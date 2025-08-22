@@ -1,0 +1,253 @@
+<div class="module-content">
+    <div class="module-header">
+        <div class="module-title">
+            <i class="fas fa-file-alt"></i>
+            <h2>Documentación Aduanera</h2>
+        </div>
+        <div class="module-actions">
+            <button class="btn btn-primary" onclick="createDocument()">
+                <i class="fas fa-plus"></i> Nuevo Documento
+            </button>
+            <button class="btn btn-secondary" onclick="validateDocuments()">
+                <i class="fas fa-check-circle"></i> Validar Todo
+            </button>
+        </div>
+    </div>
+
+    <div class="documents-dashboard">
+        <div class="doc-stats">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-file-check text-success"></i></div>
+                <div class="stat-info">
+                    <h3>24</h3>
+                    <p>Documentos Completos</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-file-times text-danger"></i></div>
+                <div class="stat-info">
+                    <h3>3</h3>
+                    <p>Pendientes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock text-warning"></i></div>
+                <div class="stat-info">
+                    <h3>5</h3>
+                    <p>Por Vencer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="document-types">
+        <h3>Tipos de Documentos</h3>
+        <div class="doc-types-grid">
+            <div class="doc-type-card" onclick="manageDocType('factura')">
+                <div class="doc-type-icon"><i class="fas fa-receipt"></i></div>
+                <h4>Factura Comercial</h4>
+                <p>Documento principal de la transacción</p>
+                <span class="doc-count">12 documentos</span>
+            </div>
+            <div class="doc-type-card" onclick="manageDocType('packing')">
+                <div class="doc-type-icon"><i class="fas fa-box"></i></div>
+                <h4>Lista de Empaque</h4>
+                <p>Detalle del contenido del envío</p>
+                <span class="doc-count">8 documentos</span>
+            </div>
+            <div class="doc-type-card" onclick="manageDocType('certificado')">
+                <div class="doc-type-icon"><i class="fas fa-certificate"></i></div>
+                <h4>Certificado de Origen</h4>
+                <p>Acredita el origen de las mercancías</p>
+                <span class="doc-count">6 documentos</span>
+            </div>
+            <div class="doc-type-card" onclick="manageDocType('conocimiento')">
+                <div class="doc-type-icon"><i class="fas fa-ship"></i></div>
+                <h4>Conocimiento de Embarque</h4>
+                <p>Título de propiedad de la mercancía</p>
+                <span class="doc-count">4 documentos</span>
+            </div>
+            <div class="doc-type-card" onclick="manageDocType('seguro')">
+                <div class="doc-type-icon"><i class="fas fa-shield-alt"></i></div>
+                <h4>Póliza de Seguro</h4>
+                <p>Cobertura de la mercancía en tránsito</p>
+                <span class="doc-count">7 documentos</span>
+            </div>
+            <div class="doc-type-card" onclick="manageDocType('sanitario')">
+                <div class="doc-type-icon"><i class="fas fa-medkit"></i></div>
+                <h4>Certificado Sanitario</h4>
+                <p>Para productos alimentarios y agrícolas</p>
+                <span class="doc-count">3 documentos</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-documents">
+        <h3>Documentos Recientes</h3>
+        <div class="documents-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Documento</th>
+                        <th>Tipo</th>
+                        <th>Envío</th>
+                        <th>Estado</th>
+                        <th>Vencimiento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="doc-info">
+                                <i class="fas fa-receipt"></i>
+                                <span>FC-2024-001</span>
+                            </div>
+                        </td>
+                        <td>Factura Comercial</td>
+                        <td>#EXP-2024-001</td>
+                        <td><span class="status-badge status-complete">Completo</span></td>
+                        <td>-</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" onclick="viewDocument('FC-2024-001')">Ver</button>
+                            <button class="btn btn-sm btn-primary" onclick="downloadDocument('FC-2024-001')">Descargar</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="doc-info">
+                                <i class="fas fa-certificate"></i>
+                                <span>CO-2024-002</span>
+                            </div>
+                        </td>
+                        <td>Certificado Origen</td>
+                        <td>#EXP-2024-002</td>
+                        <td><span class="status-badge status-pending">Pendiente</span></td>
+                        <td>20/01/2024</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning" onclick="editDocument('CO-2024-002')">Completar</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="doc-info">
+                                <i class="fas fa-box"></i>
+                                <span>LE-2024-003</span>
+                            </div>
+                        </td>
+                        <td>Lista Empaque</td>
+                        <td>#EXP-2024-003</td>
+                        <td><span class="status-badge status-review">En Revisión</span></td>
+                        <td>18/01/2024</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline" onclick="viewDocument('LE-2024-003')">Ver</button>
+                            <button class="btn btn-sm btn-success" onclick="approveDocument('LE-2024-003')">Aprobar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="document-templates">
+        <h3>Plantillas Disponibles</h3>
+        <div class="templates-grid">
+            <div class="template-card" onclick="useTemplate('factura-comercial')">
+                <div class="template-icon"><i class="fas fa-file-invoice"></i></div>
+                <h5>Factura Comercial</h5>
+                <p>Plantilla estándar para facturas de exportación</p>
+            </div>
+            <div class="template-card" onclick="useTemplate('certificado-origen')">
+                <div class="template-icon"><i class="fas fa-stamp"></i></div>
+                <h5>Certificado de Origen</h5>
+                <p>Formato oficial para certificados de origen</p>
+            </div>
+            <div class="template-card" onclick="useTemplate('lista-empaque')">
+                <div class="template-icon"><i class="fas fa-list-alt"></i></div>
+                <h5>Lista de Empaque</h5>
+                <p>Detalle completo del contenido del envío</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="compliance-checker">
+        <h3>Verificador de Cumplimiento</h3>
+        <div class="compliance-form">
+            <div class="form-group">
+                <label>País de Destino:</label>
+                <select id="destinationCountry">
+                    <option>Brasil</option>
+                    <option>México</option>
+                    <option>Chile</option>
+                    <option>Colombia</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tipo de Producto:</label>
+                <select id="productType">
+                    <option>Alimentos</option>
+                    <option>Textiles</option>
+                    <option>Maquinaria</option>
+                    <option>Químicos</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="checkCompliance()">Verificar Requisitos</button>
+        </div>
+        <div id="complianceResults" class="compliance-results" style="display: none;">
+            <div class="requirement-item">
+                <i class="fas fa-check-circle text-success"></i>
+                <span>Factura Comercial - Requerida</span>
+            </div>
+            <div class="requirement-item">
+                <i class="fas fa-check-circle text-success"></i>
+                <span>Certificado de Origen - Requerido</span>
+            </div>
+            <div class="requirement-item">
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                <span>Certificado Sanitario - Requerido para alimentos</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function createDocument() {
+    showToast('Abriendo asistente de documentos...', 'info');
+}
+
+function validateDocuments() {
+    showToast('Validando todos los documentos...', 'info');
+}
+
+function manageDocType(type) {
+    showToast(`Gestionando documentos de tipo: ${type}`, 'info');
+}
+
+function viewDocument(docId) {
+    showToast(`Abriendo documento ${docId}`, 'info');
+}
+
+function downloadDocument(docId) {
+    showToast(`Descargando documento ${docId}`, 'success');
+}
+
+function editDocument(docId) {
+    showToast(`Editando documento ${docId}`, 'info');
+}
+
+function approveDocument(docId) {
+    showToast(`Documento ${docId} aprobado`, 'success');
+}
+
+function useTemplate(templateType) {
+    showToast(`Usando plantilla: ${templateType}`, 'info');
+}
+
+function checkCompliance() {
+    const country = document.getElementById('destinationCountry').value;
+    const product = document.getElementById('productType').value;
+    
+    document.getElementById('complianceResults').style.display = 'block';
+    showToast(`Verificando requisitos para ${product} hacia ${country}`, 'info');
+}
+</script>

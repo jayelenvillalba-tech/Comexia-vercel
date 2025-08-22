@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KoraApp - Sistema de Comercio Internacional</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/modules.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="app-logo">🚀</div>
+                <h1>KoraApp</h1>
+                <p>Accede a tu dashboard</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn-login">Iniciar Sesión</button>
+                
+                <div class="login-demo">
+                    <p>Demo: Cualquier email y contraseña funcionan</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboard-screen" class="dashboard-container" style="display: none;">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="app-logo">🚀</div>
+                <h1>KoraApp</h1>
+                <div class="breadcrumb">
+                    <span id="section-title">Dashboard - Resumen</span>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="user-info">
+                    <span class="user-name" id="user-name">Usuario</span>
+                    <span class="user-role" id="user-role">Admin</span>
+                </div>
+                <button class="btn-logout" onclick="logout()">🚪 Salir</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="dashboard-main">
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li><a href="#" data-section="overview" class="nav-link active">📊 Resumen</a></li>
+                        
+                        <!-- Módulo Logística Internacional -->
+                        <li class="nav-section">
+                            <span class="nav-section-title">🌍 Logística Internacional</span>
+                            <ul class="nav-subsection">
+                                <li><a href="#" data-section="supply-chain" class="nav-link">🔗 Cadenas Logísticas</a></li>
+                                <li><a href="#" data-section="transport" class="nav-link">🚛 Modos de Transporte</a></li>
+                                <li><a href="#" data-section="customs" class="nav-link">📋 Documentación Aduanera</a></li>
+                                <li><a href="#" data-section="inventory" class="nav-link">📦 Inventarios</a></li>
+                                <li><a href="#" data-section="insurance" class="nav-link">🛡️ Seguros y Riesgos</a></li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Módulo Financiero -->
+                        <li class="nav-section">
+                            <span class="nav-section-title">💰 Módulo Financiero</span>
+                            <ul class="nav-subsection">
+                                <li><a href="#" data-section="exchange-rates" class="nav-link">💱 Tipos de Cambio</a></li>
+                                <li><a href="#" data-section="costs" class="nav-link">💲 Costos y Presupuestos</a></li>
+                                <li><a href="#" data-section="financial-reports" class="nav-link">📈 Reportes Financieros</a></li>
+                                <li><a href="#" data-section="audit" class="nav-link">🔍 Auditoría</a></li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Módulo Marketing Internacional -->
+                        <li class="nav-section">
+                            <span class="nav-section-title">📈 Marketing Internacional</span>
+                            <ul class="nav-subsection">
+                                <li><a href="#" data-section="strategies" class="nav-link">🎯 Estrategias</a></li>
+                                <li><a href="#" data-section="channels" class="nav-link">📺 Canales</a></li>
+                                <li><a href="#" data-section="campaigns" class="nav-link">📢 Campañas</a></li>
+                                <li><a href="#" data-section="roi-metrics" class="nav-link">📊 Métricas ROI</a></li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Módulo Legal y Normativo -->
+                        <li class="nav-section">
+                            <span class="nav-section-title">⚖️ Legal y Normativo</span>
+                            <ul class="nav-subsection">
+                                <li><a href="#" data-section="regulations" class="nav-link">📜 Regulaciones</a></li>
+                                <li><a href="#" data-section="compliance" class="nav-link">✅ Compliance</a></li>
+                                <li><a href="#" data-section="treaties" class="nav-link">🤝 Tratados</a></li>
+                                <li><a href="#" data-section="legal-alerts" class="nav-link">🚨 Alertas Legales</a></li>
+                            </ul>
+                        </li>
+                        
+                        <!-- Módulos Adicionales -->
+                        <li><a href="#" data-section="users" class="nav-link">👥 Usuarios</a></li>
+                        <li><a href="#" data-section="settings" class="nav-link">⚙️ Configuración</a></li>
+                        <li><a href="#" data-section="reports" class="nav-link">📊 Reportes</a></li>
+                        <li><a href="#" data-section="analytics" class="nav-link">📈 Analytics</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <main class="dashboard-content">
+                <!-- MÓDULO 1: Overview/Dashboard -->
+                <section id="overview-section" class="content-section active">
+                    <div class="module-header">
+                        <h2>📊 Dashboard - Resumen Ejecutivo</h2>
+                        <div class="role-indicator">Rol: <span id="user-role-display">Admin</span></div>
+                    </div>
+                    
+                    <div class="dashboard-overview">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">📦</div>
+                                <div class="stat-info">
+                                    <h3>Envíos Activos</h3>
+                                    <div class="stat-value">156</div>
+                                    <div class="stat-change positive">+12% vs mes anterior</div>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">💰</div>
+                                <div class="stat-info">
+                                    <h3>Ingresos Mensuales</h3>
+                                    <div class="stat-value">$2.4M</div>
+                                    <div class="stat-change positive">+8.5% vs mes anterior</div>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">🌍</div>
+                                <div class="stat-info">
+                                    <h3>Países Activos</h3>
+                                    <div class="stat-value">23</div>
+                                    <div class="stat-change neutral">Sin cambios</div>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">⚡</div>
+                                <div class="stat-info">
+                                    <h3>Eficiencia Operativa</h3>
+                                    <div class="stat-value">94.2%</div>
+                                    <div class="stat-change positive">+2.1% vs mes anterior</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <h3>Acciones Rápidas</h3>
+                            <div class="actions-grid">
+                                <button class="action-btn" onclick="showSection('supply-chain')">
+                                    <span class="action-icon">🔗</span>
+                                    <span>Cadenas Logísticas</span>
+                                </button>
+                                <button class="action-btn" onclick="showSection('exchange-rates')">
+                                    <span class="action-icon">💱</span>
+                                    <span>Tipos de Cambio</span>
+                                </button>
+                                <button class="action-btn" onclick="showSection('customs')">
+                                    <span class="action-icon">📋</span>
+                                    <span>Documentación</span>
+                                </button>
+                                <button class="action-btn" onclick="showSection('strategies')">
+                                    <span class="action-icon">🎯</span>
+                                    <span>Marketing</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 2: Logística - Supply Chain -->
+                <section id="supply-chain-section" class="content-section">
+                    <div class="module-header">
+                        <h2>🔗 Visualización de Cadenas Logísticas</h2>
+                        <div class="role-indicator">Rol: <span class="user-role-display">Admin</span></div>
+                    </div>
+                    
+                    <div class="supply-chain-dashboard">
+                        <div class="chain-visualization">
+                            <h3>Cadena de Suministro Global</h3>
+                            <div class="chain-flow">
+                                <div class="chain-step">🏭 Proveedor</div>
+                                <div class="chain-arrow">→</div>
+                                <div class="chain-step">📦 Almacén</div>
+                                <div class="chain-arrow">→</div>
+                                <div class="chain-step">🚛 Transporte</div>
+                                <div class="chain-arrow">→</div>
+                                <div class="chain-step">🏪 Distribuidor</div>
+                                <div class="chain-arrow">→</div>
+                                <div class="chain-step">👤 Cliente</div>
+                            </div>
+                        </div>
+                        
+                        <div class="chain-metrics">
+                            <div class="metric-card">
+                                <h4>Tiempo Total</h4>
+                                <div class="metric-value">15 días</div>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Costo Total</h4>
+                                <div class="metric-value">$2,450</div>
+                            </div>
+                            <div class="metric-card">
+                                <h4>Eficiencia</h4>
+                                <div class="metric-value">87%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="supply-chain-table">
+                            <h3>Operaciones de Cadena de Suministro</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Proveedor</th>
+                                        <th>Producto</th>
+                                        <th>Estado</th>
+                                        <th>Tiempo Estimado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="supply-chain-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 2: Logística - Transport -->
+                <section id="transport-section" class="content-section">
+                    <div class="module-header">
+                        <h2>🚛 Comparativo de Modos de Transporte</h2>
+                    </div>
+                    
+                    <div class="transport-comparison">
+                        <div class="transport-mode">
+                            <div class="mode-icon">🚢</div>
+                            <h3>Marítimo</h3>
+                            <div class="mode-stats">
+                                <p><strong>Costo:</strong> Bajo</p>
+                                <p><strong>Tiempo:</strong> 20-30 días</p>
+                                <p><strong>Capacidad:</strong> Alta</p>
+                                <p><strong>Emisiones:</strong> Bajas</p>
+                            </div>
+                            <div class="mode-score">Puntuación: 8.5/10</div>
+                        </div>
+                        
+                        <div class="transport-mode">
+                            <div class="mode-icon">✈️</div>
+                            <h3>Aéreo</h3>
+                            <div class="mode-stats">
+                                <p><strong>Costo:</strong> Alto</p>
+                                <p><strong>Tiempo:</strong> 1-3 días</p>
+                                <p><strong>Capacidad:</strong> Media</p>
+                                <p><strong>Emisiones:</strong> Altas</p>
+                            </div>
+                            <div class="mode-score">Puntuación: 7.2/10</div>
+                        </div>
+                        
+                        <div class="transport-mode">
+                            <div class="mode-icon">🚛</div>
+                            <h3>Terrestre</h3>
+                            <div class="mode-stats">
+                                <p><strong>Costo:</strong> Medio</p>
+                                <p><strong>Tiempo:</strong> 5-10 días</p>
+                                <p><strong>Capacidad:</strong> Media</p>
+                                <p><strong>Emisiones:</strong> Medias</p>
+                            </div>
+                            <div class="mode-score">Puntuación: 7.8/10</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 2: Logística - Customs -->
+                <section id="customs-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📋 Documentación Aduanera</h2>
+                        <button class="btn-primary" onclick="generateCustomsDoc()">📄 Generar Documento</button>
+                    </div>
+                    
+                    <div class="customs-dashboard">
+                        <div class="document-types">
+                            <div class="doc-type-card">
+                                <h3>📋 Factura Comercial</h3>
+                                <p>Documento principal para exportación</p>
+                                <div class="doc-status completed">✅ Completado</div>
+                            </div>
+                            <div class="doc-type-card">
+                                <h3>📦 Lista de Empaque</h3>
+                                <p>Detalle de mercancías empacadas</p>
+                                <div class="doc-status pending">⏳ Pendiente</div>
+                            </div>
+                            <div class="doc-type-card">
+                                <h3>🛡️ Certificado de Origen</h3>
+                                <p>Origen de las mercancías</p>
+                                <div class="doc-status in-progress">🔄 En Proceso</div>
+                            </div>
+                        </div>
+                        
+                        <div class="customs-table">
+                            <h3>Documentos Aduaneros</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tipo Documento</th>
+                                        <th>Cliente</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customs-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 2: Logística - Inventory -->
+                <section id="inventory-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📦 Gestión de Inventarios</h2>
+                        <button class="btn-primary" onclick="addInventoryItem()">➕ Agregar Producto</button>
+                    </div>
+                    
+                    <div class="inventory-dashboard">
+                        <div class="inventory-stats">
+                            <div class="stat-card">
+                                <h4>Total Productos</h4>
+                                <div class="stat-value">2,456</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Valor Inventario</h4>
+                                <div class="stat-value">$1,234,567</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Stock Bajo</h4>
+                                <div class="stat-value warning">23</div>
+                            </div>
+                        </div>
+                        
+                        <div class="inventory-table">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>SKU</th>
+                                        <th>Producto</th>
+                                        <th>Stock Actual</th>
+                                        <th>Stock Mínimo</th>
+                                        <th>Ubicación</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventory-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 2: Logística - Insurance -->
+                <section id="insurance-section" class="content-section">
+                    <div class="module-header">
+                        <h2>🛡️ Seguros y Gestión de Riesgos</h2>
+                        <button class="btn-primary" onclick="calculateInsurance()">💰 Calcular Seguro</button>
+                    </div>
+                    
+                    <div class="insurance-dashboard">
+                        <div class="risk-assessment">
+                            <h3>Evaluación de Riesgos</h3>
+                            <div class="risk-factors">
+                                <div class="risk-factor low">
+                                    <span class="risk-icon">🟢</span>
+                                    <span>Riesgo País: Bajo</span>
+                                    <span class="risk-score">2.1/10</span>
+                                </div>
+                                <div class="risk-factor medium">
+                                    <span class="risk-icon">🟡</span>
+                                    <span>Riesgo Transporte: Medio</span>
+                                    <span class="risk-score">5.3/10</span>
+                                </div>
+                                <div class="risk-factor high">
+                                    <span class="risk-icon">🔴</span>
+                                    <span>Riesgo Climático: Alto</span>
+                                    <span class="risk-score">7.8/10</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="insurance-table">
+                            <h3>Pólizas de Seguro</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tipo Póliza</th>
+                                        <th>Cobertura</th>
+                                        <th>Prima</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="insurance-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 3: Financiero - Exchange Rates -->
+                <section id="exchange-rates-section" class="content-section">
+                    <div class="module-header">
+                        <h2>💱 Tipos de Cambio en Tiempo Real</h2>
+                        <button class="btn-refresh" onclick="refreshExchangeRates()">🔄 Actualizar</button>
+                    </div>
+                    
+                    <div class="exchange-rates-grid">
+                        <div class="currency-card">
+                            <div class="currency-pair">USD/EUR</div>
+                            <div class="exchange-rate">0.8456</div>
+                            <div class="rate-change positive">+0.0023 (+0.27%)</div>
+                        </div>
+                        <div class="currency-card">
+                            <div class="currency-pair">USD/GBP</div>
+                            <div class="exchange-rate">0.7892</div>
+                            <div class="rate-change negative">-0.0045 (-0.57%)</div>
+                        </div>
+                        <div class="currency-card">
+                            <div class="currency-pair">USD/JPY</div>
+                            <div class="exchange-rate">149.23</div>
+                            <div class="rate-change positive">+1.45 (+0.98%)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="financial-operations">
+                        <h3>Operaciones Financieras</h3>
+                        <div class="operations-table">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tipo</th>
+                                        <th>Moneda</th>
+                                        <th>Monto</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="financial-operations-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 3: Financiero - Costs -->
+                <section id="costs-section" class="content-section">
+                    <div class="module-header">
+                        <h2>💲 Costos y Presupuestos</h2>
+                        <button class="btn-primary" onclick="createBudget()">📊 Nuevo Presupuesto</button>
+                    </div>
+                    
+                    <div class="costs-dashboard">
+                        <div class="cost-breakdown">
+                            <h3>Desglose de Costos</h3>
+                            <div class="cost-chart">
+                                <div class="cost-item">
+                                    <span class="cost-label">Transporte</span>
+                                    <div class="cost-bar">
+                                        <div class="cost-fill" style="width: 35%"></div>
+                                    </div>
+                                    <span class="cost-value">$3,500 (35%)</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Aranceles</span>
+                                    <div class="cost-bar">
+                                        <div class="cost-fill" style="width: 25%"></div>
+                                    </div>
+                                    <span class="cost-value">$2,500 (25%)</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Seguros</span>
+                                    <div class="cost-bar">
+                                        <div class="cost-fill" style="width: 15%"></div>
+                                    </div>
+                                    <span class="cost-value">$1,500 (15%)</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="budget-table">
+                            <h3>Presupuestos</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Proyecto</th>
+                                        <th>Presupuesto</th>
+                                        <th>Gastado</th>
+                                        <th>Restante</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="budget-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 3: Financiero - Reports -->
+                <section id="financial-reports-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📈 Reportes Financieros</h2>
+                        <button class="btn-primary" onclick="generateReport()">📊 Generar Reporte</button>
+                    </div>
+                    
+                    <div class="reports-dashboard">
+                        <div class="report-types">
+                            <div class="report-card">
+                                <h3>📊 Reporte de Ingresos</h3>
+                                <p>Análisis mensual de ingresos</p>
+                                <button class="btn-secondary" onclick="generateIncomeReport()">Generar</button>
+                            </div>
+                            <div class="report-card">
+                                <h3>💰 Reporte de Gastos</h3>
+                                <p>Desglose detallado de gastos</p>
+                                <button class="btn-secondary" onclick="generateExpenseReport()">Generar</button>
+                            </div>
+                            <div class="report-card">
+                                <h3>📈 Reporte de ROI</h3>
+                                <p>Retorno de inversión por proyecto</p>
+                                <button class="btn-secondary" onclick="generateROIReport()">Generar</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 3: Financiero - Audit -->
+                <section id="audit-section" class="content-section">
+                    <div class="module-header">
+                        <h2>🔍 Auditoría Financiera</h2>
+                        <button class="btn-primary" onclick="startAudit()">🔍 Iniciar Auditoría</button>
+                    </div>
+                    
+                    <div class="audit-dashboard">
+                        <div class="audit-status">
+                            <h3>Estado de Auditorías</h3>
+                            <div class="audit-progress">
+                                <div class="progress-item">
+                                    <span>Auditoría Q1 2024</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 85%"></div>
+                                    </div>
+                                    <span>85%</span>
+                                </div>
+                                <div class="progress-item">
+                                    <span>Auditoría Anual 2023</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                    </div>
+                                    <span>Completada</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 4: Marketing - Strategies -->
+                <section id="strategies-section" class="content-section">
+                    <div class="module-header">
+                        <h2>🎯 Estrategias de Marketing Internacional</h2>
+                        <button class="btn-primary" onclick="createStrategy()">➕ Nueva Estrategia</button>
+                    </div>
+                    
+                    <div class="strategies-dashboard">
+                        <div class="strategy-cards">
+                            <div class="strategy-card">
+                                <h3>🌍 Expansión Global</h3>
+                                <p>Estrategia para mercados emergentes</p>
+                                <div class="strategy-metrics">
+                                    <span>ROI: 145%</span>
+                                    <span>Alcance: 2.3M</span>
+                                </div>
+                                <div class="strategy-status active">Activa</div>
+                            </div>
+                            <div class="strategy-card">
+                                <h3>📱 Marketing Digital</h3>
+                                <p>Campañas en redes sociales</p>
+                                <div class="strategy-metrics">
+                                    <span>ROI: 89%</span>
+                                    <span>Alcance: 1.8M</span>
+                                </div>
+                                <div class="strategy-status planning">Planificación</div>
+                            </div>
+                        </div>
+                        
+                        <div class="strategies-table">
+                            <h3>Estrategias de Marketing</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Estrategia</th>
+                                        <th>Mercado</th>
+                                        <th>Presupuesto</th>
+                                        <th>ROI</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="strategies-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 4: Marketing - Channels -->
+                <section id="channels-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📺 Canales de Marketing</h2>
+                        <button class="btn-primary" onclick="addChannel()">➕ Nuevo Canal</button>
+                    </div>
+                    
+                    <div class="channels-dashboard">
+                        <div class="channel-performance">
+                            <h3>Rendimiento por Canal</h3>
+                            <div class="channel-chart">
+                                <div class="channel-item">
+                                    <span class="channel-name">📱 Redes Sociales</span>
+                                    <div class="performance-bar">
+                                        <div class="performance-fill" style="width: 78%"></div>
+                                    </div>
+                                    <span class="performance-value">78%</span>
+                                </div>
+                                <div class="channel-item">
+                                    <span class="channel-name">📧 Email Marketing</span>
+                                    <div class="performance-bar">
+                                        <div class="performance-fill" style="width: 65%"></div>
+                                    </div>
+                                    <span class="performance-value">65%</span>
+                                </div>
+                                <div class="channel-item">
+                                    <span class="channel-name">🔍 SEO/SEM</span>
+                                    <div class="performance-bar">
+                                        <div class="performance-fill" style="width: 82%"></div>
+                                    </div>
+                                    <span class="performance-value">82%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 4: Marketing - Campaigns -->
+                <section id="campaigns-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📢 Campañas de Marketing</h2>
+                        <button class="btn-primary" onclick="createCampaign()">➕ Nueva Campaña</button>
+                    </div>
+                    
+                    <div class="campaigns-dashboard">
+                        <div class="campaign-stats">
+                            <div class="stat-card">
+                                <h4>Campañas Activas</h4>
+                                <div class="stat-value">12</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Alcance Total</h4>
+                                <div class="stat-value">2.4M</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Conversiones</h4>
+                                <div class="stat-value">8,456</div>
+                            </div>
+                        </div>
+                        
+                        <div class="campaigns-table">
+                            <h3>Campañas Activas</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Campaña</th>
+                                        <th>Canal</th>
+                                        <th>Presupuesto</th>
+                                        <th>Alcance</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="campaigns-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 4: Marketing - ROI Metrics -->
+                <section id="roi-metrics-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📊 Métricas ROI de Marketing</h2>
+                        <button class="btn-refresh" onclick="refreshMetrics()">🔄 Actualizar Métricas</button>
+                    </div>
+                    
+                    <div class="roi-dashboard">
+                        <div class="roi-overview">
+                            <div class="roi-card">
+                                <h3>ROI General</h3>
+                                <div class="roi-value positive">+156%</div>
+                                <div class="roi-trend">↗️ +12% vs mes anterior</div>
+                            </div>
+                            <div class="roi-card">
+                                <h3>ROAS</h3>
+                                <div class="roi-value">4.2:1</div>
+                                <div class="roi-trend">↗️ +0.3 vs mes anterior</div>
+                            </div>
+                            <div class="roi-card">
+                                <h3>CAC</h3>
+                                <div class="roi-value">$45</div>
+                                <div class="roi-trend">↘️ -$5 vs mes anterior</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 5: Legal - Regulations -->
+                <section id="regulations-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📜 Regulaciones Internacionales</h2>
+                        <button class="btn-primary" onclick="checkCompliance()">✅ Verificar Compliance</button>
+                    </div>
+                    
+                    <div class="regulations-dashboard">
+                        <div class="regulation-categories">
+                            <div class="regulation-card">
+                                <h3>🌍 Comercio Internacional</h3>
+                                <p>Regulaciones de importación/exportación</p>
+                                <div class="compliance-status compliant">✅ Cumpliendo</div>
+                            </div>
+                            <div class="regulation-card">
+                                <h3>💰 Regulaciones Financieras</h3>
+                                <p>Normativas bancarias y fiscales</p>
+                                <div class="compliance-status warning">⚠️ Revisar</div>
+                            </div>
+                            <div class="regulation-card">
+                                <h3>🔒 Protección de Datos</h3>
+                                <p>GDPR y regulaciones de privacidad</p>
+                                <div class="compliance-status compliant">✅ Cumpliendo</div>
+                            </div>
+                        </div>
+                        
+                        <div class="regulations-table">
+                            <h3>Regulaciones por País</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>País</th>
+                                        <th>Regulación</th>
+                                        <th>Tipo</th>
+                                        <th>Estado</th>
+                                        <th>Última Revisión</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="regulations-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 5: Legal - Compliance -->
+                <section id="compliance-section" class="content-section">
+                    <div class="module-header">
+                        <h2>✅ Sistema de Compliance</h2>
+                        <button class="btn-primary" onclick="auditCompliance()">🔍 Auditar Compliance</button>
+                    </div>
+                    
+                    <div class="compliance-dashboard">
+                        <div class="compliance-overview">
+                            <div class="compliance-score">
+                                <h3>Puntuación de Compliance</h3>
+                                <div class="score-circle">
+                                    <div class="score-value">94%</div>
+                                </div>
+                                <div class="score-status excellent">Excelente</div>
+                            </div>
+                        </div>
+                        
+                        <div class="compliance-table">
+                            <h3>Estado de Compliance</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Área</th>
+                                        <th>Regulación</th>
+                                        <th>Estado</th>
+                                        <th>Última Auditoría</th>
+                                        <th>Próxima Revisión</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="compliance-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 5: Legal - Treaties -->
+                <section id="treaties-section" class="content-section">
+                    <div class="module-header">
+                        <h2>🤝 Tratados Comerciales</h2>
+                        <button class="btn-primary" onclick="searchTreaties()">🔍 Buscar Tratados</button>
+                    </div>
+                    
+                    <div class="treaties-dashboard">
+                        <div class="treaty-map">
+                            <h3>Mapa de Tratados Activos</h3>
+                            <div class="treaty-regions">
+                                <div class="region-card">
+                                    <h4>🇺🇸 USMCA</h4>
+                                    <p>Estados Unidos, México, Canadá</p>
+                                    <div class="treaty-status active">Activo</div>
+                                </div>
+                                <div class="region-card">
+                                    <h4>🇪🇺 UE-Mercosur</h4>
+                                    <p>Unión Europea - Mercosur</p>
+                                    <div class="treaty-status negotiating">En Negociación</div>
+                                </div>
+                                <div class="region-card">
+                                    <h4>🌏 CPTPP</h4>
+                                    <p>Tratado Transpacífico</p>
+                                    <div class="treaty-status active">Activo</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="treaties-table">
+                            <h3>Tratados Aplicables</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tratado</th>
+                                        <th>Países</th>
+                                        <th>Tipo</th>
+                                        <th>Estado</th>
+                                        <th>Beneficios</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="treaties-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 5: Legal - Alerts -->
+                <section id="legal-alerts-section" class="content-section">
+                    <div class="module-header">
+                        <h2>🚨 Alertas Legales</h2>
+                        <button class="btn-primary" onclick="createAlert()">➕ Nueva Alerta</button>
+                    </div>
+                    
+                    <div class="alerts-dashboard">
+                        <div class="alert-summary">
+                            <div class="alert-count critical">
+                                <h4>Críticas</h4>
+                                <div class="count-value">3</div>
+                            </div>
+                            <div class="alert-count warning">
+                                <h4>Advertencias</h4>
+                                <div class="count-value">7</div>
+                            </div>
+                            <div class="alert-count info">
+                                <h4>Informativas</h4>
+                                <div class="count-value">12</div>
+                            </div>
+                        </div>
+                        
+                        <div class="alerts-table">
+                            <h3>Alertas Recientes</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th>Descripción</th>
+                                        <th>País/Región</th>
+                                        <th>Prioridad</th>
+                                        <th>Fecha</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="legal-alerts-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 6: Users Management -->
+                <section id="users-section" class="content-section">
+                    <div class="module-header">
+                        <h2>👥 Gestión de Usuarios</h2>
+                        <button class="btn-primary" onclick="addUser()">➕ Nuevo Usuario</button>
+                    </div>
+                    
+                    <div class="users-dashboard">
+                        <div class="user-stats">
+                            <div class="stat-card">
+                                <h4>Total Usuarios</h4>
+                                <div class="stat-value">156</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Usuarios Activos</h4>
+                                <div class="stat-value">142</div>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Administradores</h4>
+                                <div class="stat-value">8</div>
+                            </div>
+                        </div>
+                        
+                        <div class="users-table">
+                            <h3>Lista de Usuarios</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Estado</th>
+                                        <th>Último Acceso</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-tbody">
+                                    <!-- Datos dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 7: Settings -->
+                <section id="settings-section" class="content-section">
+                    <div class="module-header">
+                        <h2>⚙️ Configuración del Sistema</h2>
+                        <button class="btn-primary" onclick="saveSettings()">💾 Guardar Cambios</button>
+                    </div>
+                    
+                    <div class="settings-dashboard">
+                        <div class="settings-categories">
+                            <div class="settings-category">
+                                <h3>🌐 Configuración General</h3>
+                                <div class="setting-item">
+                                    <label>Idioma del Sistema</label>
+                                    <select id="system-language">
+                                        <option value="es">Español</option>
+                                        <option value="en">English</option>
+                                        <option value="pt">Português</option>
+                                    </select>
+                                </div>
+                                <div class="setting-item">
+                                    <label>Zona Horaria</label>
+                                    <select id="timezone">
+                                        <option value="UTC-5">UTC-5 (Colombia)</option>
+                                        <option value="UTC-3">UTC-3 (Argentina)</option>
+                                        <option value="UTC-6">UTC-6 (México)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-category">
+                                <h3>🔒 Seguridad</h3>
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" checked> Autenticación de dos factores
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" checked> Notificaciones de seguridad
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-category">
+                                <h3>📧 Notificaciones</h3>
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox" checked> Alertas por email
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label>
+                                        <input type="checkbox"> Notificaciones push
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 8: Advanced Reports -->
+                <section id="reports-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📊 Reportes Avanzados</h2>
+                        <button class="btn-primary" onclick="createCustomReport()">📋 Reporte Personalizado</button>
+                    </div>
+                    
+                    <div class="reports-dashboard">
+                        <div class="report-builder">
+                            <h3>Constructor de Reportes</h3>
+                            <div class="builder-form">
+                                <div class="form-group">
+                                    <label>Tipo de Reporte</label>
+                                    <select id="report-type">
+                                        <option value="financial">Financiero</option>
+                                        <option value="logistics">Logístico</option>
+                                        <option value="marketing">Marketing</option>
+                                        <option value="legal">Legal</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Período</label>
+                                    <select id="report-period">
+                                        <option value="monthly">Mensual</option>
+                                        <option value="quarterly">Trimestral</option>
+                                        <option value="yearly">Anual</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="recent-reports">
+                            <h3>Reportes Recientes</h3>
+                            <div class="reports-list">
+                                <div class="report-item">
+                                    <span class="report-name">📊 Reporte Financiero Q1</span>
+                                    <span class="report-date">15/03/2024</span>
+                                    <button class="btn-secondary" onclick="downloadReport('fin-q1')">📥 Descargar</button>
+                                </div>
+                                <div class="report-item">
+                                    <span class="report-name">🚛 Análisis Logístico Marzo</span>
+                                    <span class="report-date">10/03/2024</span>
+                                    <button class="btn-secondary" onclick="downloadReport('log-mar')">📥 Descargar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO 9: Analytics -->
+                <section id="analytics-section" class="content-section">
+                    <div class="module-header">
+                        <h2>📈 Analytics Avanzado</h2>
+                        <button class="btn-refresh" onclick="refreshAnalytics()">🔄 Actualizar Datos</button>
+                    </div>
+                    
+                    <div class="analytics-dashboard">
+                        <div class="analytics-overview">
+                            <div class="analytics-card">
+                                <h3>📊 KPIs Principales</h3>
+                                <div class="kpi-grid">
+                                    <div class="kpi-item">
+                                        <span class="kpi-label">Eficiencia Operativa</span>
+                                        <span class="kpi-value">94.2%</span>
+                                        <span class="kpi-trend positive">↗️ +2.1%</span>
+                                    </div>
+                                    <div class="kpi-item">
+                                        <span class="kpi-label">Satisfacción Cliente</span>
+                                        <span class="kpi-value">4.8/5</span>
+                                        <span class="kpi-trend positive">↗️ +0.2</span>
+                                    </div>
+                                    <div class="kpi-item">
+                                        <span class="kpi-label">Tiempo Promedio Entrega</span>
+                                        <span class="kpi-value">12.3 días</span>
+                                        <span class="kpi-trend negative">↘️ -0.8</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="analytics-card">
+                                <h3>📈 Tendencias</h3>
+                                <div class="trend-chart">
+                                    <div class="chart-placeholder">
+                                        [Gráfico de tendencias - Implementar con Chart.js]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="predictive-analytics">
+                            <h3>🔮 Análisis Predictivo</h3>
+                            <div class="prediction-cards">
+                                <div class="prediction-card">
+                                    <h4>Demanda Próximo Mes</h4>
+                                    <div class="prediction-value">+15%</div>
+                                    <div class="confidence-level">Confianza: 87%</div>
+                                </div>
+                                <div class="prediction-card">
+                                    <h4>Costos de Transporte</h4>
+                                    <div class="prediction-value">+3%</div>
+                                    <div class="confidence-level">Confianza: 92%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+    <script src="js/app.js"></script> 
+            <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/modules.js"></script>
+    <script src="js/dashboard.js"></script>
+
+    <!-- Notification Container -->
+    <div id="notification-container"></div>
+</body>
+</html>

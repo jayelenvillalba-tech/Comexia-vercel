@@ -1,0 +1,25 @@
+c:\KoraApp\ComexIA-Trae-main\
+├── firebase.json (nuevo)
+├── .firebaserc (nuevo)
+└── public/
+    ├── index.html
+    ├── manifest.json
+    ├── robots.txt
+    ├── css/
+    │   ├── main.css
+    │   ├── modules.css
+    │   └── responsive.css
+    ├── js/
+    │   ├── app.js
+    │   ├── utils.js
+    │   ├── modules.js
+    │   └── dashboard.js
+    ├── assets/
+    │   ├── favicon.ico
+    │   └── [otros archivos]
+    ├── img/
+    │   └── [archivos de imágenes]
+    └── partials/
+        ├── integraciones.html
+        ├── comunicaciones.html
+        └── [otros módulos]

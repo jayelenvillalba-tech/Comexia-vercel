@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Internacional - Comex.IA</title>
+    <style>
+        .marketing-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .marketing-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .marketing-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .marketing-title h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        .marketing-icon {
+            font-size: 32px;
+            color: #3498db;
+        }
+        
+        .marketing-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+            border: 1px solid #bdc3c7;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: #d5dbdb;
+        }
+        
+        .marketing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .marketing-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        .card-icon {
+            font-size: 24px;
+            color: #3498db;
+        }
+        
+        .campaigns-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .campaigns-table th,
+        .campaigns-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .campaigns-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-paused {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-draft {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .chart-container {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .marketing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .marketing-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="marketing-container">
+        <div class="marketing-header">
+            <div class="marketing-title">
+                <span class="marketing-icon">🌍</span>
+                <h1>Marketing Internacional</h1>
+            </div>
+            <div class="marketing-actions">
+                <button class="btn-secondary" onclick="exportMarketingData()">📊 Exportar</button>
+                <button class="btn-primary" onclick="createCampaign()">➕ Nueva Campaña</button>
+            </div>
+        </div>
+        
+        <!-- Métricas Principales -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">24</div>
+                <div class="metric-label">Campañas Activas</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">$45.2K</div>
+                <div class="metric-label">Inversión Total</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">3.2%</div>
+                <div class="metric-label">CTR Promedio</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">156</div>
+                <div class="metric-label">Leads Generados</div>
+            </div>
+        </div>
+        
+        <div class="marketing-grid">
+            <!-- Campañas Activas -->
+            <div class="marketing-card">
+                <div class="card-header">
+                    <span class="card-icon">📢</span>
+                    <h3 class="card-title">Campañas Activas</h3>
+                </div>
+                
+                <table class="campaigns-table">
+                    <thead>
+                        <tr>
+                            <th>Campaña</th>
+                            <th>País</th>
+                            <th>Estado</th>
+                            <th>ROI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Exportación USA</td>
+                            <td>🇺🇸 Estados Unidos</td>
+                            <td><span class="status-badge status-active">Activa</span></td>
+                            <td>+24%</td>
+                        </tr>
+                        <tr>
+                            <td>Mercado Europeo</td>
+                            <td>🇪🇺 Europa</td>
+                            <td><span class="status-badge status-active">Activa</span></td>
+                            <td>+18%</td>
+                        </tr>
+                        <tr>
+                            <td>Expansión LATAM</td>
+                            <td>🌎 Latinoamérica</td>
+                            <td><span class="status-badge status-paused">Pausada</span></td>
+                            <td>+12%</td>
+                        </tr>
+                        <tr>
+                            <td>Asia Pacífico</td>
+                            <td>🌏 Asia</td>
+                            <td><span class="status-badge status-draft">Borrador</span></td>
+                            <td>--</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Nueva Campaña -->
+            <div class="marketing-card">
+                <div class="card-header">
+                    <span class="card-icon">🎯</span>
+                    <h3 class="card-title">Crear Nueva Campaña</h3>
+                </div>
+                
+                <form id="campaignForm">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de la Campaña</label>
+                        <input type="text" class="form-input" placeholder="Ej: Campaña Q1 2024">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Mercado Objetivo</label>
+                        <select class="form-select">
+                            <option value="">Seleccionar mercado...</option>
+                            <option value="usa">🇺🇸 Estados Unidos</option>
+                            <option value="eu">🇪🇺 Unión Europea</option>
+                            <option value="latam">🌎 Latinoamérica</option>
+                            <option value="asia">🌏 Asia Pacífico</option>
+                            <option value="africa">🌍 África</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Presupuesto (USD)</label>
+                        <input type="number" class="form-input" placeholder="10000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Campaña</label>
+                        <select class="form-select">
+                            <option value="">Seleccionar tipo...</option>
+                            <option value="awareness">Conocimiento de Marca</option>
+                            <option value="leads">Generación de Leads</option>
+                            <option value="conversion">Conversión</option>
+                            <option value="retention">Retención</option>
+                        </select>
+                    </div>
+                    
+                    <button type="button" class="btn-primary" onclick="saveCampaign()" style="width: 100%;">💾 Guardar Campaña</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Análisis de Mercado -->
+        <div class="marketing-card">
+            <div class="card-header">
+                <span class="card-icon">📈</span>
+                <h3 class="card-title">Análisis de Rendimiento por Mercado</h3>
+            </div>
+            
+            <div class="chart-container">
+                <div>📊 Gráfico de Rendimiento por Mercado<br><small>Datos actualizados en tiempo real</small></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Funciones de Marketing
+        function createCampaign() {
+            alert('🎯 Abriendo formulario de nueva campaña...');
+            document.querySelector('#campaignForm input').focus();
+        }
+        
+        function saveCampaign() {
+            const form = document.getElementById('campaignForm');
+            const formData = new FormData(form);
+            
+            // Simulación de guardado
+            alert('💾 Campaña guardada exitosamente!');
+            form.reset();
+        }
+        
+        function exportMarketingData() {
+            alert('📊 Exportando datos de marketing...');
+            // Simulación de exportación
+            setTimeout(() => {
+                alert('✅ Datos exportados correctamente!');
+            }, 1500);
+        }
+        
+        // Actualización de métricas en tiempo real
+        function updateMetrics() {
+            const metrics = document.querySelectorAll('.metric-value');
+            metrics.forEach(metric => {
+                const currentValue = parseInt(metric.textContent.replace(/[^0-9]/g, ''));
+                const variation = Math.floor(Math.random() * 10) - 5;
+                const newValue = Math.max(0, currentValue + variation);
+                
+                if (metric.textContent.includes('$')) {
+                    metric.textContent = `$${newValue}K`;
+                } else if (metric.textContent.includes('%')) {
+                    metric.textContent = `${(newValue / 10).toFixed(1)}%`;
+                } else {
+                    metric.textContent = newValue;
+                }
+            });
+        }
+        
+        // Actualizar métricas cada 30 segundos
+        setInterval(updateMetrics, 30000);
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🌍 Módulo de Marketing Internacional cargado');
+        });
+    </script>
+</body>
+</html>

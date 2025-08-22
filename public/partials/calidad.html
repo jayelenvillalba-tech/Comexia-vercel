@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Calidad - Comex.IA</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .actions {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border-left: 5px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-card.quality {
+            border-left-color: #27ae60;
+        }
+
+        .metric-card.defects {
+            border-left-color: #e74c3c;
+        }
+
+        .metric-card.certifications {
+            border-left-color: #3498db;
+        }
+
+        .metric-card.audits {
+            border-left-color: #f39c12;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-expired {
+            background: #f5c6cb;
+            color: #721c24;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #e9ecef;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-award"></i>
+                Gestión de Calidad
+            </h1>
+            <p>Control y aseguramiento de calidad en procesos de comercio exterior</p>
+        </div>
+
+        <div class="actions">
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="openModal('newInspectionModal')">
+                    <i class="fas fa-plus"></i> Nueva Inspección
+                </button>
+                <button class="btn btn-success" onclick="openModal('certificationModal')">
+                    <i class="fas fa-certificate"></i> Solicitar Certificación
+                </button>
+                <button class="btn btn-warning" onclick="openModal('auditModal')">
+                    <i class="fas fa-search"></i> Programar Auditoría
+                </button>
+                <button class="btn btn-info" onclick="generateQualityReport()">
+                    <i class="fas fa-chart-line"></i> Generar Reporte
+                </button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Métricas de Calidad -->
+            <div class="metrics-grid">
+                <div class="metric-card quality">
+                    <div class="metric-value" id="qualityIndex">94.2%</div>
+                    <div class="metric-label">Índice de Calidad</div>
+                </div>
+                <div class="metric-card defects">
+                    <div class="metric-value" id="defectRate">2.1%</div>
+                    <div class="metric-label">Tasa de Defectos</div>
+                </div>
+                <div class="metric-card certifications">
+                    <div class="metric-value" id="activeCertifications">12</div>
+                    <div class="metric-label">Certificaciones Activas</div>
+                </div>
+                <div class="metric-card audits">
+                    <div class="metric-value" id="pendingAudits">3</div>
+                    <div class="metric-label">Auditorías Pendientes</div>
+                </div>
+            </div>
+
+            <!-- Inspecciones Recientes -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-clipboard-check"></i>
+                    Inspecciones Recientes
+                </h2>
+                <div class="table-container">
+                    <table id="inspectionsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Fecha</th>
+                                <th>Inspector</th>
+                                <th>Resultado</th>
+                                <th>Puntuación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>INS-2024-001</td>
+                                <td>Textiles Premium</td>
+                                <td>15/01/2024</td>
+                                <td>María González</td>
+                                <td><span class="status-badge status-approved">Aprobado</span></td>
+                                <td>96/100</td>
+                                <td>
+                                    <button class="btn btn-primary" onclick="viewInspection('INS-2024-001')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>INS-2024-002</td>
+                                <td>Electrónicos</td>
+                                <td>14/01/2024</td>
+                                <td>Carlos Ruiz</td>
+                                <td><span class="status-badge status-pending">Pendiente</span></td>
+                                <td>-</td>
+                                <td>
+                                    <button class="btn btn-warning" onclick="continueInspection('INS-2024-002')">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>INS-2024-003</td>
+                                <td>Alimentos Orgánicos</td>
+                                <td>13/01/2024</td>
+                                <td>Ana López</td>
+                                <td><span class="status-badge status-rejected">Rechazado</span></td>
+                                <td>72/100</td>
+                                <td>
+                                    <button class="btn btn-primary" onclick="viewInspection('INS-2024-003')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Certificaciones -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-certificate"></i>
+                    Estado de Certificaciones
+                </h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Certificación</th>
+                                <th>Organismo</th>
+                                <th>Fecha Emisión</th>
+                                <th>Fecha Vencimiento</th>
+                                <th>Estado</th>
+                                <th>Progreso Renovación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ISO 9001:2015</td>
+                                <td>SGS</td>
+                                <td>15/03/2023</td>
+                                <td>15/03/2026</td>
+                                <td><span class="status-badge status-approved">Vigente</span></td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 25%">25%</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>HACCP</td>
+                                <td>Bureau Veritas</td>
+                                <td>20/06/2023</td>
+                                <td>20/06/2024</td>
+                                <td><span class="status-badge status-expired">Por Vencer</span></td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 85%">85%</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>OHSAS 18001</td>
+                                <td>TÜV Rheinland</td>
+                                <td>10/09/2023</td>
+                                <td>10/09/2026</td>
+                                <td><span class="status-badge status-approved">Vigente</span></td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 15%">15%</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Análisis de Defectos -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Análisis de Defectos
+                </h2>
+                <div class="form-grid">
+                    <div>
+                        <h3>Defectos por Categoría</h3>
+                        <div class="chart-container">
+                            <canvas id="defectsChart"></canvas>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Tendencia Mensual</h3>
+                        <div class="chart-container">
+                            <canvas id="trendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Correctivas -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-tools"></i>
+                    Acciones Correctivas
+                </h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Descripción</th>
+                                <th>Responsable</th>
+                                <th>Fecha Límite</th>
+                                <th>Estado</th>
+                                <th>Progreso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>AC-001</td>
+                                <td>Mejorar proceso de empaque</td>
+                                <td>Juan Pérez</td>
+                                <td>30/01/2024</td>
+                                <td><span class="status-badge status-pending">En Progreso</span></td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 60%">60%</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>AC-002</td>
+                                <td>Capacitación en control de calidad</td>
+                                <td>María González</td>
+                                <td>15/02/2024</td>
+                                <td><span class="status-badge status-approved">Completado</span></td>
+                                <td>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%">100%</div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Inspección -->
+    <div id="newInspectionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('newInspectionModal')">&times;</span>
+            <h2><i class="fas fa-clipboard-check"></i> Nueva Inspección</h2>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('inspection-basic')">Información Básica</button>
+                <button class="tab" onclick="showTab('inspection-criteria')">Criterios</button>
+                <button class="tab" onclick="showTab('inspection-schedule')">Programación</button>
+            </div>
+
+            <div id="inspection-basic" class="tab-content active">
+                <div class="form-group">
+                    <label>Producto/Lote</label>
+                    <input type="text" id="inspectionProduct" placeholder="Nombre del producto o lote">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Inspección</label>
+                    <select id="inspectionType">
+                        <option value="incoming">Materia Prima</option>
+                        <option value="process">En Proceso</option>
+                        <option value="final">Producto Final</option>
+                        <option value="pre-shipment">Pre-embarque</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prioridad</label>
+                    <select id="inspectionPriority">
+                        <option value="low">Baja</option>
+                        <option value="medium">Media</option>
+                        <option value="high">Alta</option>
+                        <option value="critical">Crítica</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="inspection-criteria" class="tab-content">
+                <div class="form-group">
+                    <label>Criterios de Evaluación</label>
+                    <textarea id="inspectionCriteria" rows="4" placeholder="Especifique los criterios de evaluación..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Estándares Aplicables</label>
+                    <input type="text" id="inspectionStandards" placeholder="ISO, ASTM, etc.">
+                </div>
+                <div class="form-group">
+                    <label>Tamaño de Muestra</label>
+                    <input type="number" id="sampleSize" placeholder="Cantidad de unidades">
+                </div>
+            </div>
+
+            <div id="inspection-schedule" class="tab-content">
+                <div class="form-group">
+                    <label>Inspector Asignado</label>
+                    <select id="inspector">
+                        <option value="maria.gonzalez">María González</option>
+                        <option value="carlos.ruiz">Carlos Ruiz</option>
+                        <option value="ana.lopez">Ana López</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fecha Programada</label>
+                    <input type="datetime-local" id="inspectionDate">
+                </div>
+                <div class="form-group">
+                    <label>Duración Estimada (horas)</label>
+                    <input type="number" id="estimatedDuration" step="0.5" placeholder="2.5">
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn btn-primary" onclick="createInspection()">
+                    <i class="fas fa-save"></i> Crear Inspección
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Certificación -->
+    <div id="certificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('certificationModal')">&times;</span>
+            <h2><i class="fas fa-certificate"></i> Solicitar Certificación</h2>
+            
+            <div class="form-group">
+                <label>Tipo de Certificación</label>
+                <select id="certificationType">
+                    <option value="iso9001">ISO 9001:2015</option>
+                    <option value="iso14001">ISO 14001:2015</option>
+                    <option value="haccp">HACCP</option>
+                    <option value="ohsas">OHSAS 18001</option>
+                    <option value="fsc">FSC</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Organismo Certificador</label>
+                <select id="certificationBody">
+                    <option value="sgs">SGS</option>
+                    <option value="bureau-veritas">Bureau Veritas</option>
+                    <option value="tuv">TÜV Rheinland</option>
+                    <option value="dnv">DNV GL</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Alcance</label>
+                <textarea id="certificationScope" rows="3" placeholder="Descripción del alcance de la certificación..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Fecha Deseada</label>
+                <input type="date" id="desiredDate">
+            </div>
+            
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn btn-success" onclick="requestCertification()">
+                    <i class="fas fa-paper-plane"></i> Enviar Solicitud
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Auditoría -->
+    <div id="auditModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('auditModal')">&times;</span>
+            <h2><i class="fas fa-search"></i> Programar Auditoría</h2>
+            
+            <div class="form-group">
+                <label>Tipo de Auditoría</label>
+                <select id="auditType">
+                    <option value="internal">Interna</option>
+                    <option value="external">Externa</option>
+                    <option value="supplier">Proveedor</option>
+                    <option value="customer">Cliente</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Área/Proceso</label>
+                <input type="text" id="auditArea" placeholder="Área o proceso a auditar">
+            </div>
+            <div class="form-group">
+                <label>Auditor Principal</label>
+                <select id="leadAuditor">
+                    <option value="external.auditor">Auditor Externo</option>
+                    <option value="maria.gonzalez">María González</option>
+                    <option value="carlos.ruiz">Carlos Ruiz</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Fecha de Auditoría</label>
+                <input type="date" id="auditDate">
+            </div>
+            <div class="form-group">
+                <label>Objetivos</label>
+                <textarea id="auditObjectives" rows="3" placeholder="Objetivos de la auditoría..."></textarea>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: right;">
+                <button class="btn btn-warning" onclick="scheduleAudit()">
+                    <i class="fas fa-calendar-plus"></i> Programar Auditoría
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Funciones para modales
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Funciones para tabs
+        function showTab(tabId) {
+            // Ocultar todos los contenidos de tabs
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remover clase active de todos los tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Mostrar el contenido seleccionado
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activar el tab correspondiente
+            event.target.classList.add('active');
+        }
+
+        // Funciones de inspección
+        function createInspection() {
+            const product = document.getElementById('inspectionProduct').value;
+            const type = document.getElementById('inspectionType').value;
+            const priority = document.getElementById('inspectionPriority').value;
+            
+            if (!product) {
+                alert('Por favor, ingrese el producto o lote');
+                return;
+            }
+            
+            // Simular creación de inspección
+            alert(`Inspección creada exitosamente para: ${product}`);
+            closeModal('newInspectionModal');
+            
+            // Actualizar tabla (simulado)
+            updateInspectionsTable();
+        }
+
+        function viewInspection(id) {
+            alert(`Visualizando detalles de la inspección: ${id}`);
+        }
+
+        function continueInspection(id) {
+            alert(`Continuando inspección: ${id}`);
+        }
+
+        // Funciones de certificación
+        function requestCertification() {
+            const type = document.getElementById('certificationType').value;
+            const body = document.getElementById('certificationBody').value;
+            
+            alert(`Solicitud de certificación enviada: ${type} - ${body}`);
+            closeModal('certificationModal');
+        }
+
+        // Funciones de auditoría
+        function scheduleAudit() {
+            const type = document.getElementById('auditType').value;
+            const area = document.getElementById('auditArea').value;
+            const date = document.getElementById('auditDate').value;
+            
+            if (!area || !date) {
+                alert('Por favor, complete todos los campos requeridos');
+                return;
+            }
+            
+            alert(`Auditoría programada: ${type} - ${area} - ${date}`);
+            closeModal('auditModal');
+        }
+
+        // Función para generar reporte
+        function generateQualityReport() {
+            alert('Generando reporte de calidad...');
+            // Simular descarga de reporte
+            setTimeout(() => {
+                alert('Reporte generado exitosamente');
+            }, 2000);
+        }
+
+        // Actualizar métricas en tiempo real
+        function updateMetrics() {
+            const qualityIndex = document.getElementById('qualityIndex');
+            const defectRate = document.getElementById('defectRate');
+            const activeCertifications = document.getElementById('activeCertifications');
+            const pendingAudits = document.getElementById('pendingAudits');
+            
+            // Simular actualización de métricas
+            setInterval(() => {
+                const newQuality = (Math.random() * 10 + 90).toFixed(1);
+                const newDefects = (Math.random() * 3 + 1).toFixed(1);
+                
+                qualityIndex.textContent = newQuality + '%';
+                defectRate.textContent = newDefects + '%';
+            }, 30000); // Actualizar cada 30 segundos
+        }
+
+        // Actualizar tabla de inspecciones
+        function updateInspectionsTable() {
+            // Simular actualización de la tabla
+            console.log('Tabla de inspecciones actualizada');
+        }
+
+        // Cerrar modales al hacer clic fuera
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            updateMetrics();
+            
+            // Configurar fecha mínima para campos de fecha
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('desiredDate').min = today;
+            document.getElementById('auditDate').min = today;
+            
+            // Configurar fecha y hora mínima para inspección
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('inspectionDate').min = now.toISOString().slice(0, 16);
+        });
+    </script>
+</body>
+</html>
