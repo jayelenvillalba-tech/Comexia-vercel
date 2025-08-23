@@ -1,0 +1,111 @@
+/* Responsive Design para KoraApp */
+@media (max-width: 1200px) {
+    .dashboard-container {
+        padding: 0 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        order: 2;
+    }
+    
+    .dashboard-main {
+        margin-left: 0;
+        padding: 1rem;
+        order: 1;
+    }
+    
+    .dashboard-header {
+        padding: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .login-card {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .selector-row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .selector-group {
+        width: 100%;
+    }
+    
+    .btn-login-toggle {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-header {
+        padding: 0.75rem;
+    }
+    
+    .kora-logo {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .login-modal-content {
+        margin: 0.5rem;
+        padding: 1rem;
+    }
+    
+    .form-group input {
+        padding: 0.75rem;
+    }
+    
+    .btn-login {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+    .dashboard-container {
+        background: #1a1a1a;
+        color: #ffffff;
+    }
+    
+    .login-card {
+        background: #2d2d2d;
+        color: #ffffff;
+    }
+}
