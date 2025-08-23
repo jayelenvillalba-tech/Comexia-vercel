@@ -489,3 +489,641 @@
     background: #dc3545;
     border: 1px solid var(--secondary-gray);
 }
+
+/* Estructura País-Usuario-Producto */
+.country-user-product-section {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(30, 58, 95, 0.3);
+}
+
+.info-panel {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--silvery-white);
+  border-radius: 8px;
+  border: 1px solid var(--light-gray);
+}
+
+.trade-details h3 {
+  color: var(--primary-dark);
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.tariff-card, .agreements-card {
+  background: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border-left: 4px solid var(--accent-blue);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tariff-card h4, .agreements-card h4 {
+  color: var(--primary-dark);
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.tariff-rate {
+  color: var(--accent-blue);
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.agreements-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.agreements-card li {
+  background: var(--sky-blue);
+  color: white;
+  padding: 5px 10px;
+  margin: 5px 0;
+  border-radius: 15px;
+  display: inline-block;
+  font-size: 0.9em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .country-user-product-section {
+    padding: 15px;
+  }
+  
+  .selector-row {
+    flex-direction: column;
+  }
+  
+  .selector-group {
+    margin-bottom: 15px;
+  }
+}
+/* Búsqueda Avanzada */
+.advanced-search-section {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 15px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.advanced-search-section h2 {
+    color: #1a365d;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.search-container {
+    margin-bottom: 2rem;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+.search-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #04a453;
+    box-shadow: 0 0 0 3px rgba(4, 164, 83, 0.1);
+    transform: translateY(-1px);
+}
+
+.search-button {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #04a453 0%, #049344 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.search-button:hover {
+    background: linear-gradient(135deg, #049344 0%, #037a3a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(4, 164, 83, 0.3);
+}
+
+.filters-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: end;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 180px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2d5aa0;
+    font-size: 0.9rem;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    background: white;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #2d5aa0;
+    box-shadow: 0 0 0 3px rgba(45, 90, 160, 0.1);
+}
+
+.clear-button {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    height: fit-content;
+}
+
+.clear-button:hover {
+    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+    transform: translateY(-1px);
+}
+
+/* Resultados de Búsqueda */
+.search-results {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.results-header h3 {
+    color: #1a365d;
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.results-count {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: #f8f9fa;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.result-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.result-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #04a453;
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.product-name {
+    color: #1a365d;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0;
+    flex: 1;
+    margin-right: 1rem;
+}
+
+.sa-code {
+    background: linear-gradient(135deg, #4299e1 0%, #2d5aa0 100%);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.result-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background: rgba(248, 249, 250, 0.7);
+    border-radius: 6px;
+}
+
+.detail-item .label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.detail-item .value {
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+.detail-item .value.tariff {
+    color: #04a453;
+    font-weight: 700;
+}
+
+.result-description {
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    font-style: italic;
+    padding-top: 0.5rem;
+    border-top: 1px solid #f1f3f4;
+}
+
+/* Paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.page-btn {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #4299e1 0%, #2d5aa0 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2d5aa0 0%, #1a365d 100%);
+    transform: translateY(-1px);
+}
+
+.page-btn:disabled {
+    background: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.page-info {
+    color: #495057;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Responsive para Búsqueda Avanzada */
+@media (max-width: 768px) {
+    .advanced-search-section {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    .search-input-group {
+        flex-direction: column;
+    }
+    
+    .filters-row {
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .product-name {
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .page-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+/* Estilos para Gráficos Interactivos */
+.charts-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin: 30px 0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin: 30px 0;
+}
+
+.chart-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 300px;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        min-height: 250px;
+    }
+}
+/* Selector de Idioma */
+.language-selector {
+    margin-right: 1rem;
+}
+
+.language-select {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+}
+
+.language-select:focus {
+    outline: none;
+    border-color: #2d5aa0;
+    box-shadow: 0 0 0 3px rgba(45, 90, 160, 0.1);
+}
+
+.language-select:hover {
+    border-color: #2d5aa0;
+}
+
+/* Responsive para selector de idioma */
+@media (max-width: 768px) {
+    .language-selector {
+        margin-right: 0.5rem;
+    }
+    
+    .language-select {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+        min-width: 120px;
+    }
+}
+    }
+}
+
+/* =========================
+   PWA STYLES
+   ========================= */
+
+/* Install Button */
+.pwa-install-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: none;
+}
+
+.pwa-install-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.pwa-install-button.show {
+    display: block;
+    animation: slideInUp 0.3s ease;
+}
+
+/* Offline Indicator */
+.offline-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ff6b6b;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 1001;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+.offline-indicator.show {
+    transform: translateY(0);
+}
+
+/* Update Available Notification */
+.update-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #4ecdc4;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.4);
+    z-index: 1000;
+    display: none;
+    max-width: 300px;
+}
+
+.update-notification.show {
+    display: block;
+    animation: slideInLeft 0.3s ease;
+}
+
+.update-notification button {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.update-notification button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* PWA Animations */
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Mobile PWA Adjustments */
+@media (max-width: 768px) {
+    .pwa-install-button {
+        bottom: 15px;
+        right: 15px;
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .update-notification {
+        bottom: 15px;
+        left: 15px;
+        right: 15px;
+        max-width: none;
+    }
+    
+    .offline-indicator {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
+
+/* PWA Standalone Mode Adjustments */
+@media (display-mode: standalone) {
+    body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .header {
+        padding-top: calc(1rem + env(safe-area-inset-top));
+    }
+}
