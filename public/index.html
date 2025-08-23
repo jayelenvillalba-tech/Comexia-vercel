@@ -44,8 +44,7 @@
     <div id="dashboard-screen" class="dashboard-container" style="display: none;">
         <!-- Header -->
         <header class="dashboard-header">
-            <div class="header-left">
-                <div class="app-logo">🚀</div>
+            <div class="app-logo kora-logo">🌊</div>
                 <h1>KoraApp</h1>
                 <div class="breadcrumb">
                     <span id="section-title">Dashboard - Resumen</span>
@@ -57,6 +56,7 @@
                     <span class="user-name" id="user-name">Usuario</span>
                     <span class="user-role" id="user-role">Admin</span>
                 </div>
+                <button class="btn-login-toggle" onclick="showLoginModal()">🔐 Login</button>
                 <button class="btn-logout" onclick="logout()">🚪 Salir</button>
             </div>
         </header>
@@ -1154,12 +1154,43 @@
                     </div>
                 </section>
     <script src="js/app.js"></script> 
-            <!-- Scripts -->
-    <script src="js/utils.js"></script>
-    <script src="js/modules.js"></script>
-    <script src="js/dashboard.js"></script>
+<!-- Modal de Login -->
+<div id="login-modal" class="login-modal" style="display: none;">
+    <div class="login-modal-content">
+        <div class="login-modal-header">
+            <h2>Iniciar Sesión</h2>
+            <button class="close-modal" onclick="closeLoginModal()">&times;</button>
+        </div>
+        <form id="login-form-modal" class="login-form">
+            <div class="form-group">
+                <label for="email-modal">Email</label>
+                <input type="email" id="email-modal" name="email" placeholder="tu@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password-modal">Contraseña</label>
+                <input type="password" id="password-modal" name="password" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="btn-login">Iniciar Sesión</button>
+            
+            <div class="login-demo">
+                <p>Demo: Cualquier email y contraseña funcionan</p>
+            </div>
+        </form>
+    </div>
+</div>
 
-    <!-- Notification Container -->
-    <div id="notification-container"></div>
+<!-- Selector País-Usuario-Producto -->
+<div id="country-user-product-selector"></div>
+
+<!-- Scripts -->
+<script src="js/utils.js"></script>
+<script src="js/modules.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/country-user-product.js"></script>
+
+<!-- Notification Container -->
+<div id="notification-container"></div>
 </body>
 </html>
