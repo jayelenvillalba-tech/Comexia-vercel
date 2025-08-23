@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KoraApp - Sistema de Comercio Internacional</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/modules.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/modules.css">
+    <link rel="stylesheet" href="./css/responsive.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
 </head>
 <body>
     <!-- Login Screen -->
@@ -40,26 +40,28 @@
         </div>
     </div>
 
-    <!-- Dashboard Screen -->
-    <div id="dashboard-screen" class="dashboard-container" style="display: none;">
-        <!-- Header -->
-        <header class="dashboard-header">
+<!-- Dashboard Screen -->
+<div id="dashboard-screen" class="dashboard-container" style="display: none;">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-left">
             <div class="app-logo kora-logo">🌊</div>
-                <h1>KoraApp</h1>
-                <div class="breadcrumb">
-                    <span id="section-title">Dashboard - Resumen</span>
-                </div>
+            <h1>KoraApp</h1>
+            <div class="breadcrumb">
+                <span id="section-title">Dashboard - Resumen</span>
             </div>
-            
-            <div class="header-right">
-                <div class="user-info">
-                    <span class="user-name" id="user-name">Usuario</span>
-                    <span class="user-role" id="user-role">Admin</span>
-                </div>
-                <button class="btn-login-toggle" onclick="showLoginModal()">🔐 Login</button>
-                <button class="btn-logout" onclick="logout()">🚪 Salir</button>
+        </div>
+        
+        <div class="header-right">
+            <div class="user-info">
+                <span class="user-name" id="user-name">Usuario Demo</span>
+                <span class="user-role" id="user-role">Demo</span>
             </div>
-        </header>
+            <div class="auth-controls">
+                <button class="btn-demo-auto" onclick="window.app.autoDemoLogin()">⚡ Demo Rápido</button>
+                <button class="btn-login-toggle" onclick="window.app.showLoginModal()">🔐 Login Manual</button>
+                <button class="btn-logout" onclick="window.app.handleLogout()">🚪 Salir</button>
+            </div>
 
         <!-- Main Content -->
         <div class="dashboard-main">
@@ -67,20 +69,6 @@
             <aside class="dashboard-sidebar">
                 <nav class="sidebar-nav">
                     <ul>
-                        <li><a href="#" data-section="overview" class="nav-link active">📊 Resumen</a></li>
-                        
-                        <!-- Módulo Logística Internacional -->
-                        <li class="nav-section">
-                            <span class="nav-section-title">🌍 Logística Internacional</span>
-                            <ul class="nav-subsection">
-                                <li><a href="#" data-section="supply-chain" class="nav-link">🔗 Cadenas Logísticas</a></li>
-                                <li><a href="#" data-section="transport" class="nav-link">🚛 Modos de Transporte</a></li>
-                                <li><a href="#" data-section="customs" class="nav-link">📋 Documentación Aduanera</a></li>
-                                <li><a href="#" data-section="inventory" class="nav-link">📦 Inventarios</a></li>
-                                <li><a href="#" data-section="insurance" class="nav-link">🛡️ Seguros y Riesgos</a></li>
-                            </ul>
-                        </li>
-                        
                         <!-- Módulo Financiero -->
                         <li class="nav-section">
                             <span class="nav-section-title">💰 Módulo Financiero</span>
@@ -1152,45 +1140,81 @@
                             </div>
                         </div>
                     </div>
-                </section>
-    <script src="js/app.js"></script> 
 <!-- Modal de Login -->
 <div id="login-modal" class="login-modal" style="display: none;">
-    <div class="login-modal-content">
-        <div class="login-modal-header">
-            <h2>Iniciar Sesión</h2>
-            <button class="close-modal" onclick="closeLoginModal()">&times;</button>
+                </section>
+            </main>
         </div>
-        <form id="login-form-modal" class="login-form">
-            <div class="form-group">
-                <label for="email-modal">Email</label>
-                <input type="email" id="email-modal" name="email" placeholder="tu@email.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password-modal">Contraseña</label>
-                <input type="password" id="password-modal" name="password" placeholder="••••••••" required>
-            </div>
-            
-            <button type="submit" class="btn-login">Iniciar Sesión</button>
-            
-            <div class="login-demo">
-                <p>Demo: Cualquier email y contraseña funcionan</p>
-            </div>
-        </form>
     </div>
-</div>
 
-<!-- Selector País-Usuario-Producto -->
-<div id="country-user-product-selector"></div>
+    <!-- Modal de Login -->
+    <div id="login-modal" class="login-modal" style="display: none;">
+        <div class="login-modal-content">
+            <div class="login-modal-header">
+                <h2>Iniciar Sesión</h2>
+                <button class="close-modal" onclick="closeLoginModal()">&times;</button>
+            </div>
+            <form id="login-form-modal" class="login-form">
+                <div class="form-group">
+                    <label for="email-modal">Email</label>
+                    <input type="email" id="email-modal" name="email" placeholder="tu@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password-modal">Contraseña</label>
+                    <input type="password" id="password-modal" name="password" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn-login">Iniciar Sesión</button>
+                
+                <div class="login-demo">
+                    <p>Demo: Cualquier email y contraseña funcionan</p>
+                </div>
+            </form>
+        </div>
+    </div>
 
-<!-- Scripts -->
-<script src="js/utils.js"></script>
-<script src="js/modules.js"></script>
-<script src="js/dashboard.js"></script>
-<script src="js/country-user-product.js"></script>
+    <!-- Sección País-Usuario-Producto -->
+    <div class="country-user-product-section">
+        <h2>🌍 Análisis de Comercio Exterior</h2>
+        
+        <div class="selector-row">
+            <div class="selector-group">
+                <label for="country-select">🌍 País:</label>
+                <select id="country-select" class="kora-select">
+                    <option value="">Seleccionar país...</option>
+                </select>
+            </div>
+            
+            <div class="selector-group">
+                <label for="user-select">👤 Usuario:</label>
+                <select id="user-select" class="kora-select" disabled>
+                    <option value="">Seleccionar usuario...</option>
+                </select>
+            </div>
+            
+            <div class="selector-group">
+                <label for="product-select">📦 Producto:</label>
+                <select id="product-select" class="kora-select" disabled>
+                    <option value="">Seleccionar producto...</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="info-panel" id="trade-info" style="display: none;">
+            <div class="trade-details">
+                <h3>📊 Información Comercial</h3>
+                <div id="tariff-info"></div>
+                <div id="trade-agreements"></div>
+            </div>
+        </div>
+    </div>
 
-<!-- Notification Container -->
-<div id="notification-container"></div>
+    <!-- Scripts al final del body -->
+    <script src="./js/utils.js"></script>
+    <script src="./js/modules.js"></script>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/country-structure.js"></script>
 </body>
 </html>

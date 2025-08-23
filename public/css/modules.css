@@ -347,6 +347,44 @@
 
 .btn-login-toggle {
     background: #6c757d;
+    background: #c82333;
+    transform: translateY(-1px);
+}
+/* Estilos de información de usuario */
+/* Controles de autenticación en header */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.auth-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-demo-auto {
+    background: linear-gradient(135deg, #04a453 0%, #049344 100%);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(4, 164, 83, 0.2);
+}
+
+.btn-demo-auto:hover {
+    background: linear-gradient(135deg, #049344 0%, #037a3a 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(4, 164, 83, 0.3);
+}
+
+.btn-login-toggle {
+    background: #6c757d;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -375,4 +413,79 @@
 .btn-logout:hover {
     background: #c82333;
     transform: translateY(-1px);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-right: 1rem;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.user-role {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+/* Variables de colores basadas en el logo de Comex.IA */
+:root {
+    --primary-dark: #1e3a5f;     /* Azul marino del fondo */
+    --primary-blue: #0ea5e9;     /* Azul brillante del globo */
+    --primary-light: #38bdf8;    /* Azul cielo */
+    --text-light: #f8fafc;       /* Blanco plateado */
+    --secondary-gray: #e2e8f0;   /* Gris claro */
+    --accent-blue: #0284c7;      /* Azul de acento */
+}
+
+/* Actualizar selector de países */
+.selector-row {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #2563eb 100%);
+    border: 1px solid var(--primary-blue);
+    color: var(--text-light);
+}
+
+.selector-group label {
+    color: var(--primary-light);
+}
+
+.kora-select {
+    background: var(--text-light);
+    border: 2px solid var(--secondary-gray);
+    color: var(--primary-dark);
+}
+
+.kora-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+/* Actualizar botones de autenticación */
+.btn-demo-auto {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--accent-blue) 100%);
+    box-shadow: 0 2px 4px rgba(14, 165, 233, 0.2);
+}
+
+.btn-demo-auto:hover {
+    background: linear-gradient(135deg, var(--accent-blue) 0%, var(--primary-dark) 100%);
+    box-shadow: 0 4px 8px rgba(14, 165, 233, 0.3);
+}
+
+.btn-login-toggle {
+    background: var(--primary-dark);
+    border: 1px solid var(--primary-light);
+}
+
+.btn-login-toggle:hover {
+    background: var(--accent-blue);
+}
+
+.btn-logout {
+    background: #dc3545;
+    border: 1px solid var(--secondary-gray);
 }

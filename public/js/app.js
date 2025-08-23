@@ -4,8 +4,10 @@ class KoraApp {
         this.currentUser = null;
         this.currentSection = 'overview';
         this.isInitialized = false;
+        this.autoLoginEnabled = true;
         this.init();
     }
+}
 
     init() {
         // Esperar a que el DOM esté completamente cargado
@@ -22,11 +24,94 @@ class KoraApp {
         // Verificar estado de autenticación primero
         this.checkAuthState();
         
+        // Intentar login automático si no hay usuario
+        if (!this.currentUser) {
+            this.autoDemoLogin();
+        }
+        
         // Luego vincular eventos
         this.bindEvents();
         
         this.isInitialized = true;
         console.log('✅ KoraApp inicializada correctamente');
+    }
+
+    autoDemoLogin() {
+        if (this.autoLoginEnabled && !this.currentUser) {
+            console.log('🎯 Iniciando login automático demo...');
+            
+            // Simular login automático con usuario demo
+            this.currentUser = {
+                email: 'demo@koraapp.com',
+                name: 'Usuario Demo',
+                role: 'demo',
+                permissions: this.getRolePermissions('demo'),
+                loginTime: new Date().toISOString(),
+                isAutoLogin: true
+            };
+            
+            // Guardar en localStorage
+            try {
+                localStorage.setItem('koraapp_user', JSON.stringify(this.currentUser));
+                localStorage.setItem('koraapp_session', Date.now().toString());
+            } catch (error) {
+                console.error('Error guardando sesión:', error);
+            }
+            
+            // Mostrar dashboard directamente
+            this.showDashboard();
+            
+            // Notificación de bienvenida
+            if (window.Utils && typeof Utils.showNotification === 'function') {
+                Utils.showNotification('¡Bienvenido! Modo Demo Automático Activado 🎯', 'success');
+            }
+            
+            return true;
+        }
+        return false;
+    }        
+    this.isInitialized = true;
+    initializeApp() {
+        console.log('🚀 Inicializando KoraApp...');
+        
+        // Verificar estado de autenticación primero
+        this.checkAuthState();
+        
+        // Intentar login automático si no hay usuario
+        if (!this.currentUser) {
+            this.autoDemoLogin();
+        }
+        
+        // Luego vincular eventos
+        this.bindEvents();
+        
+        this.isInitialized = true;
+        console.log('✅ KoraApp inicializada correctamente');
+    }
+
+    autoDemoLogin() {
+        if (this.autoLoginEnabled && !this.currentUser) {
+            console.log('🎯 Iniciando login automático demo...');
+            
+            // Simular login automático con usuario demo
+            this.currentUser = {
+                email: 'demo@koraapp.com',
+                name: 'Usuario Demo',
+                role: 'demo',
+                permissions: this.getRolePermissions('demo'),
+                loginTime: new Date().toISOString(),
+                isAutoLogin: true
+            };
+            
+            // Guardar en localStorage
+            try {
+                localStorage.setItem('koraapp_user', JSON.stringify(this.currentUser));
+                localStorage.setItem('koraapp_session', Date.now().toString());
+            } catch (error) {
+                console.error('Error guardando sesión:', error);
+            }
+            
+            // Mostrar dashboard directamente
     }
 
     bindEvents() {
@@ -387,47 +472,78 @@ class KoraApp {
         // Actualizar título de la página
         document.title = `KoraApp - ${titles[sectionName] || 'Dashboard'}`;
     }
-
-    checkAuthState() {
-        console.log('🔍 Verificando estado de autenticación...');
+checkAuthState() {
+    console.log('🔍 Iniciando modo demo automático...');
+    
+    try {
+        const savedUser = localStorage.getItem('koraapp_user');
+        const sessionTime = localStorage.getItem('koraapp_session');
         
-        try {
-            const savedUser = localStorage.getItem('koraapp_user');
-            const sessionTime = localStorage.getItem('koraapp_session');
+        if (savedUser && sessionTime) {
+            const user = JSON.parse(savedUser);
+            const sessionAge = Date.now() - parseInt(sessionTime);
             
-            if (savedUser && sessionTime) {
-                const user = JSON.parse(savedUser);
-                const sessionAge = Date.now() - parseInt(sessionTime);
+            // Sesión válida por 24 horas (86400000 ms)
+            if (sessionAge < 86400000) {
+                this.currentUser = user;
+                console.log('✅ Sesión válida encontrada:', this.currentUser.email);
+                this.showDashboard();
                 
-                // Sesión válida por 24 horas (86400000 ms)
-                if (sessionAge < 86400000) {
-                    this.currentUser = user;
-                    console.log('✅ Sesión válida encontrada:', this.currentUser.email);
-                    this.showDashboard();
-                    
-                    // Verificar si hay una sección específica en la URL
-                    const hash = window.location.hash.substring(1);
-                    if (hash) {
-                        this.showSection(hash);
-                    }
-                    
-                    if (window.Utils && typeof Utils.showNotification === 'function') {
-                        Utils.showNotification('Sesión restaurada correctamente', 'info');
-                    }
-                    return;
+                // Verificar si hay una sección específica en la URL
+                const hash = window.location.hash.substring(1);
+                if (hash) {
+                    this.showSection(hash);
                 }
+                
+                if (window.Utils && typeof Utils.showNotification === 'function') {
+                    Utils.showNotification('Sesión restaurada correctamente', 'info');
+                }
+                return;
             }
-            
-            console.log('ℹ️ No hay sesión activa, mostrando login');
-            this.showLogin();
-        } catch (error) {
-            console.error('❌ Error verificando autenticación:', error);
-            // En caso de error, limpiar y mostrar login
-            try {
-                localStorage.removeItem('koraapp_user');
-                localStorage.removeItem('koraapp_session');
-            } catch (e) {
-                console.error('Error limpiando localStorage:', e);
+        }
+        
+        // ✅ NUEVO: Login automático demo
+        console.log('🎯 Iniciando sesión demo automática...');
+        this.autoLoginDemo();
+        
+    } catch (error) {
+        console.error('❌ Error verificando autenticación:', error);
+        // En caso de error, iniciar demo automático
+        this.autoLoginDemo();
+    }
+}
+
+// ✅ NUEVO: Método para login automático demo
+autoLoginDemo() {
+    console.log('🚀 Iniciando demo automático...');
+    
+    const demoUser = {
+        email: 'demo@koraapp.com',
+        name: 'Usuario Demo',
+        role: 'demo',
+        permissions: this.getRolePermissions('demo'),
+        loginTime: new Date().toISOString()
+    };
+    
+    this.currentUser = demoUser;
+    
+    // Guardar estado en localStorage
+    try {
+        localStorage.setItem('koraapp_user', JSON.stringify(this.currentUser));
+        localStorage.setItem('koraapp_session', Date.now().toString());
+        console.log('💾 Sesión demo guardada en localStorage');
+    } catch (error) {
+        console.error('Error guardando sesión demo:', error);
+    }
+    
+    // Mostrar dashboard directamente
+    this.showDashboard();
+    
+    // Mostrar notificación de bienvenida
+    if (window.Utils && typeof Utils.showNotification === 'function') {
+        Utils.showNotification('¡Bienvenido al Demo de KoraApp! 🚀', 'success');
+    }
+}
             }
             this.showLogin();
         }
@@ -443,7 +559,7 @@ class KoraApp {
         if (window.Utils && typeof Utils.showNotification === 'function') {
             Utils.showNotification(message, 'error');
         } else {
-            alert(message);
+        this.dashboardManager = new DashboardManager();
         }
     }
 
@@ -459,7 +575,9 @@ function logout() {
         window.koraApp.handleLogout();
     }
 }
-
+f (this.dashboardManager && typeof this.dashboardManager.initializeDemoData === 'function') {
+    this.dashboardManager.initializeDemoData();
+}
 // Inicializar aplicación
 let koraAppInstance = null;
 
@@ -478,6 +596,47 @@ function initializeKoraApp() {
     }
 }
 
+// ✅ Funciones para modal de login
+function showLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        // Focus en el campo email
+        setTimeout(() => {
+            const emailInput = document.getElementById('email-modal');
+            if (emailInput) {
+                emailInput.focus();
+            }
+        }, 100);
+    }
+}
+
+function closeLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        // Limpiar formulario
+        const loginForm = document.getElementById('login-form-modal');
+        if (loginForm) {
+            loginForm.reset();
+        }
+    }
+}
+
+// Cerrar modal al hacer clic fuera
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('login-modal');
+    if (e.target === modal) {
+        closeLoginModal();
+    }
+});
+
+// Cerrar modal con tecla Escape
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeLoginModal();
+    }
+});
 // Manejar navegación del navegador
 window.addEventListener('popstate', (e) => {
     if (window.koraApp && window.koraApp.currentUser) {
@@ -507,3 +666,191 @@ window.addEventListener('unhandledrejection', (e) => {
     console.error('❌ Promesa rechazada:', e.reason);
     e.preventDefault();
 });
+// ... existing code ...
+
+// ✅ Funciones para modal de login
+function showLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        // Focus en el campo email
+function showLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        // Focus en el campo email
+        setTimeout(() => {
+            const emailInput = document.getElementById('email-modal');
+            if (emailInput) {
+                emailInput.focus();
+            }
+        }, 100);
+    }
+}
+
+function closeLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        // Limpiar formulario
+        const loginForm = document.getElementById('login-form-modal');
+        if (loginForm) {
+            loginForm.reset();
+        }
+    }
+}
+    }
+}
+
+function closeLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        // Limpiar formulario
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.reset();
+        }
+    }
+}
+
+// Cerrar modal al hacer clic fuera
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('login-modal');
+    if (e.target === modal) {
+        closeLoginModal();
+    }
+});
+
+// Cerrar modal con tecla Escape
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeLoginModal();
+    }
+});
+// ... existing code ...
+
+// Inicializar la aplicación globalmente
+window.app = new KoraApp();
+
+// Funciones globales para compatibilidad
+function logout() {
+    if (window.app) {
+        window.app.handleLogout();
+    }
+}
+
+function showLoginModal() {
+    if (window.app) {
+        window.app.showLoginModal();
+    }
+}
+// KoraApp - Aplicación SPA Principal
+class KoraApp {
+    constructor() {
+        this.currentUser = null;
+        this.currentSection = 'overview';
+        this.isInitialized = false;
+        this.autoLoginEnabled = true; // Nueva funcionalidad
+        this.init();
+    }
+
+    init() {
+        // Esperar a que el DOM esté completamente cargado
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.initializeApp());
+        } else {
+            this.initializeApp();
+        }
+    }
+
+    initializeApp() {
+        console.log('🚀 Inicializando KoraApp...');
+        
+        // Verificar estado de autenticación primero
+        this.checkAuthState();
+        
+        // Intentar login automático si no hay usuario
+        if (!this.currentUser) {
+            this.autoDemoLogin();
+        }
+        
+        // Luego vincular eventos
+        this.bindEvents();
+        
+        this.isInitialized = true;
+        console.log('✅ KoraApp inicializada correctamente');
+    }
+
+    // Nuevo método de login automático
+    autoDemoLogin() {
+        if (this.autoLoginEnabled && !this.currentUser) {
+            console.log('🎯 Iniciando login automático demo...');
+            
+            // Simular login automático con usuario demo
+            this.currentUser = {
+                email: 'demo@koraapp.com',
+                name: 'Usuario Demo',
+                role: 'demo',
+                permissions: this.getRolePermissions('demo'),
+                loginTime: new Date().toISOString(),
+                isAutoLogin: true
+            };
+            
+            // Guardar en localStorage
+            try {
+                localStorage.setItem('koraapp_user', JSON.stringify(this.currentUser));
+                localStorage.setItem('koraapp_session', Date.now().toString());
+                console.log('💾 Sesión demo guardada');
+            } catch (error) {
+                console.error('Error guardando sesión:', error);
+            }
+            
+            // Mostrar dashboard directamente
+            this.showDashboard();
+            
+            // Notificación de bienvenida
+            if (window.Utils && typeof Utils.showNotification === 'function') {
+                Utils.showNotification('¡Bienvenido! Modo Demo Automático Activado 🎯', 'success');
+            }
+            
+            return true;
+        }
+        return false;
+    }
+
+    // Método para mostrar modal de login manual
+    showLoginModal() {
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        
+        if (loginScreen && dashboardScreen) {
+            loginScreen.style.display = 'flex';
+            dashboardScreen.style.display = 'none';
+            
+            // Limpiar usuario actual
+            this.currentUser = null;
+            localStorage.removeItem('koraapp_user');
+            localStorage.removeItem('koraapp_session');
+            
+            console.log('🔐 Modal de login manual mostrado');
+        }
+    }
+
+    // ... existing code ...
+}
+// Inicializar la aplicación globalmente
+window.app = new KoraApp();
+
+// Funciones globales para compatibilidad
+function logout() {
+    if (window.app) {
+        window.app.handleLogout();
+    }
+}
+
+function showLoginModal() {
+    if (window.app) {
+        window.app.showLoginModal();
+    }
+}
