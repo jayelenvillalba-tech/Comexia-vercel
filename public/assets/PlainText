@@ -1,25 +1,115 @@
-c:\KoraApp\ComexIA-Trae-main\
-├── firebase.json (nuevo)
-├── .firebaserc (nuevo)
-└── public/
-    ├── index.html
-    ├── manifest.json
-    ├── robots.txt
-    ├── css/
-    │   ├── main.css
-    │   ├── modules.css
-    │   └── responsive.css
-    ├── js/
-    │   ├── app.js
-    │   ├── utils.js
-    │   ├── modules.js
-    │   └── dashboard.js
-    ├── assets/
-    │   ├── favicon.ico
-    │   └── [otros archivos]
-    ├── img/
-    │   └── [archivos de imágenes]
-    └── partials/
-        ├── integraciones.html
-        ├── comunicaciones.html
-        └── [otros módulos]
+KoraApp - Plataforma de Comercio Exterior con IA
+==============================================
+
+📋 ESTRUCTURA DEL PROYECTO:
+KoraApp/
+├── 📱 PWA Features
+│   ├── manifest.json (configuración PWA)
+│   ├── sw.js (service worker)
+│   └── pwa.js (gestión PWA)
+├── 🔄 Data Management
+│   ├── api-service.js (APIs centralizadas)
+│   ├── data-sync.js (sincronización)
+│   └── dashboard-widgets.js (widgets dinámicos)
+├── 🎨 UI/UX
+│   ├── Tema Kora implementado
+│   ├── Responsive design
+│   └── Multiidioma (ES/EN)
+└── 📊 Analytics
+    ├── Gráficos interactivos
+    ├── Búsqueda avanzada
+    └── Datos en tiempo real
+
+🚀 DEPLOYMENT EN VERCEL:
+========================
+
+1. CONFIGURACIÓN INICIAL:
+   - Conectar repositorio GitHub a Vercel
+   - Configurar Build Settings:
+     * Framework Preset: Other
+     * Build Command: (dejar vacío)
+     * Output Directory: public
+     * Install Command: (dejar vacío)
+
+2. ARCHIVOS DE CONFIGURACIÓN:
+   - vercel.json (configuración de headers y routing)
+   - Manejo especial para sw.js y manifest.json
+   - Configuración de SPA routing
+
+3. VARIABLES DE ENTORNO (Opcionales):
+   Dashboard Vercel → Settings → Environment Variables:
+   - NODE_ENV: production
+   - API_CACHE_DURATION: 3600000
+   - PWA_CACHE_VERSION: v1.0.0
+
+4. VERIFICACIÓN POST-DEPLOYMENT:
+   ✅ PWA funcional (manifest + service worker)
+   ✅ APIs integradas con fallbacks
+   ✅ Responsive design
+   ✅ Multiidioma (ES/EN)
+   ✅ Gráficos interactivos
+   ✅ Búsqueda avanzada
+   ✅ Funcionalidad offline
+
+📁 ARCHIVOS CRÍTICOS:
+====================
+- public/index.html (punto de entrada)
+- public/manifest.json (configuración PWA)
+- public/sw.js (service worker)
+- public/js/pwa.js (gestión PWA)
+- public/js/api-service.js (APIs)
+- public/js/data-sync.js (sincronización)
+- public/js/dashboard-widgets.js (widgets)
+- vercel.json (configuración Vercel)
+
+🔧 COMANDOS DE DEPLOYMENT:
+=========================
+
+Opción 1 - GitHub Integration:
+1. Push código a GitHub
+2. Conectar repo en Vercel
+3. Deploy automático
+
+Opción 2 - Vercel CLI:
+1. npm i -g vercel
+2. vercel login
+3. vercel --prod
+
+📊 FUNCIONALIDADES IMPLEMENTADAS:
+=================================
+✅ Login automático demo
+✅ Tema visual Kora
+✅ Estructura país-usuario-producto
+✅ Búsqueda avanzada de productos
+✅ Gráficos interactivos (Chart.js)
+✅ Sistema multiidioma
+✅ PWA completa
+✅ APIs de comercio exterior
+✅ Sincronización de datos
+✅ Widgets dinámicos
+✅ Funcionalidad offline
+✅ Optimización de rendimiento
+
+🌐 URLs DE PRODUCCIÓN:
+=====================
+- Aplicación: https://tu-proyecto.vercel.app
+- PWA Manifest: https://tu-proyecto.vercel.app/manifest.json
+- Service Worker: https://tu-proyecto.vercel.app/sw.js
+
+📱 TESTING PWA:
+===============
+1. Abrir en Chrome/Edge
+2. Verificar ícono de instalación
+3. Instalar como PWA
+4. Probar funcionalidad offline
+5. Verificar notificaciones
+
+🔄 MANTENIMIENTO:
+================
+- Monitorear APIs externas
+- Actualizar cache de service worker
+- Revisar métricas de Vercel
+- Actualizar datos de aranceles
+
+ESTADO: ✅ LISTO PARA PRODUCCIÓN
+ÚLTIMA ACTUALIZACIÓN: Enero 2025
