@@ -1,8 +1,6 @@
 {
-{
   "version": 2,
-  "public": true
-}
+  "builds": [
     {
       "src": "public/**/*",
       "use": "@vercel/static"
@@ -14,15 +12,8 @@
       "dest": "/public/$1"
     },
     {
-      "src": "/",
+      "src": "/.*",
       "dest": "/public/index.html"
-    }
-  ],
-  "functions": {},
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/public/index.html"
     }
   ]
 }
