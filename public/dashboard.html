@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComexIA - Dashboard Empresarial</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1><i class="fas fa-globe-americas"></i> ComexIA</h1>
+                    <span class="subtitle">Dashboard Empresarial Global</span>
+                </div>
+                <div class="header-actions">
+                    <button id="refresh-stats" class="btn-refresh">
+                        <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                    <div class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Content -->
+        <main class="dashboard-main">
+            <!-- Stats Overview -->
+            <section class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="total-revenue">$2,450,000</div>
+                        <div class="stat-label">Ingresos Totales</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shipping-fast"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="active-shipments">156</div>
+                        <div class="stat-label">Envíos Activos</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="pending-operations">23</div>
+                        <div class="stat-label">Operaciones Pendientes</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="compliance-score">94%</div>
+                        <div class="stat-label">Cumplimiento</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Widgets Container -->
+            <section class="dashboard-widgets">
+                <!-- El GlobalCompaniesWidget se insertará aquí automáticamente -->
+                
+                <!-- Recent Transactions -->
+                <div class="widget transactions-widget">
+                    <div class="widget-header">
+                        <h3><i class="fas fa-exchange-alt"></i> Transacciones Recientes</h3>
+                    </div>
+                    <div class="widget-content">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tipo</th>
+                                        <th>Monto</th>
+                                        <th>Estado</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-transactions">
+                                    <!-- Las transacciones se cargarán dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="widget actions-widget">
+                    <div class="widget-header">
+                        <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+                    </div>
+                    <div class="widget-content">
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="refreshGlobalWidget()">
+                                <i class="fas fa-sync"></i>
+                                <span>Actualizar Empresas</span>
+                            </button>
+                            <button class="action-btn" onclick="exportData()">
+                                <i class="fas fa-download"></i>
+                                <span>Exportar Datos</span>
+                            </button>
+                            <button class="action-btn" onclick="generateReport()">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Generar Reporte</span>
+                            </button>
+                            <button class="action-btn" onclick="viewAnalytics()">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Ver Analíticas</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/modules.js"></script>
+    <script src="js/GlobalCompaniesWidget.js"></script>
+    <script src="js/dashboard.js"></script>
+    
+    <script>
+        // Funciones para acciones rápidas
+        function refreshGlobalWidget() {
+            if (window.globalCompaniesWidget) {
+                window.globalCompaniesWidget.refresh();
+            }
+        }
+        
+        function exportData() {
+            alert('Función de exportación en desarrollo');
+        }
+        
+        function generateReport() {
+            alert('Función de reportes en desarrollo');
+        }
+        
+        function viewAnalytics() {
+            alert('Función de analíticas en desarrollo');
+        }
+    </script>
+</body>
+</html>

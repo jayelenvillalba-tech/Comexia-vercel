@@ -1,7 +1,7 @@
 class DashboardManager {
     constructor() {
         this.currentUser = null;
-        this.advancedDataManager = null;
+        this.advancedDataManager = new AdvancedDataManager();
         this.init();
     }
 
@@ -715,4 +715,76 @@ function calculateInsurance() {
     if (window.dashboardManager) {
         window.dashboardManager.calculateInsurance();
     }
+}
+// Función temporal para generar datos mock
+generateMockLogisticsData() {
+    return {
+        shipments: [
+            { id: 1, origin: 'México', destination: 'Estados Unidos', status: 'En tránsito', value: 15000 },
+            { id: 2, origin: 'Brasil', destination: 'Argentina', status: 'Entregado', value: 8500 },
+            { id: 3, origin: 'Chile', destination: 'Perú', status: 'Pendiente', value: 12000 }
+        ],
+        totalValue: 35500,
+        activeShipments: 15,
+        completedShipments: 42
+    };
+}
+
+// Función para inicializar datos demo
+initializeDemoData() {
+    const mockData = this.generateMockLogisticsData();
+    this.updateDashboardStats(mockData);
+    this.renderShipmentsTable(mockData.shipments);
+}
+
+// Actualizar estadísticas del dashboard
+updateDashboardStats(data) {
+    const statsElements = {
+        totalValue: document.querySelector('.stat-total-value .value'),
+        activeShipments: document.querySelector('.stat-active .value'),
+        completedShipments: document.querySelector('.stat-completed .value')
+    };
+    
+    if (statsElements.totalValue) {
+        statsElements.totalValue.textContent = `$${data.totalValue.toLocaleString()}`;
+    }
+    if (statsElements.activeShipments) {
+        statsElements.activeShipments.textContent = data.activeShipments;
+    }
+    if (statsElements.completedShipments) {
+        statsElements.completedShipments.textContent = data.completedShipments;
+    }
+}
+
+// Renderizar tabla de envíos
+renderShipmentsTable(shipments) {
+    const tableContainer = document.querySelector('.shipments-table-container');
+    if (!tableContainer) return;
+    
+    const tableHTML = `
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Origen</th>
+                    <th>Destino</th>
+                    <th>Estado</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${shipments.map(shipment => `
+                    <tr>
+                        <td>${shipment.id}</td>
+                        <td>${shipment.origin}</td>
+                        <td>${shipment.destination}</td>
+                        <td><span class="status-badge status-${shipment.status.toLowerCase().replace(' ', '-')}">${shipment.status}</span></td>
+                        <td>$${shipment.value.toLocaleString()}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+    
+    tableContainer.innerHTML = tableHTML;
 }

@@ -1,0 +1,19 @@
+﻿País,Fuente,Descripción,URL,Frecuencia de actualización
+Argentina,Dirección General de Aduanas – AFIP,Registro de Importadores y Exportadores,https://www.afip.gob.ar,Semanal
+Argentina,Cámara Argentina de Comercio y Servicios (CAC),Directorio de empresas socias con comercio exterior,https://www.cac.com.ar,Variable
+Brasil,Siscomex – Receita Federal,Registro oficial de empresas habilitadas para importar/exportar,https://www.gov.br/siscomex,Variable
+Brasil,CNI – Confederação Nacional da Indústria,Directorio sectorial de exportadores por estado,https://www.portaldaindustria.com.br,Variable
+Chile,Servicio Nacional de Aduanas,Estadísticas y registros por RUT de importadores/exportadores,https://www.aduana.cl,Variable
+Chile,ProChile,Directorio de exportadores chilenos,https://www.prochile.gob.cl,Variable
+Uruguay,Dirección Nacional de Aduanas,Registro de empresas autorizadas,https://www.aduanas.gub.uy,Variable
+Uruguay,Uruguay XXI,Directorio de exportadores,https://www.uruguayxxi.gub.uy,Variable
+Paraguay,Dirección Nacional de Aduanas,Listado de operadores de comercio exterior,https://www.aduana.gov.py,Variable
+Paraguay,Rediex,Base de datos de exportadores,https://www.rediex.gov.py,Variable
+Bolivia,Aduana Nacional,Registro de importadores/exportadores habilitados,https://www.aduana.gob.bo,Variable
+Bolivia,Cámara Nacional de Exportadores de Bolivia (CANEB),Directorio por sector,https://www.caneb.org.bo,Variable
+Perú,SUNAT,Registro de importadores/exportadores por RUC,https://www.sunat.gob.pe,Variable
+Perú,PromPerú,Directorio oficial de exportadores,https://www.promperu.gob.pe,Variable
+Ecuador,SENAE,Listado oficial de operadores,https://www.aduana.gob.ec,Variable
+Ecuador,ProEcuador,Directorio de exportadores,https://www.proecuador.gob.ec,Variable
+Colombia,DIAN,Registro de importadores/exportadores,https://www.dian.gov.co,Variable
+Colombia,ProColombia,Directorio de empresas exportadoras,https://www.procolombia.co,Variable

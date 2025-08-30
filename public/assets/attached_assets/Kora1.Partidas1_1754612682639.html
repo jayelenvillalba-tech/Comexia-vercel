@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kora1 - Comercio Internacional Etapa 1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/World_map_blank_without_borders.svg/2000px-World_map_blank_without_borders.svg.png');
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .container {
+      background-color: rgba(255,255,255,0.9);
+      max-width: 700px;
+      margin: 4rem auto;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+    h1, h2 {
+      text-align: center;
+      color: #003366;
+    }
+    select {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ccc;
+    }
+    .scrollable {
+      max-height: 180px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      margin-top: 0.5rem;
+      padding-left: 0;
+      list-style: none;
+    }
+    .scrollable option {
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Kora1 - Comercio Internacional</h1>
+    <h2>¿Sos importador o exportador?</h2>
+    <select id="tipoOperacion">
+      <option value="">Seleccioná una opción</option>
+      <option value="importador">Importador</option>
+      <option value="exportador">Exportador</option>
+    </select>
+
+    <h2>Seleccioná un Capítulo del Nomenclador</h2>
+    <select id="capitulosSelect" size="10" class="scrollable">
+      <!-- Capítulos se cargan dinámicamente -->
+    </select>
+
+    <h2>Seleccioná una Partida</h2>
+    <select id="partidasSelect" size="10" class="scrollable" disabled>
+      <option value="">Primero elegí un capítulo...</option>
+    </select>
+
+    <div id="infoSeleccion" style="margin-top: 1.5rem; text-align: center; font-weight: bold; color:#003366;"></div>
+  </div>
+
+  <script>
+    const capitulos = [
+      { codigo: "01", descripcion: "Animales vivos" },
+      { codigo: "02", descripcion: "Carnes y despojos comestibles" },
+      { codigo: "03", descripcion: "Pescados y crustáceos, moluscos" },
+      { codigo: "04", descripcion: "Leche y productos lácteos; huevos" },
+      { codigo: "05", descripcion: "Los demás productos de origen animal" },
+      { codigo: "06", descripcion: "Plantas vivas y productos de floricultura" },
+      { codigo: "07", descripcion: "Hortalizas, plantas, raíces y tubérculos" },
+      { codigo: "08", descripcion: "Frutas y frutos comestibles; cortezas de cítricos o melones" },
+      { codigo: "09", descripcion: "Café, té, yerba mate y especias" },
+      { codigo: "10", descripcion: "Cereales" },
+      { codigo: "11", descripcion: "Productos de la molinería; malta; almidón; inulina; gluten de trigo" },
+      { codigo: "12", descripcion: "Semillas y frutos oleaginosos; plantas industriales o medicinales" },
+      { codigo: "13", descripcion: "Gomas, resinas y demás jugos y extractos vegetales" },
+      { codigo: "14", descripcion: "Materiales trenzables y productos de esparto o de cestería" },
+      { codigo: "15", descripcion: "Grasas y aceites animales o vegetales" },
+      { codigo: "16", descripcion: "Preparaciones de carne, pescado o de crustáceos, moluscos" },
+      { codigo: "17", descripcion: "Azúcares y artículos de confitería" },
+      { codigo: "18", descripcion: "Cacao y sus preparaciones" },
+      { codigo: "19", descripcion: "Preparaciones a base de cereales, harina, almidón, leche" },
+      { codigo: "20", descripcion: "Preparaciones de hortalizas, frutas u otros frutos" }
+    ];
+
+    // Partidas completas para capítulos 1 a 20 (solo un subconjunto representativo para ejemplo)
+    const partidasPorCapitulo = {
+      "01": [
+        { codigo: "0101", descripcion: "Caballos, asnos, mulos y cebras vivos" },
+        { codigo: "0102", descripcion: "Bovinos vivos" },
+        { codigo: "0103", descripcion: "Cerdos vivos" },
+        { codigo: "0104", descripcion: "Ovejas y cabras vivas" },
+        { codigo: "0105", descripcion: "Aves de corral vivas" },
+        { codigo: "0106", descripcion: "Otros animales vivos" }
+      ],
+      "02": [
+        { codigo: "0201", descripcion: "Carne de bovino fresca o refrigerada" },
+        { codigo: "0202", descripcion: "Carne de bovino congelada" },
+        { codigo: "0203", descripcion: "Carne de cerdo fresca, refrigerada o congelada" },
+        { codigo: "0204", descripcion: "Carne de ovejas y cabras fresca, refrigerada o congelada" },
+        { codigo: "0205", descripcion: "Carne de aves de corral fresca, refrigerada o congelada" },
+        { codigo: "0206", descripcion: "Carne de caballo, asno, mula o cebras fresca, refrigerada o congelada" },
+        { codigo: "0207", descripcion: "Carnes y despojos comestibles de otros animales" }
+      ],
+      "03": [
+        { codigo: "0301", descripcion: "Pescados vivos" },
+        { codigo: "0302", descripcion: "Pescados frescos o refrigerados, excepto los de la partida 0301" },
+        { codigo: "0303", descripcion: "Pescados congelados" },
+        { codigo: "0304", descripcion: "Pescados salados, secos o en salmuera; harinas y polvo de pescado" },
+        { codigo: "0305", descripcion: "Langostas, cangrejos, camarones y otros crustáceos" },
+        { codigo: "0306", descripcion: "Moluscos, cefalópodos" }
+      ],
+      "04": [
+        { codigo: "0401", descripcion: "Leche y nata, sin concentrar ni acidificar" },
+        { codigo: "0402", descripcion: "Leche y nata concentradas o acidificadas" },
+        { codigo: "0403", descripcion: "Yogur, kéfir y demás leches y nata acidificadas" },
+        { codigo: "0404", descripcion: "Leche y nata en polvo, gránulos o concentradas" },
+        { codigo: "0405", descripcion: "Mantequilla y otras grasas y aceites de la leche" },
+        { codigo: "0406", descripcion: "Queso y requesón" }
+      ],
+      "05": [
+        { codigo: "0501", descripcion: "Heces de animales y productos de su elaboración" },
+        { codigo: "0502", descripcion: "Huevos de aves, enteros, frescos, refrigerados o congelados" },
+        { codigo: "0503", descripcion: "Otros productos de origen animal" }
+      ],
+      "06": [
+        { codigo: "0601", descripcion: "Bulbos, tubérculos, raíces y demás materiales para plantación" },
+        { codigo: "0602", descripcion: "Flores y botones de flor para la decoración" },
+        { codigo: "0603", descripcion: "Plantas vivas y demás productos de floricultura" }
+      ],
+      "07": [
+        { codigo: "0701", descripcion: "Patatas y batatas frescas o refrigeradas" },
+        { codigo: "0702", descripcion: "Tomates frescos o refrigerados" },
+        { codigo: "0703", descripcion: "Cebollas, chalotes, ajos, puerros y demás plantas cebollas frescas o refrigeradas" },
+        { codigo: "0704", descripcion: "Repollo, coliflor, coles de Bruselas, nabos frescos o refrigerados" },
+        { codigo: "0705", descripcion: "Lechugas y demás plantas de ensalada frescas" },
+        { codigo: "0706", descripcion: "Verduras frescas, congeladas o secas" }
+      ],
+      "08": [
+        { codigo: "0801", descripcion: "Cocos, nueces de cola y demás frutos secos" },
+        { codigo: "0802", descripcion: "Nueces y almendras frescas o secas" },
+        { codigo: "0803", descripcion: "Bananas y plátanos frescos" },
+        { codigo: "0804", descripcion: "Dátiles, higos, piñas y demás frutas frescas" },
+        { codigo: "0805", descripcion: "Cítricos frescos" },
+        { codigo: "0806", descripcion: "Uvas frescas" }
+      ],
+      "09": [
+        { codigo: "0901", descripcion: "Café, incluso tostado o descafeinado" },
+        { codigo: "0902", descripcion: "Té" },
+        { codigo: "0903", descripcion: "Yerba mate y preparados para infusiones" },
+        { codigo: "0904", descripcion: "Especias" }
+      ],
+      "10": [
+        { codigo: "1001", descripcion: "Trigo y morcajo" },
+        { codigo: "1002", descripcion: "Cebada" },
+        { codigo: "1003", descripcion: "Centeno" },
+        { codigo: "1004", descripcion: "Avena" },
+        { codigo: "1005", descripcion: "Maíz (excepto para siembra)" },
+        { codigo: "1006", descripcion: "Arroz" }
+      ],
+      "11": [
+        { codigo: "1101", descripcion: "Harina y polvo de trigo" },
+        { codigo: "1102", descripcion: "Harina de maíz" },
+        { codigo: "1103", descripcion: "Malta" },
+        { codigo: "1104", descripcion: "Almidón y fécula de patata, tapioca y otros féculas" },
+        { codigo: "1105", descripcion: "Gluten de trigo" }
+      ],
+      "12": [
+        { codigo: "1201", descripcion: "Soja y sus frutos, incluso partidos" },
+        { codigo: "1202", descripcion: "Maní (cacahuete), incluso partido" },
+        { codigo: "1203", descripcion: "Girasol" },
+        { codigo: "1204", descripcion: "Colza y mostaza" },
+        { codigo: "1205", descripcion: "Algodón" }
+      ],
+      "13": [
+        { codigo: "1301", descripcion: "Gomas y resinas naturales" },
+        { codigo: "1302", descripcion: "Resinas obtenidas de productos vegetales" },
+        { codigo: "1303", descripcion: "Jugos y extractos vegetales" }
+      ],
+      "14": [
+        { codigo: "1401", descripcion: "Materiales trenzables" },
+        { codigo: "1402", descripcion: "Productos de esparto o de cestería" }
+      ],
+      "15": [
+        { codigo: "1501", descripcion: "Grasas animales y aceites de pescado" },
+        { codigo: "1502", descripcion: "Aceites vegetales y sus fracciones" }
+      ],
+      "16": [
+        { codigo: "1601", descripcion: "Preparaciones de carne, pescado o crustáceos" },
+        { codigo: "1602", descripcion: "Preparaciones de hortalizas, frutas u otros frutos" }
+      ],
+      "17": [
+        { codigo: "1701", descripcion: "Azúcares de caña o remolacha" },
+        { codigo: "1702", descripcion: "Azúcares refinados y artículos de confitería" }
+      ],
+      "18": [
+        { codigo: "1801", descripcion: "Cacao en grano, entero o partido" },
+        { codigo: "1802", descripcion: "Preparaciones de cacao" }
+      ],
+      "19": [
+        { codigo: "1901", descripcion: "Preparaciones a base de harina, almidón o leche" },
+        { codigo: "1902", descripcion: "Panes, pasteles y galletas" }
+      ],
+      "20": [
+        { codigo: "2001", descripcion: "Preparaciones de hortalizas, frutas u otros frutos" },
+        { codigo: "2002", descripcion: "Jaleas, mermeladas, purés y conservas de frutas" }
+      ]
+    };
+
+    const selectCapitulo = document.getElementById("capitulosSelect");
+    const selectPartida = document.getElementById("partidasSelect");
+    const infoSeleccion = document.getElementById("infoSeleccion");
+    const tipoOperacion = document.getElementById("tipoOperacion");
+
+    // Cargar capítulos
+    function cargarCapitulos() {
+      capitulos.forEach(c => {
+        const option = document.createElement("option");
+        option.value = c.codigo;
+        option.textContent = `${c.codigo} - ${c.descripcion}`;
+        selectCapitulo.appendChild(option);
+      });
+    }
+
+    // Cargar partidas según capítulo
+    function cargarPartidas(codigoCapitulo) {
+      selectPartida.innerHTML = "";
+      if (partidasPorCapitulo[codigoCapitulo]) {
+        partidasPorCapitulo[codigoCapitulo].forEach(p => {
+          const option = document.createElement("option");
+          option.value = p.codigo;
+          option.textContent = `${p.codigo} - ${p.descripcion}`;
+          selectPartida.appendChild(option);
+        });
+        selectPartida.disabled = false;
+      } else {
+        selectPartida.innerHTML = '<option value="">No hay partidas disponibles para este capítulo.</option>';
+        selectPartida.disabled = true;
+      }
+    }
+
+    // Mostrar selección completa
+    function mostrarSeleccion() {
+      const op = tipoOperacion.value;
+      const cap = selectCapitulo.value;
+      const part = selectPartida.value;
+
+      if (!op) {
+        infoSeleccion.textContent = "Por favor, seleccioná importador o exportador.";
+        return;
+      }
+      if (!cap) {
+        infoSeleccion.textContent = "Por favor, seleccioná un capítulo.";
+        return;
+      }
+      if (!part) {
+        infoSeleccion.textContent = "Por favor, seleccioná una partida.";
+        return;
+      }
+
+      const capObj = capitulos.find(c => c.codigo === cap);
+      const partObj = partidasPorCapitulo[cap].find(p => p.codigo === part);
+
+      infoSeleccion.textContent = `Operación: ${op.toUpperCase()} | Capítulo: ${capObj.codigo} - ${capObj.descripcion} | Partida: ${partObj.codigo} - ${partObj.descripcion}`;
+    }
+
+    // Eventos
+    document.addEventListener("DOMContentLoaded", () => {
+      cargarCapitulos();
+    });
+
+    selectCapitulo.addEventListener("change", () => {
+      cargarPartidas(selectCapitulo.value);
+      infoSeleccion.textContent = "";
+    });
+
+    selectPartida.addEventListener("change", () => {
+      mostrarSeleccion();
+    });
+
+    tipoOperacion.addEventListener("change", () => {
+      mostrarSeleccion();
+    });
+  </script>
+</body>
+</html>
