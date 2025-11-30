@@ -3,1211 +3,1313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KoraApp - Sistema de Comercio Internacional</title>
+    <title>Che.Comex - Sistema Integral del Comercio Internacional</title>
     
-    <!-- CSS Files - Rutas relativas corregidas -->
-    <link rel="stylesheet" href="./css/main.css">
-    <link rel="stylesheet" href="./css/modules.css">
-    <link rel="stylesheet" href="./css/responsive.css">
-    
-    <!-- External Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Favicon - Ruta relativa corregida -->
-    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#000000">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="KoraApp">
-    <meta name="msapplication-TileColor" content="#667eea">
-    <meta name="msapplication-config" content="./browserconfig.xml">
+    <meta name="apple-mobile-web-app-title" content="Che.Comex">
     
-    <!-- PWA Manifest - Ruta relativa corregida -->
-    <link rel="manifest" href="./manifest.json">
+    <!-- Google Fonts - Playfair Display para elegancia -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="./assets/Logo Comer.IA.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./assets/Logo Comer.IA.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./assets/Logo Comer.IA.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="./assets/Logo Comer.IA.png">
+    <!-- Nomenclador Mercosur -->
+    <script src="./nomeclador-mercosur.js"></script>
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Variables de colores JoguaMundu - NEGRO ELEGANTE */
+        :root {
+            --primary-black: #000000;
+            --secondary-black: #1a1a1a;
+            --dark-gray: #333333;
+            --medium-gray: #666666;
+            --light-gray: #999999;
+            --neutral-light: #f8f9fa;
+            --neutral-white: #ffffff;
+            --soft-gray: #f5f5f5;
+            --text-primary: #000000;
+            --text-secondary: #333333;
+            --text-light: #666666;
+            --border-light: rgba(0, 0, 0, 0.1);
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --shadow-heavy: rgba(0, 0, 0, 0.25);
+            --accent-gold: #d4af37;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--neutral-white) 0%, var(--neutral-light) 50%, var(--soft-gray) 100%);
+            overflow-x: hidden;
+        }
+        
+        /* HEADER STICKY */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 70px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 15px var(--shadow-medium);
+        }
+        
+        .logo-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 24px;
+            font-family: 'Playfair Display', serif;
+            box-shadow: 0 4px 15px var(--shadow-medium);
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-black);
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-black);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-gold);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-black);
+            transition: all 0.3s ease;
+        }
+        
+        /* HERO SECTION - CENTRADO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--neutral-white) 0%, var(--neutral-light) 40%, var(--soft-gray) 100%);
+            padding-top: 70px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23E8E8E8" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.4;
+            z-index: 0;
+        }
+        
+        .hero-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-content h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary-black);
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .hero-content .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 400;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 20px var(--shadow-medium);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--shadow-heavy);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-black);
+            padding: 1rem 2rem;
+            border: 2px solid var(--primary-black);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-black);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* DEMO SECTION - CENTRADO Y MEJORADO */
+        .demo-section {
+            background: linear-gradient(135deg, var(--neutral-white) 0%, var(--soft-gray) 100%);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 8px 30px var(--shadow-light);
+            border: 1px solid var(--border-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-header h3 {
+            color: var(--primary-black);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .demo-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        .demo-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group select,
+        .form-group input {
+            padding: 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--neutral-white);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-black);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-search-container {
+            position: relative;
+        }
+        
+        .product-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.2s ease;
+        }
+        
+        .suggestion-item:hover {
+            background: var(--neutral-light);
+        }
+        
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+        
+        .operation-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .operation-btn {
+            flex: 1;
+            padding: 1.2rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            background: var(--neutral-white);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 16px;
+        }
+        
+        .operation-btn.active {
+            border-color: var(--primary-black);
+            background: var(--primary-black);
+            color: white;
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+            color: white;
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--shadow-medium);
+        }
+        
+        .demo-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+            color: white;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        /* FEATURES SECTION */
+        .features {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--neutral-white) 0%, var(--neutral-light) 100%);
+        }
+        
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .features-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .features-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .features-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, var(--neutral-white) 0%, var(--soft-gray) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-black), var(--accent-gold));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 40px var(--shadow-medium);
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px var(--shadow-medium);
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* ABOUT SECTION */
+        .about {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--soft-gray) 0%, var(--neutral-light) 100%);
+        }
+        
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .about-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 1.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .about-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        
+        .about-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .about-illustration {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 5rem;
+            box-shadow: 0 20px 60px var(--shadow-heavy);
+        }
+        
+        /* CONTACT SECTION */
+        .contact {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--neutral-white) 0%, var(--neutral-light) 100%);
+        }
+        
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+        
+        .contact-header {
+            margin-bottom: 3rem;
+        }
+        
+        .contact-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 1rem;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .contact-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .contact-options {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .contact-option {
+            background: linear-gradient(135deg, var(--neutral-white) 0%, var(--soft-gray) 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px var(--shadow-light);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            min-width: 200px;
+        }
+        
+        .contact-option:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px var(--shadow-medium);
+        }
+        
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 4px 15px var(--shadow-medium);
+        }
+        
+        .gmail-icon {
+            background: linear-gradient(135deg, #EA4335, #FBBC05);
+        }
+        
+        .linkedin-icon {
+            background: linear-gradient(135deg, #0077B5, #00A0DC);
+        }
+        
+        .contact-option h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .contact-option p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: var(--primary-black);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section ul li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section ul li a:hover {
+            color: var(--accent-gold);
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                box-shadow: 0 4px 20px var(--shadow-light);
+                gap: 1rem;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .operation-buttons {
+                flex-direction: column;
+            }
+            
+            .contact-options {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .demo-section {
+                padding: 2rem;
+            }
+        }
+        
+        /* ANIMACIONES */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+    </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="login-screen" class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="app-logo">🚀</div>
-                <h1 data-i18n="app.title">KoraApp</h1>
-                <p data-i18n="login.title">Accede a tu dashboard</p>
-            </div>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-container">
+            <a href="#" class="logo">
+                <img src="./assets/img/joguamundu-logo.png" alt="JoguaMundu Logo" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="logo-circle" style="display: none;">J</div>
+                <span class="logo-text">JoguaMundu</span>
+            </a>
             
-            <form id="login-form" class="login-form">
-                <div class="form-group">
-                <label for="email" data-i18n="login.email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="tu@email.com" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password" data-i18n="login.password">Contraseña</label>
-                    <input type="password" id="password" name="password" placeholder="••••••••" required>
-                </div>
-                
-                <button type="submit" class="btn-login" data-i18n="login.submit">Iniciar Sesión</button>
-                
-                <div class="login-demo">
-                    <p data-i18n="login.demo">Demo: Cualquier email y contraseña funcionan</p>
-                </div>
-            </form>
-        </div>
-    </div>
-
-<!-- Dashboard Screen -->
-<div id="dashboard-screen" class="dashboard-container" style="display: none;">
-    <!-- Header -->
-    <header class="dashboard-header">
-        <div class="header-left">
-            <div class="app-logo kora-logo">🌊</div>
-            <h1>KoraApp</h1>
-            <div class="breadcrumb">
-                <span id="section-title">Dashboard - Resumen</span>
-            </div>
-        </div>
-        
-        <div class="header-right">
-            <div class="user-info">
-                <span class="user-name" id="user-name">Usuario Demo</span>
-                <span class="user-role" id="user-role">Demo</span>
-            </div>
-            <div class="auth-controls">
-                <button class="btn-demo-auto" onclick="window.app.autoDemoLogin()" data-i18n="login.auto-demo">⚡ Demo Rápido</button>
-                <button class="btn-login-toggle" onclick="window.app.showLoginModal()" data-i18n="header.login">🔐 Login Manual</button>
-                <button class="btn-logout" onclick="window.app.handleLogout()" data-i18n="header.logout">🚪 Salir</button>
+            <nav class="nav-menu" id="navMenu">
+                <a href="#inicio" class="nav-link">Inicio</a>
+                <a href="#quienes-somos" class="nav-link">Quiénes somos</a>
+                <a href="#empresas-directas" class="nav-link">Empresas directas</a>
+                <a href="#empresas-indirectas" class="nav-link">Empresas indirectas</a>
+                <a href="#pymes" class="nav-link">PYMEs</a>
+                <a href="#cooperativas" class="nav-link">Cooperativas</a>
+                <a href="#leyes-tratados" class="nav-link">Leyes y tratados</a>
+                <a href="#analisis-comercial" class="nav-link">Análisis comercial</a>
+                <a href="#contacto" class="nav-link">Contacto</a>
+            </nav>
+            
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </header>
-
-        <!-- Main Content -->
-        <div class="dashboard-main">
-            <!-- Sidebar -->
-            <aside class="dashboard-sidebar">
-                <nav class="sidebar-nav">
-                    <ul>
-                        <!-- Módulo Financiero -->
-                        <li class="nav-section">
-                            <span class="nav-section-title">💰 Módulo Financiero</span>
-                            <ul class="nav-subsection">
-                                <li><a href="#" data-section="exchange-rates" class="nav-link">💱 Tipos de Cambio</a></li>
-                                <li><a href="#" data-section="costs" class="nav-link">💲 Costos y Presupuestos</a></li>
-                                <li><a href="#" data-section="financial-reports" class="nav-link">📈 Reportes Financieros</a></li>
-                                <li><a href="#" data-section="audit" class="nav-link">🔍 Auditoría</a></li>
-                            </ul>
-                        </li>
-                        
-                        <!-- Módulo Marketing Internacional -->
-                        <li class="nav-section">
-                            <span class="nav-section-title">📈 Marketing Internacional</span>
-                            <ul class="nav-subsection">
-                                <li><a href="#" data-section="strategies" class="nav-link">🎯 Estrategias</a></li>
-                                <li><a href="#" data-section="channels" class="nav-link">📺 Canales</a></li>
-                                <li><a href="#" data-section="campaigns" class="nav-link">📢 Campañas</a></li>
-                                <li><a href="#" data-section="roi-metrics" class="nav-link">📊 Métricas ROI</a></li>
-                            </ul>
-                        </li>
-                        
-                        <!-- Módulo Legal y Normativo -->
-                        <li class="nav-section">
-                            <span class="nav-section-title">⚖️ Legal y Normativo</span>
-                            <ul class="nav-subsection">
-                                <li><a href="#" data-section="regulations" class="nav-link">📜 Regulaciones</a></li>
-                                <li><a href="#" data-section="compliance" class="nav-link">✅ Compliance</a></li>
-                                <li><a href="#" data-section="treaties" class="nav-link">🤝 Tratados</a></li>
-                                <li><a href="#" data-section="legal-alerts" class="nav-link">🚨 Alertas Legales</a></li>
-                            </ul>
-                        </li>
-                        
-                        <!-- Módulos Adicionales -->
-                        <li><a href="#" data-section="users" class="nav-link">👥 Usuarios</a></li>
-                        <li><a href="#" data-section="settings" class="nav-link">⚙️ Configuración</a></li>
-                        <li><a href="#" data-section="reports" class="nav-link">📊 Reportes</a></li>
-                        <li><a href="#" data-section="analytics" class="nav-link">📈 Analytics</a></li>
-                    </ul>
-                </nav>
-            </aside>
-
-            <!-- Content Area -->
-            <main class="dashboard-content">
-                <!-- MÓDULO 1: Overview/Dashboard -->
-                <section id="overview-section" class="content-section active">
-                    <div class="module-header">
-                        <h2>📊 Dashboard - Resumen Ejecutivo</h2>
-                        <div class="role-indicator">Rol: <span id="user-role-display">Admin</span></div>
+    
+    <!-- HERO SECTION - CENTRADO -->
+    <section class="hero" id="inicio">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>JoguaMundu</h1>
+                <p class="subtitle">Sistema Integral del Comercio Internacional</p>
+                <div class="hero-buttons">
+                </div>
+                
+                <!-- DEMO CENTRADO -->
+                <div class="demo-section">
+                    <div class="demo-header">
+                        <h3>🌍 Comercio del Mundo</h3>
+                        <p>Conecta con mercados globales usando nuestro sistema inteligente</p>
                     </div>
                     
-                    <div class="dashboard-overview">
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">📦</div>
-                                <div class="stat-info">
-                                    <h3>Envíos Activos</h3>
-                                    <div class="stat-value">156</div>
-                                    <div class="stat-change positive">+12% vs mes anterior</div>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-icon">💰</div>
-                                <div class="stat-info">
-                                    <h3>Ingresos Mensuales</h3>
-                                    <div class="stat-value">$2.4M</div>
-                                    <div class="stat-change positive">+8.5% vs mes anterior</div>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-icon">🌍</div>
-                                <div class="stat-info">
-                                    <h3>Países Activos</h3>
-                                    <div class="stat-value">23</div>
-                                    <div class="stat-change neutral">Sin cambios</div>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-card">
-                                <div class="stat-icon">⚡</div>
-                                <div class="stat-info">
-                                    <h3>Eficiencia Operativa</h3>
-                                    <div class="stat-value">94.2%</div>
-                                    <div class="stat-change positive">+2.1% vs mes anterior</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="quick-actions">
-                            <h3>Acciones Rápidas</h3>
-                            <div class="actions-grid">
-                                <button class="action-btn" onclick="showSection('supply-chain')">
-                                    <span class="action-icon">🔗</span>
-                                    <span>Cadenas Logísticas</span>
-                                </button>
-                                <button class="action-btn" onclick="showSection('exchange-rates')">
-                                    <span class="action-icon">💱</span>
-                                    <span>Tipos de Cambio</span>
-                                </button>
-                                <button class="action-btn" onclick="showSection('customs')">
-                                    <span class="action-icon">📋</span>
-                                    <span>Documentación</span>
-                                </button>
-                                <button class="action-btn" onclick="showSection('strategies')">
-                                    <span class="action-icon">🎯</span>
-                                    <span>Marketing</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                      
-                        <!-- Global Companies Widget -->
-                        <div class="global-companies-widget" id="global-companies-widget">
-                            <div class="companies-header">
-                                <h3>🌍 Base de Datos Global de Empresas</h3>
-                                <span class="companies-count">800+ empresas</span>
-                            </div>
-                            
-                            <div class="companies-stats">
-                                <div class="stat-item">
-                                    <div class="stat-number" id="direct-companies">0</div>
-                                    <div class="stat-label">Directas</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-number" id="indirect-companies">0</div>
-                                    <div class="stat-label">Indirectas</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-number" id="sme-companies">0</div>
-                                    <div class="stat-label">PyMEs</div>
-                                </div>
-                                <div class="stat-item">
-                                    <div class="stat-number" id="coop-companies">0</div>
-                                    <div class="stat-label">Cooperativas</div>
-                                </div>
-                            </div>
-                            
-                            <div class="companies-search">
-                                <input type="text" id="company-search" placeholder="🔍 Buscar empresa...">
-                                <select id="continent-filter">
-                                    <option value="">🌍 Todos los continentes</option>
-                                    <option value="america">🌎 América</option>
-                                    <option value="europe">🇪🇺 Europa</option>
-                                    <option value="asia">🌏 Asia</option>
-                                    <option value="africa">🌍 África</option>
-                                    <option value="oceania">🇦🇺 Oceanía</option>
-                                </select>
-                                <select id="type-filter">
-                                    <option value="">📊 Todos los tipos</option>
-                                    <option value="direct">Directa</option>
-                                    <option value="indirect">Indirecta</option>
-                                    <option value="sme">PyME</option>
-                                    <option value="cooperative">Cooperativa</option>
-                                </select>
-                            </div>
-                            
-                            <div class="companies-grid" id="companies-grid">
-                                <!-- Las empresas se cargarán dinámicamente aquí -->
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 2: Logística - Supply Chain -->
-                <section id="supply-chain-section" class="content-section">
-                    <div class="module-header">
-                        <h2>🔗 Visualización de Cadenas Logísticas</h2>
-                        <div class="role-indicator">Rol: <span class="user-role-display">Admin</span></div>
-                    </div>
-                    
-                    <div class="supply-chain-dashboard">
-                        <div class="chain-visualization">
-                            <h3>Cadena de Suministro Global</h3>
-                            <div class="chain-flow">
-                                <div class="chain-step">🏭 Proveedor</div>
-                                <div class="chain-arrow">→</div>
-                                <div class="chain-step">📦 Almacén</div>
-                                <div class="chain-arrow">→</div>
-                                <div class="chain-step">🚛 Transporte</div>
-                                <div class="chain-arrow">→</div>
-                                <div class="chain-step">🏪 Distribuidor</div>
-                                <div class="chain-arrow">→</div>
-                                <div class="chain-step">👤 Cliente</div>
-                            </div>
-                        </div>
-                        
-                        <div class="chain-metrics">
-                            <div class="metric-card">
-                                <h4>Tiempo Total</h4>
-                                <div class="metric-value">15 días</div>
-                            </div>
-                            <div class="metric-card">
-                                <h4>Costo Total</h4>
-                                <div class="metric-value">$2,450</div>
-                            </div>
-                            <div class="metric-card">
-                                <h4>Eficiencia</h4>
-                                <div class="metric-value">87%</div>
-                            </div>
-                        </div>
-                        
-                        <div class="supply-chain-table">
-                            <h3>Operaciones de Cadena de Suministro</h3>
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Proveedor</th>
-                                        <th>Producto</th>
-                                        <th>Estado</th>
-                                        <th>Tiempo Estimado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="supply-chain-tbody">
-                                    <!-- Datos dinámicos -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 2: Logística - Transport -->
-                <section id="transport-section" class="content-section">
-                    <div class="module-header">
-                        <h2>🚛 Comparativo de Modos de Transporte</h2>
-                    </div>
-                    
-                    <div class="transport-comparison">
-                        <div class="transport-mode">
-                            <div class="mode-icon">🚢</div>
-                            <h3>Marítimo</h3>
-                            <div class="mode-stats">
-                                <p><strong>Costo:</strong> Bajo</p>
-                                <p><strong>Tiempo:</strong> 20-30 días</p>
-                                <p><strong>Capacidad:</strong> Alta</p>
-                                <p><strong>Emisiones:</strong> Bajas</p>
-                            </div>
-                            <div class="mode-score">Puntuación: 8.5/10</div>
-                        </div>
-                        
-                        <div class="transport-mode">
-                            <div class="mode-icon">✈️</div>
-                            <h3>Aéreo</h3>
-                            <div class="mode-stats">
-                                <p><strong>Costo:</strong> Alto</p>
-                                <p><strong>Tiempo:</strong> 1-3 días</p>
-                                <p><strong>Capacidad:</strong> Media</p>
-                                <p><strong>Emisiones:</strong> Altas</p>
-                            </div>
-                            <div class="mode-score">Puntuación: 7.2/10</div>
-                        </div>
-                        
-                        <div class="transport-mode">
-                            <div class="mode-icon">🚛</div>
-                            <h3>Terrestre</h3>
-                            <div class="mode-stats">
-                                <p><strong>Costo:</strong> Medio</p>
-                                <p><strong>Tiempo:</strong> 5-10 días</p>
-                                <p><strong>Capacidad:</strong> Media</p>
-                                <p><strong>Emisiones:</strong> Medias</p>
-                            </div>
-                            <div class="mode-score">Puntuación: 7.8/10</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 2: Logística - Customs -->
-                <section id="customs-section" class="content-section">
-                    <div class="module-header">
-                        <h2>📋 Documentación Aduanera</h2>
-                        <button class="btn-primary" onclick="generateCustomsDoc()">📄 Generar Documento</button>
-                    </div>
-                    
-                    <div class="customs-dashboard">
-                        <div class="document-types">
-                            <div class="doc-type">
-                                <h4>📄 Factura Comercial</h4>
-                                <p>Documento que detalla la transacción comercial</p>
-                                <button class="btn-secondary">Generar</button>
-                            </div>
-                            
-                            <div class="doc-type">
-                                <h4>📋 Lista de Empaque</h4>
-                                <p>Detalle del contenido del envío</p>
-                                <button class="btn-secondary">Generar</button>
-                            </div>
-                            
-                            <div class="doc-type">
-                                <h4>🛃 Declaración Aduanera</h4>
-                                <p>Formulario oficial para aduanas</p>
-                                <button class="btn-secondary">Generar</button>
-                            </div>
-                        </div>
-                        
-                        <div class="customs-requirements">
-                            <h3>Requisitos por País</h3>
-                            <div class="requirements-table">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>País</th>
-                                            <th>Documentos Requeridos</th>
-                                            <th>Tiempo Procesamiento</th>
-                                            <th>Aranceles</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>🇺🇸 Estados Unidos</td>
-                                            <td>Factura, Lista empaque, Certificado origen</td>
-                                            <td>2-3 días</td>
-                                            <td>5-15%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>🇪🇺 Unión Europea</td>
-                                            <td>Factura, Lista empaque, EUR.1</td>
-                                            <td>1-2 días</td>
-                                            <td>0-10%</td>
-                                        </tr>
-                                        <tr>
-                                            <td>🇨🇳 China</td>
-                                            <td>Factura, Lista empaque, Licencia importación</td>
-                                            <td>3-5 días</td>
-                                            <td>10-25%</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 3: Financiero - Exchange Rates -->
-                <section id="exchange-rates-section" class="content-section">
-                    <div class="module-header">
-                        <h2>💱 Tipos de Cambio en Tiempo Real</h2>
-                        <div class="last-update">Última actualización: <span id="rates-timestamp">--:--</span></div>
-                    </div>
-                    
-                    <div class="exchange-dashboard">
-                        <div class="currency-converter">
-                            <h3>Convertidor de Divisas</h3>
-                            <div class="converter-form">
-                                <div class="currency-input">
-                                    <input type="number" id="amount-from" placeholder="1000" value="1000">
-                                    <select id="currency-from">
-                                        <option value="USD">🇺🇸 USD</option>
-                                        <option value="EUR">🇪🇺 EUR</option>
-                                        <option value="GBP">🇬🇧 GBP</option>
-                                        <option value="JPY">🇯🇵 JPY</option>
-                                        <option value="CAD">🇨🇦 CAD</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="converter-arrow">⇄</div>
-                                
-                                <div class="currency-input">
-                                    <input type="number" id="amount-to" readonly>
-                                    <select id="currency-to">
-                                        <option value="EUR">🇪🇺 EUR</option>
-                                        <option value="USD">🇺🇸 USD</option>
-                                        <option value="GBP">🇬🇧 GBP</option>
-                                        <option value="JPY">🇯🇵 JPY</option>
-                                        <option value="CAD">🇨🇦 CAD</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="rates-grid">
-                            <div class="rate-card">
-                                <div class="rate-pair">USD/EUR</div>
-                                <div class="rate-value">0.8456</div>
-                                <div class="rate-change negative">-0.12%</div>
-                            </div>
-                            
-                            <div class="rate-card">
-                                <div class="rate-pair">USD/GBP</div>
-                                <div class="rate-value">0.7823</div>
-                                <div class="rate-change positive">+0.08%</div>
-                            </div>
-                            
-                            <div class="rate-card">
-                                <div class="rate-pair">USD/JPY</div>
-                                <div class="rate-value">149.25</div>
-                                <div class="rate-change positive">+0.34%</div>
-                            </div>
-                            
-                            <div class="rate-card">
-                                <div class="rate-pair">USD/CAD</div>
-                                <div class="rate-value">1.3567</div>
-                                <div class="rate-change negative">-0.05%</div>
-                            </div>
-                        </div>
-                        
-                        <div class="rate-chart-container">
-                            <h3>Tendencia USD/EUR (7 días)</h3>
-                            <canvas id="exchange-rate-chart"></canvas>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 3: Financiero - Costs -->
-                <section id="costs-section" class="content-section">
-                    <div class="module-header">
-                        <h2>💲 Calculadora de Costos y Presupuestos</h2>
-                    </div>
-                    
-                    <div class="costs-dashboard">
-                        <div class="cost-calculator">
-                            <h3>Calculadora de Costos de Envío</h3>
-                            <form class="calculator-form">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Origen</label>
-                                        <select id="origin-country">
-                                            <option value="US">🇺🇸 Estados Unidos</option>
-                                            <option value="CN">🇨🇳 China</option>
-                                            <option value="DE">🇩🇪 Alemania</option>
-                                            <option value="JP">🇯🇵 Japón</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label>Destino</label>
-                                        <select id="destination-country">
-                                            <option value="MX">🇲🇽 México</option>
-                                            <option value="BR">🇧🇷 Brasil</option>
-                                            <option value="AR">🇦🇷 Argentina</option>
-                                            <option value="CO">🇨🇴 Colombia</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Peso (kg)</label>
-                                        <input type="number" id="shipment-weight" placeholder="1000">
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label>Dimensiones (cm³)</label>
-                                        <input type="number" id="shipment-volume" placeholder="50000">
-                                    </div>
-                                </div>
-                                
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Modo de Transporte</label>
-                                        <select id="transport-mode">
-                                            <option value="sea">🚢 Marítimo</option>
-                                            <option value="air">✈️ Aéreo</option>
-                                            <option value="land">🚛 Terrestre</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label>Valor de Mercancía (USD)</label>
-                                        <input type="number" id="cargo-value" placeholder="10000">
-                                    </div>
-                                </div>
-                                
-                                <button type="button" class="btn-primary" onclick="calculateShippingCost()">Calcular Costo</button>
-                            </form>
-                        </div>
-                        
-                        <div class="cost-breakdown" id="cost-breakdown" style="display: none;">
-                            <h3>Desglose de Costos</h3>
-                            <div class="cost-items">
-                                <div class="cost-item">
-                                    <span>Flete Base:</span>
-                                    <span id="base-freight">$0</span>
-                                </div>
-                                <div class="cost-item">
-                                    <span>Seguro:</span>
-                                    <span id="insurance-cost">$0</span>
-                                </div>
-                                <div class="cost-item">
-                                    <span>Documentación:</span>
-                                    <span id="documentation-cost">$0</span>
-                                </div>
-                                <div class="cost-item">
-                                    <span>Aranceles:</span>
-                                    <span id="duties-cost">$0</span>
-                                </div>
-                                <div class="cost-item total">
-                                    <span>Total:</span>
-                                    <span id="total-cost">$0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 3: Financiero - Financial Reports -->
-                <section id="financial-reports-section" class="content-section">
-                    <div class="module-header">
-                        <h2>📈 Reportes Financieros</h2>
-                        <div class="report-controls">
-                            <select id="report-period">
-                                <option value="month">Este Mes</option>
-                                <option value="quarter">Este Trimestre</option>
-                                <option value="year">Este Año</option>
-                            </select>
-                            <button class="btn-primary" onclick="generateFinancialReport()">📊 Generar Reporte</button>
-                        </div>
-                    </div>
-                    
-                    <div class="financial-dashboard">
-                        <div class="financial-summary">
-                            <div class="summary-card">
-                                <h4>Ingresos Totales</h4>
-                                <div class="summary-value">$2,456,789</div>
-                                <div class="summary-change positive">+15.3% vs período anterior</div>
-                            </div>
-                            
-                            <div class="summary-card">
-                                <h4>Costos Operativos</h4>
-                                <div class="summary-value">$1,234,567</div>
-                                <div class="summary-change negative">+8.7% vs período anterior</div>
-                            </div>
-                            
-                            <div class="summary-card">
-                                <h4>Margen Bruto</h4>
-                                <div class="summary-value">$1,222,222</div>
-                                <div class="summary-change positive">+22.1% vs período anterior</div>
-                            </div>
-                            
-                            <div class="summary-card">
-                                <h4>ROI</h4>
-                                <div class="summary-value">24.8%</div>
-                                <div class="summary-change positive">+3.2% vs período anterior</div>
-                            </div>
-                        </div>
-                        
-                        <div class="charts-container">
-                            <div class="chart-section">
-                                <h3>Ingresos por Región</h3>
-                                <canvas id="revenue-by-region-chart"></canvas>
-                            </div>
-                            
-                            <div class="chart-section">
-                                <h3>Tendencia de Costos</h3>
-                                <canvas id="costs-trend-chart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 3: Financiero - Audit -->
-                <section id="audit-section" class="content-section">
-                    <div class="module-header">
-                        <h2>🔍 Auditoría y Compliance</h2>
-                    </div>
-                    
-                    <div class="audit-dashboard">
-                        <div class="compliance-status">
-                            <h3>Estado de Compliance</h3>
-                            <div class="compliance-grid">
-                                <div class="compliance-item">
-                                    <div class="compliance-icon">✅</div>
-                                    <div class="compliance-info">
-                                        <h4>Documentación Fiscal</h4>
-                                        <p>100% Completo</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="compliance-item">
-                                    <div class="compliance-icon">⚠️</div>
-                                    <div class="compliance-info">
-                                        <h4>Certificaciones</h4>
-                                        <p>85% Completo</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="compliance-item">
-                                    <div class="compliance-icon">❌</div>
-                                    <div class="compliance-info">
-                                        <h4>Auditorías Pendientes</h4>
-                                        <p>3 Pendientes</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="audit-log">
-                            <h3>Registro de Auditoría</h3>
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha</th>
-                                        <th>Tipo</th>
-                                        <th>Usuario</th>
-                                        <th>Acción</th>
-                                        <th>Estado</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>2024-01-15</td>
-                                        <td>Financiera</td>
-                                        <td>admin@koraapp.com</td>
-                                        <td>Revisión de facturas Q4</td>
-                                        <td><span class="status-badge success">Completado</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2024-01-10</td>
-                                        <td>Operativa</td>
-                                        <td>auditor@koraapp.com</td>
-                                        <td>Verificación de inventario</td>
-                                        <td><span class="status-badge warning">En Progreso</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2024-01-05</td>
-                                        <td>Compliance</td>
-                                        <td>legal@koraapp.com</td>
-                                        <td>Revisión normativa</td>
-                                        <td><span class="status-badge error">Pendiente</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 4: Marketing - Strategies -->
-                <section id="strategies-section" class="content-section">
-                    <div class="module-header">
-                        <h2>🎯 Estrategias de Marketing Internacional</h2>
-                    </div>
-                    
-                    <div class="strategies-dashboard">
-                        <div class="strategy-cards">
-                            <div class="strategy-card">
-                                <div class="strategy-icon">🌍</div>
-                                <h3>Expansión Global</h3>
-                                <p>Estrategia para entrada a nuevos mercados internacionales</p>
-                                <div class="strategy-metrics">
-                                    <span>ROI: 156%</span>
-                                    <span>Alcance: 2.3M</span>
-                                </div>
-                                <button class="btn-secondary">Ver Detalles</button>
-                            </div>
-                            
-                            <div class="strategy-card">
-                                <div class="strategy-icon">📱</div>
-                                <h3>Marketing Digital</h3>
-                                <p>Campañas digitales para mercados emergentes</p>
-                                <div class="strategy-metrics">
-                                    <span>ROI: 234%</span>
-                                    <span>Alcance: 1.8M</span>
-                                </div>
-                                <button class="btn-secondary">Ver Detalles</button>
-                            </div>
-                            
-                            <div class="strategy-card">
-                                <div class="strategy-icon">🤝</div>
-                                <h3>Alianzas Estratégicas</h3>
-                                <p>Partnerships con distribuidores locales</p>
-                                <div class="strategy-metrics">
-                                    <span>ROI: 189%</span>
-                                    <span>Alcance: 950K</span>
-                                </div>
-                                <button class="btn-secondary">Ver Detalles</button>
-                            </div>
-                        </div>
-                        
-                        <div class="market-analysis">
-                            <h3>Análisis de Mercado por Región</h3>
-                            <canvas id="market-analysis-chart"></canvas>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 4: Marketing - Channels -->
-                <section id="channels-section" class="content-section">
-                    <div class="module-header">
-                        <h2>📺 Canales de Marketing</h2>
-                    </div>
-                    
-                    <div class="channels-dashboard">
-                        <div class="channel-performance">
-                            <h3>Rendimiento por Canal</h3>
-                            <div class="channels-grid">
-                                <div class="channel-card">
-                                    <div class="channel-icon">📧</div>
-                                    <h4>Email Marketing</h4>
-                                    <div class="channel-stats">
-                                        <div class="stat">CTR: 3.2%</div>
-                                        <div class="stat">Conversión: 12.5%</div>
-                                        <div class="stat">ROI: $4.20</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="channel-card">
-                                    <div class="channel-icon">📱</div>
-                                    <h4>Redes Sociales</h4>
-                                    <div class="channel-stats">
-                                        <div class="stat">Engagement: 5.8%</div>
-                                        <div class="stat">Conversión: 8.3%</div>
-                                        <div class="stat">ROI: $3.15</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="channel-card">
-                                    <div class="channel-icon">🔍</div>
-                                    <h4>SEO/SEM</h4>
-                                    <div class="channel-stats">
-                                        <div class="stat">CTR: 4.7%</div>
-                                        <div class="stat">Conversión: 15.2%</div>
-                                        <div class="stat">ROI: $5.80</div>
-                                    </div>
-                                </div>
-                                
-                                <div class="channel-card">
-                                    <div class="channel-icon">📺</div>
-                                    <h4>Publicidad Display</h4>
-                                    <div class="channel-stats">
-                                        <div class="stat">CTR: 1.8%</div>
-                                        <div class="stat">Conversión: 6.1%</div>
-                                        <div class="stat">ROI: $2.45</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="channel-optimization">
-                            <h3>Optimización de Canales</h3>
-                            <canvas id="channel-performance-chart"></canvas>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 4: Marketing - Campaigns -->
-                <section id="campaigns-section" class="content-section">
-                    <div class="module-header">
-                        <h2>📢 Gestión de Campañas</h2>
-                        <button class="btn-primary" onclick="createNewCampaign()">➕ Nueva Campaña</button>
-                    </div>
-                    
-                    <div class="campaigns-dashboard">
-                        <div class="active-campaigns">
-                            <h3>Campañas Activas</h3>
-                            <div class="campaigns-list">
-                                <div class="campaign-item">
-                                    <div class="campaign-info">
-                                        <h4>Expansión LATAM Q1</h4>
-                                        <p>Campaña de lanzamiento para mercados latinoamericanos</p>
-                                        <div class="campaign-meta">
-                                            <span>Presupuesto: $50,000</span>
-                                            <span>Duración: 30 días</span>
-                                        </div>
-                                    </div>
-                                    <div class="campaign-metrics">
-                                        <div class="metric">Impresiones: 2.3M</div>
-                                        <div class="metric">Clicks: 45K</div>
-                                        <div class="metric">Conversiones: 1,234</div>
-                                    </div>
-                                    <div class="campaign-actions">
-                                        <button class="btn-secondary">Editar</button>
-                                        <button class="btn-danger">Pausar</button>
-                                    </div>
-                                </div>
-                                
-                                <div class="campaign-item">
-                                    <div class="campaign-info">
-                                        <h4>Black Friday Global</h4>
-                                        <p>Promoción especial para mercados internacionales</p>
-                                        <div class="campaign-meta">
-                                            <span>Presupuesto: $75,000</span>
-                                            <span>Duración: 7 días</span>
-                                        </div>
-                                    </div>
-                                    <div class="campaign-metrics">
-                                        <div class="metric">Impresiones: 5.1M</div>
-                                        <div class="metric">Clicks: 98K</div>
-                                        <div class="metric">Conversiones: 3,456</div>
-                                    </div>
-                                    <div class="campaign-actions">
-                                        <button class="btn-secondary">Editar</button>
-                                        <button class="btn-danger">Pausar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="campaign-analytics">
-                            <h3>Análisis de Rendimiento</h3>
-                            <canvas id="campaign-performance-chart"></canvas>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 4: Marketing - ROI Metrics -->
-                <section id="roi-metrics-section" class="content-section">
-                    <div class="module-header">
-                        <h2>📊 Métricas de ROI</h2>
-                    </div>
-                    
-                    <div class="roi-dashboard">
-                        <div class="roi-summary">
-                            <div class="roi-card">
-                                <h4>ROI General</h4>
-                                <div class="roi-value">324%</div>
-                                <div class="roi-change positive">+45% vs mes anterior</div>
-                            </div>
-                            
-                            <div class="roi-card">
-                                <h4>ROAS (Return on Ad Spend)</h4>
-                                <div class="roi-value">4.2x</div>
-                                <div class="roi-change positive">+0.8x vs mes anterior</div>
-                            </div>
-                            
-                            <div class="roi-card">
-                                <h4>CAC (Customer Acquisition Cost)</h4>
-                                <div class="roi-value">$45</div>
-                                <div class="roi-change negative">+$5 vs mes anterior</div>
-                            </div>
-                            
-                            <div class="roi-card">
-                                <h4>LTV (Lifetime Value)</h4>
-                                <div class="roi-value">$1,250</div>
-                                <div class="roi-change positive">+$150 vs mes anterior</div>
-                            </div>
-                        </div>
-                        
-                        <div class="roi-breakdown">
-                            <h3>ROI por Canal de Marketing</h3>
-                            <canvas id="roi-by-channel-chart"></canvas>
-                        </div>
-                        
-                        <div class="attribution-analysis">
-                            <h3>Análisis de Atribución</h3>
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Canal</th>
-                                        <th>Primer Toque</th>
-                                        <th>Último Toque</th>
-                                        <th>Atribución Lineal</th>
-                                        <th>Atribución por Tiempo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Email Marketing</td>
-                                        <td>25%</td>
-                                        <td>35%</td>
-                                        <td>30%</td>
-                                        <td>28%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Redes Sociales</td>
-                                        <td>40%</td>
-                                        <td>20%</td>
-                                        <td>25%</td>
-                                        <td>32%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>SEO/SEM</td>
-                                        <td>20%</td>
-                                        <td>30%</td>
-                                        <td>25%</td>
-                                        <td>22%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Publicidad Display</td>
-                                        <td>15%</td>
-                                        <td>15%</td>
-                                        <td>20%</td>
-                                        <td>18%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 5: Legal - Regulations -->
-                <section id="regulations-section" class="content-section">
-                    <div class="module-header">
-                        <h2>📜 Regulaciones Internacionales</h2>
-                    </div>
-                    
-                    <div class="regulations-dashboard">
-                        <div class="regulations-search">
-                            <h3>Búsqueda de Regulaciones</h3>
-                            <div class="search-form">
-                                <select id="regulation-country">
-                                    <option value="">Seleccionar país...</option>
+                    <div class="demo-form">
+                        <div class="form-group">
+                            <label>PAÍS DE ORIGEN:</label>
+                            <select id="countrySelect" onchange="updateDemo()">
+                                <option value="">-- Seleccionar país --</option>
+                                <optgroup label="América del Sur">
+                                    <option value="AR">🇦🇷 Argentina</option>
+                                    <option value="BR">🇧🇷 Brasil</option>
+                                    <option value="PY">🇵🇾 Paraguay</option>
+                                    <option value="UY">🇺🇾 Uruguay</option>
+                                    <option value="BO">🇧🇴 Bolivia</option>
+                                    <option value="CL">🇨🇱 Chile</option>
+                                    <option value="CO">🇨🇴 Colombia</option>
+                                    <option value="EC">🇪🇨 Ecuador</option>
+                                    <option value="PE">🇵🇪 Perú</option>
+                                    <option value="VE">🇻🇪 Venezuela</option>
+                                </optgroup>
+                                <optgroup label="América del Norte">
                                     <option value="US">🇺🇸 Estados Unidos</option>
-                                    <option value="EU">🇪🇺 Unión Europea</option>
+                                    <option value="CA">🇨🇦 Canadá</option>
+                                    <option value="MX">🇲🇽 México</option>
+                                </optgroup>
+                                <optgroup label="Europa">
+                                    <option value="DE">🇩🇪 Alemania</option>
+                                    <option value="FR">🇫🇷 Francia</option>
+                                    <option value="IT">🇮🇹 Italia</option>
+                                    <option value="ES">🇪🇸 España</option>
+                                    <option value="NL">🇳🇱 Países Bajos</option>
+                                </optgroup>
+                                <optgroup label="Asia">
                                     <option value="CN">🇨🇳 China</option>
                                     <option value="JP">🇯🇵 Japón</option>
-                                    <option value="MX">🇲🇽 México</option>
-                                </select>
-                                
-                                <select id="regulation-category">
-                                    <option value="">Todas las categorías...</option>
-                                    <option value="customs">Aduanas</option>
-                                    <option value="tax">Impuestos</option>
-                                    <option value="safety">Seguridad</option>
-                                    <option value="environmental">Medio Ambiente</option>
-                                </select>
-                                
-                                <input type="text" id="regulation-search" placeholder="Buscar regulación...">
-                                <button class="btn-primary">🔍 Buscar</button>
+                                    <option value="KR">🇰🇷 Corea del Sur</option>
+                                    <option value="IN">🇮🇳 India</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>PRODUCTO:</label>
+                            <div class="product-search-container">
+                                 <input type="text" id="productSearch" placeholder="Buscá tu producto con nuestro nomenclador inteligente" oninput="searchProductAdvanced()" onblur="hideProductSuggestions()" autocomplete="off">
+                                 <div class="product-suggestions" id="productSuggestions"></div>
                             </div>
                         </div>
                         
-                        <div class="regulations-list">
-                            <h3>Regulaciones Relevantes</h3>
-                            <div class="regulation-item">
-                                <div class="regulation-header">
-                                    <h4>🇺🇸 FDA Food Safety Modernization Act</h4>
-                                    <span class="regulation-status active">Vigente</span>
-                                </div>
-                                <p>Regulación sobre seguridad alimentaria para importaciones a Estados Unidos</p>
-                                <div class="regulation-meta">
-                                    <span>Categoría: Seguridad</span>
-                                    <span>Última actualización: 2024-01-15</span>
-                                </div>
-                                <button class="btn-secondary">Ver Detalles</button>
-                            </div>
-                            
-                            <div class="regulation-item">
-                                <div class="regulation-header">
-                                    <h4>🇪🇺 GDPR - General Data Protection Regulation</h4>
-                                    <span class="regulation-status active">Vigente</span>
-                                </div>
-                                <p>Regulación de protección de datos para empresas que operan en la UE</p>
-                                <div class="regulation-meta">
-                                    <span>Categoría: Privacidad</span>
-                                    <span>Última actualización: 2023-12-10</span>
-                                </div>
-                                <button class="btn-secondary">Ver Detalles</button>
+                        <div class="form-group">
+                            <label>OPERACIÓN:</label>
+                            <div class="operation-buttons">
+                                <button class="operation-btn" id="exportBtn" onclick="selectOperation('export')">
+                                    📤 EXPORTAR
+                                </button>
+                                <button class="operation-btn" id="importBtn" onclick="selectOperation('import')">
+                                    📥 IMPORTAR
+                                </button>
                             </div>
                         </div>
+                    <button class="search-btn" onclick="performSearchAdvanced()">BUSCAR</button>
                     </div>
-                </section>
-
-                <!-- MÓDULO 5: Legal - Compliance -->
-                <section id="compliance-section" class="content-section">
-                    <div class="module-header">
-                        <h2>✅ Sistema de Compliance</h2>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- FEATURES SECTION -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="features-header">
+                <h2>Nuestras Soluciones</h2>
+                <p>Herramientas especializadas para cada tipo de empresa en el comercio internacional</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card" onclick="navigateToSection('empresas-directas')">
+                    <div class="feature-icon">🏭</div>
+                    <h3>Empresas Directas</h3>
+                    <p>Exportar sin intermediarios con herramientas especializadas para grandes empresas manufactureras.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateToSection('empresas-indirectas')">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Empresas Indirectas</h3>
+                    <p>Simplificar cadenas logísticas complejas con tecnología de punta para distribuidores.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateToSection('pymes')">
+                    <div class="feature-icon">🚀</div>
+                    <h3>PYMEs</h3>
+                    <p>Acceso igualitario al mundo para pequeñas y medianas empresas con herramientas simplificadas.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateToSection('cooperativas')">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Cooperativas</h3>
+                    <p>Potenciar economías regionales uniendo fuerzas para competir en mercados internacionales.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateToSection('leyes-tratados')">
+                    <div class="feature-icon">📚</div>
+                    <h3>Leyes y Tratados</h3>
+                    <p>Normativa actualizada al instante con base de datos legal completa y siempre vigente.</p>
+                </div>
+                
+                <div class="feature-card" onclick="navigateToSection('analisis-comercial')">
+                    <div class="feature-icon">📈</div>
+                    <h3>Análisis Comercial</h3>
+                    <p>Datos en tiempo real para decidir con inteligencia artificial y análisis predictivo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- ABOUT SECTION -->
+    <section class="about" id="quienes-somos">
+        <div class="about-container">
+            <div class="about-content">
+                <h2>Quiénes Somos</h2>
+                <p>Somos <strong>JoguaMundu</strong>, una plataforma digital innovadora diseñada para transformar la manera en que las empresas se vinculan con el comercio exterior.</p>
+                <p>La iniciativa surge de la experiencia y formación de su creadora, desarrolladora y estudiante de Comercio Exterior, quien identificó una problemática concreta: la falta de herramientas integrales, accesibles y confiables.</p>
+                <a href="#" class="btn-primary" onclick="openModal()">Conocer más</a>
+            </div>
+            <div class="about-image">
+                <div class="about-illustration">
+                    🌐
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CONTACT SECTION -->
+    <section class="contact" id="contacto">
+        <div class="contact-container">
+            <div class="contact-header">
+                <h2>Contacto</h2>
+                <p>¿Tienes preguntas o quieres saber más sobre JoguaMundu? Contáctanos a través de nuestros canales oficiales.</p>
+            </div>
+            
+            <div class="contact-options">
+                <a href="mailto:info@joguamundu.com" class="contact-option" target="_blank">
+                    <div class="contact-icon gmail-icon">
+                        ✉️
                     </div>
-                    
-                    <div class="compliance-dashboard">
-                        <div class="compliance-overview">
-                            <h3>Estado General de Compliance</h3>
-                            <div class="compliance-score">
-                                <div class="score-circle">
-                                    <div class="score-value">87%</div>
-                                    <div class="score-label">Compliance Score</div>
-                                </div>
-                            </div>
-                            
-                            <div class="compliance-areas">
-                                <div class="area-item">
-                                    <div class="area-icon">📋</div>
-                                    <div class="area-info">
-                                        <h4>Documentación</h4>
-                                        <div class="area-progress">
-                                            <div class="progress-bar" style="width: 95%"></div>
-                                            <span>95%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="area-item">
-                                    <div class="area-icon">🛡️</div>
-                                    <div class="area-info">
-                                        <h4>Seguridad</h4>
-                                        <div class="area-progress">
-                                            <div class="progress-bar" style="width: 82%"></div>
-                                            <span>82%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="area-item">
-                                    <div class="area-icon">💰</div>
-                                    <div class="area-info">
-                                        <h4>Fiscal</h4>
-                                        <div class="area-progress">
-                                            <div class="progress-bar" style="width: 78%"></div>
-                                            <span>78%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="compliance-tasks">
-                            <h3>Tareas Pendientes</h3>
-                            <div class="tasks-list">
-                                <div class="task-item high">
-                                    <div class="task-priority">🔴</div>
-                                    <div class="task-info">
-                                        <h4>Renovar certificado ISO 9001</h4>
-                                        <p>Vence en 15 días</p>
-                                    </div>
-                                    <button class="btn-primary">Gestionar</button>
-                                </div>
-                                
-                                <div class="task-item medium">
-                                    <div class="task-priority">🟡</div>
-                                    <div class="task-info">
-                                        <h4>Actualizar políticas de privacidad</h4>
-                                        <p>Vence en 30 días</p>
-                                    </div>
-                                    <button class="btn-secondary">Gestionar</button>
-                                </div>
-                                
-                                <div class="task-item low">
-                                    <div class="task-priority">🟢</div>
-                                    <div class="task-info">
-                                        <h4>Revisión anual de contratos</h4>
-                                        <p>Vence en 60 días</p>
-                                    </div>
-                                    <button class="btn-secondary">Gestionar</button>
-                                </div>
-                            </div>
-                        </div>
+                    <h3>Gmail</h3>
+                    <p>Envíanos un correo electrónico</p>
+                </a>
+                
+                <a href="https://linkedin.com/company/joguamundu" class="contact-option" target="_blank">
+                    <div class="contact-icon linkedin-icon">
+                        💼
                     </div>
-                </section>
-
-                <!-- MÓDULO 5: Legal - Treaties -->
-                <section id="treaties-section" class="content-section">
-                    <div class="module-header">
-                        <h2>🤝 Tratados Comerciales</h2>
+                    <h3>LinkedIn</h3>
+                    <p>Síguenos en LinkedIn</p>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>JoguaMundu</h3>
+                    <p>Sistema Integral del Comercio Internacional</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#quienes-somos">Quiénes somos</a></li>
+                        <li><a href="#features">Servicios</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Servicios</h3>
+                    <ul>
+                        <li><a href="#empresas-directas">Empresas Directas</a></li>
+                        <li><a href="#pymes">PYMEs</a></li>
+                        <li><a href="#cooperativas">Cooperativas</a></li>
+                        <li><a href="#analisis-comercial">Análisis Comercial</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Newsletter</h3>
+                    <p>Suscríbete para recibir las últimas actualizaciones</p>
+                    <div style="margin-top: 1rem;">
+                        <input type="email" placeholder="Tu email" style="padding: 0.5rem; border-radius: 4px; border: none; margin-right: 0.5rem;">
+                        <button class="btn-primary" style="padding: 0.5rem 1rem;">Suscribir</button>
                     </div>
-                    
-                    <div class="treaties-dashboard">
-                        <div class="treaties-map">
-                            <h3>Mapa de Tratados Comerciales</h3>
-                            <div class="map-container">
-                                <!-- Aquí iría un mapa interactivo -->
-                                <div class="map-placeholder">
-                                    <p>🗺️ Mapa interactivo de tratados comerciales</p>
-                                    <p>Selecciona un país para ver los tratados aplicables</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="treaties-list">
-                            <h3>Tratados Activos</h3>
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Tratado</th>
-                                        <th>Países</th>
-                                        <th>Tipo</th>
-                                        <th>Vigencia</th>
-                                        <th>Beneficios</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>USMCA (T-MEC)</td>
-                                        <td>🇺🇸🇲🇽🇨🇦</td>
-                                        <td>Libre Comercio</td>
-                                        <td>2020-presente</td>
-                                        <td>Reducción arancelaria 0-5%</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mercosur</td>
-                                        <td>🇧🇷🇦🇷🇺🇾🇵🇾</td>
-                                        <td>Unión Aduanera</td>
-                                        <td>1991-presente</td>
-                                        <td>Arancel externo común</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Alianza del Pacífico</td>
-                                        <td>🇲🇽🇨🇴🇵🇪🇨🇱</td>
-                                        <td>Integración</td>
-                                        <td>2012-presente</td>
-                                        <td>Libre circulación 92%</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- MÓDULO 5: Legal - Legal Alerts -->
-                <section id="legal-alerts-section" class="content-section">
-                    <div class="module-header">
-                        <h2>🚨 Alertas Legales</h2>
-                        <button class="btn-primary" onclick="createLegalAlert()">➕ Nueva Alerta</button>
-                    </div>
-                    
-                    <div class="alerts-dashboard">
-                        <!-- Contenido de alerts-dashboard -->
-                        <div class="alerts-list">
-                            <!-- Contenido de alertas -->
-                        </div>
-                    </div>
-                </section>
-            </main>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 JoguaMundu. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- MODAL -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h2>Sobre JoguaMundu</h2>
+            <p>Nuestro propósito es democratizar el acceso al comercio internacional, simplificando el camino tanto para grandes empresas como para PYMEs, cooperativas y emprendedores que desean exportar o importar de manera segura, legal y estratégica.</p>
+            
+            <h3>Objetivos principales</h3>
+            <ul>
+                <li><strong>Centralizar la información legal y normativa:</strong> recopilando tratados, acuerdos internacionales, leyes locales y reglamentaciones aduaneras.</li>
+                <li><strong>Facilitar el análisis de mercado:</strong> ofreciendo datos estadísticos, comparativos y actualizados que permitan a las empresas tomar decisiones informadas.</li>
+                <li><strong>Impulsar la internacionalización de PYMEs y cooperativas:</strong> brindándoles las mismas oportunidades de acceso al comercio exterior que a las grandes corporaciones.</li>
+                <li><strong>Reducir costos y tiempos:</strong> concentrando en un mismo entorno la información que habitualmente está dispersa y poco accesible.</li>
+            </ul>
+            
+            <h3>Ventajas de la plataforma</h3>
+            <ul>
+                <li><strong>Enfoque legal-documental:</strong> JoguaMundu no es solo un directorio o buscador, sino una plataforma basada en documentaciones oficiales.</li>
+                <li><strong>Integralidad:</strong> Conecta datos legales, logísticos, aduaneros y comerciales en un mismo entorno digital.</li>
+                <li><strong>Accesibilidad:</strong> Diseñada para ser clara, intuitiva y de fácil acceso.</li>
+                <li><strong>Confianza:</strong> La información está respaldada por fuentes oficiales y actualizada constantemente.</li>
+                <li><strong>Escalabilidad:</strong> Pensada para crecer y adaptarse a los cambios del comercio internacional.</li>
+            </ul>
         </div>
     </div>
     
-    <!-- Scripts JS -->
-    <script type="module" src="./js/app.js"></script>
-    <script type="module" src="./js/auth.js"></script>
-    <script type="module" src="./js/dashboard.js"></script>
-    <script type="module" src="./js/charts.js"></script>
-    <script type="module" src="./js/companies.js"></script>
+    <script>
+        // Variables globales
+        let selectedOperation = '';
+        let selectedProduct = '';
+        
+        // Toggle mobile menu
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+        
+        // Búsqueda inteligente de productos MEJORADA
+        function searchProduct() {
+            const query = document.getElementById('productSearch').value.toLowerCase();
+            const suggestionsContainer = document.getElementById('productSuggestions');
+            
+            if (query.length < 2) {
+                suggestionsContainer.style.display = 'none';
+                return;
+            }
+            
+            // Usar la función del nomenclador con búsqueda mejorada
+            let results = [];
+            
+            // Verificar si existe la función buscarProducto
+            if (typeof buscarProducto === 'function') {
+                results = buscarProducto(query);
+            } else {
+                // Fallback con productos comunes si no existe el nomenclador
+                const productosComunes = [
+                    {codigo: '1201.00', descripcion: 'Habas (porotos, frijoles, fréjoles) de soja (soya), incluso quebrantadas'},
+                    {codigo: '1001.99', descripcion: 'Trigo duro y los demás trigos'},
+                    {codigo: '0201.10', descripcion: 'Carne de bovino, fresca o refrigerada, en canales o medias canales'},
+                    {codigo: '1005.90', descripcion: 'Maíz, excepto para siembra'},
+                    {codigo: '2304.00', descripcion: 'Tortas y demás residuos sólidos de la extracción del aceite de soja'},
+                    {codigo: '1701.14', descripcion: 'Azúcar de caña, en bruto'},
+                    {codigo: '0202.20', descripcion: 'Carne de bovino, congelada, deshuesada'},
+                    {codigo: '1512.11', descripcion: 'Aceite de girasol o cártamo, en bruto'},
+                    {codigo: '0207.14', descripcion: 'Trozos y despojos de gallo o gallina, congelados'},
+                    {codigo: '2601.12', descripcion: 'Minerales de hierro aglomerados y sus concentrados'}
+                ];
+                
+                results = productosComunes.filter(product => 
+                    product.descripcion.toLowerCase().includes(query) ||
+                    product.codigo.includes(query)
+                );
+            }
+            
+            if (results.length > 0) {
+                suggestionsContainer.innerHTML = '';
+                results.slice(0, 8).forEach(product => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.innerHTML = `<strong>${product.codigo}</strong> - ${product.descripcion}`;
+                    item.onclick = () => selectProduct(product);
+                    suggestionsContainer.appendChild(item);
+                });
+                suggestionsContainer.style.display = 'block';
+            } else {
+                suggestionsContainer.innerHTML = '<div class="suggestion-item">No se encontraron productos</div>';
+                suggestionsContainer.style.display = 'block';
+            }
+        }
+        
+        function selectProduct(product) {
+            selectedProduct = product;
+            document.getElementById('productSearch').value = `${product.codigo} - ${product.descripcion}`;
+            document.getElementById('productSuggestions').style.display = 'none';
+        }
+        
+        function hideProductSuggestions() {
+            setTimeout(() => {
+                document.getElementById('productSuggestions').style.display = 'none';
+            }, 200);
+        }
+        
+        // Selección de operación
+        function selectOperation(operation) {
+            selectedOperation = operation;
+            
+            // Remover clase active de todos los botones
+            document.querySelectorAll('.operation-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Agregar clase active al botón seleccionado
+            document.getElementById(operation + 'Btn').classList.add('active');
+        }
+        
+        // Actualizar demo
+        function updateDemo() {
+            const country = document.getElementById('countrySelect').value;
+            const result = document.getElementById('demoResult');
+            
+            if (country && selectedProduct && selectedOperation) {
+                performSearch();
+            }
+        }
+        
+        // Realizar búsqueda MEJORADA
+        function performSearch() {
+            const country = document.getElementById('countrySelect').value;
+            const result = document.getElementById('demoResult');
+            
+            if (!country) {
+                alert('Por favor selecciona un país de origen');
+                return;
+            }
+            
+            if (!selectedProduct) {
+                alert('Por favor selecciona un producto');
+                return;
+            }
+            
+            if (!selectedOperation) {
+                alert('Por favor selecciona si vas a exportar o importar');
+                return;
+            }
+            
+            const countryNames = {
+                'AR': 'Argentina', 'BR': 'Brasil', 'PY': 'Paraguay', 'UY': 'Uruguay',
+                'BO': 'Bolivia', 'CL': 'Chile', 'CO': 'Colombia', 'EC': 'Ecuador', 'PE': 'Perú', 'VE': 'Venezuela',
+                'US': 'Estados Unidos', 'CA': 'Canadá', 'MX': 'México',
+                'DE': 'Alemania', 'FR': 'Francia', 'IT': 'Italia', 'ES': 'España', 'NL': 'Países Bajos',
+                'CN': 'China', 'JP': 'Japón', 'KR': 'Corea del Sur', 'IN': 'India'
+            };
+            
+            const operationText = selectedOperation === 'export' ? 'Exportación' : 'Importación';
+            
+            result.innerHTML = `
+                <strong>🌍 Análisis Global Completado:</strong><br>
+                ${operationText} de ${selectedProduct.descripcion} (${selectedProduct.codigo})<br>
+                País: ${countryNames[country]}<br>
+                <em>✅ Conectando con mercados internacionales...</em>
+            `;
+            result.style.display = 'block';
+        }
+        
+        // Navigate to sections
+        function navigateToSection(sectionId) {
+            console.log('Navegando a:', sectionId);
+        }
+        
+        // Modal functions
+        function openModal() {
+            document.getElementById('aboutModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('aboutModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+    <script src="./js/nomeclador-mercosur.js"></script>
+    <script>
+        // Reemplazar función original con la mejorada
+        window.searchProduct = searchProductAdvanced;
+        window.performSearch = performSearchAdvanced;
+        
+        // Variable global para operación seleccionada
+        window.selectedOperation = null;
+        
+        // Función para seleccionar operación (mantener compatibilidad)
+        function selectOperation(operation) {
+            window.selectedOperation = operation;
+            
+            // Actualizar estilos de botones
+            document.getElementById('exportBtn').classList.remove('active');
+            document.getElementById('importBtn').classList.remove('active');
+            document.getElementById(operation + 'Btn').classList.add('active');
+        }
+    </script>
+
+    <script src="js/nomeclador-mercosur.js"></script>
 </body>
 </html>

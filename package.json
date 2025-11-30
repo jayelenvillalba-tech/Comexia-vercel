@@ -1,0 +1,21 @@
+{
+  "name": "comexia-migration",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "migrate:empresas": "tsx database/migrations/migrate-empresas-data.ts",
+    "seed:companies": "tsx database/seeds/load-companies.ts",
+    "verify:companies": "tsx database/verify-companies.ts",
+    "verify:sqlite": "tsx database/verify-companies-sqlite.ts",
+    "migrate:full": "npm run migrate:empresas && npm run seed:companies"
+  },
+  "dependencies": {
+    "@types/node": "^20.0.0",
+    "drizzle-orm": "^0.44.5",
+    "drizzle-zod": "^0.8.3",
+    "postgres": "^3.4.3",
+    "sql.js": "^1.8.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

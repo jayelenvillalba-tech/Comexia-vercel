@@ -1,0 +1,27 @@
+{
+  "name": "comexia-backend",
+  "version": "1.0.0",
+  "description": "Backend server for ComexIA application",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "tsx server.ts",
+    "dev": "tsx watch server.ts"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "drizzle-orm": "^0.30.0",
+    "postgres": "^3.4.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.1",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.24",
+    "@types/cors": "^2.8.17"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

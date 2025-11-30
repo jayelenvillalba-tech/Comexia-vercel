@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(240 10% 3.9%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(240 10% 3.9%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(240 10% 3.9%);
+  --primary: hsl(203.89 88.28% 53.14%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(240 4.8% 95.9%);
+  --secondary-foreground: hsl(240 5.9% 10%);
+  --muted: hsl(240 4.8% 95.9%);
+  --muted-foreground: hsl(240 3.8% 46.1%);
+  --accent: hsl(240 4.8% 95.9%);
+  --accent-foreground: hsl(240 5.9% 10%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 5.9% 90%);
+  --input: hsl(240 5.9% 90%);
+  --ring: hsl(203.89 88.28% 53.14%);
+  --chart-1: hsl(203.89 88.28% 53.14%);
+  --chart-2: hsl(120 60% 50%);
+  --chart-3: hsl(60 60% 50%);
+  --chart-4: hsl(300 60% 50%);
+  --chart-5: hsl(30 60% 50%);
+  --radius: 0.5rem;
+  --kora-primary: hsl(203.89 88.28% 53.14%);
+  --kora-primary-dark: hsl(210 100% 38%);
+  --kora-primary-light: hsl(203 91% 67%);
+  --kora-secondary: hsl(0 0% 26%);
+  --kora-success: hsl(122 39% 49%);
+  --kora-warning: hsl(36 100% 50%);
+  --kora-error: hsl(4 90% 58%);
+  --kora-surface: hsl(0 0% 98%);
+  --kora-surface-variant: hsl(0 0% 96%);
+}
+
+/* World Map Background */
+.world-map-bg {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(34, 197, 94, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+  background-size: 600px 600px, 800px 800px, 400px 400px;
+  background-position: 0% 0%, 100% 100%, 50% 50%;
+  animation: worldMapFloat 20s ease-in-out infinite;
+}
+
+@keyframes worldMapFloat {
+  0%, 100% {
+    background-position: 0% 0%, 100% 100%, 50% 50%;
+  }
+  50% {
+    background-position: 100% 0%, 0% 100%, 30% 70%;
+  }
+}
+
+.dark {
+  --background: hsl(240 10% 3.9%);
+  --foreground: hsl(0 0% 98%);
+  --card: hsl(240 10% 3.9%);
+  --card-foreground: hsl(0 0% 98%);
+  --popover: hsl(240 10% 3.9%);
+  --popover-foreground: hsl(0 0% 98%);
+  --primary: hsl(203.89 88.28% 53.14%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(240 3.7% 15.9%);
+  --secondary-foreground: hsl(0 0% 98%);
+  --muted: hsl(240 3.7% 15.9%);
+  --muted-foreground: hsl(240 5% 64.9%);
+  --accent: hsl(240 3.7% 15.9%);
+  --accent-foreground: hsl(0 0% 98%);
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --border: hsl(240 3.7% 15.9%);
+  --input: hsl(240 3.7% 15.9%);
+  --ring: hsl(203.89 88.28% 53.14%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Roboto', sans-serif;
+  }
+}
+
+@layer components {
+  .world-map-bg {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/World_map_blank_without_borders.svg/2000px-World_map_blank_without_borders.svg.png');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+  }
+  
+  .glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+  }
+  
+  .dark .glass-card {
+    background: rgba(24, 24, 27, 0.95);
+  }
+}
+
+@layer utilities {
+  .text-kora-primary {
+    color: var(--kora-primary);
+  }
+  
+  .bg-kora-primary {
+    background-color: var(--kora-primary);
+  }
+  
+  .border-kora-primary {
+    border-color: var(--kora-primary);
+  }
+  
+  .text-kora-success {
+    color: var(--kora-success);
+  }
+  
+  .bg-kora-success {
+    background-color: var(--kora-success);
+  }
+  
+  .text-kora-warning {
+    color: var(--kora-warning);
+  }
+  
+  .bg-kora-warning {
+    background-color: var(--kora-warning);
+  }
+  
+  .text-kora-error {
+    color: var(--kora-error);
+  }
+  
+  .bg-kora-error {
+    background-color: var(--kora-error);
+  }
+}
