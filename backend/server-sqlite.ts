@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { db } from '../database/db';
+import { db, initDatabase } from '../database/db-sqlite';
 import { companies, hsSubpartidas, hsPartidas, hsChapters, hsSections } from '../shared/shared/schema-sqlite';
 import { eq, like, or, and, sql, desc } from 'drizzle-orm';
 import { countries, getCountryTreaties, getTariffReduction } from '../shared/shared/countries-data';

@@ -1,7 +1,8 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/hooks/use-language";
-import { Plus, Search, Filter, TrendingUp, Package, Globe, Calendar } from "lucide-react";
+import { Plus, Search, Filter, TrendingUp, Package, Globe, Calendar, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,11 +11,16 @@ import Header from "@/components/header";
 import PostCard from "@/components/marketplace/post-card";
 import PostForm from "@/components/marketplace/post-form";
 import MarketplaceFilters from "@/components/marketplace/filters";
+import MarketplaceSidebar from "@/components/marketplace/sidebar";
+import AuthGuardModal from "@/components/auth/auth-guard-modal";
+import { useUser } from "@/context/user-context";
 
 export default function Marketplace() {
   const { language } = useLanguage();
+  const { user } = useUser();
   const queryClient = useQueryClient();
   const [showPostForm, setShowPostForm] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
@@ -24,6 +30,40 @@ export default function Marketplace() {
     dateRange: "all" as "all" | "today" | "week" | "month",
     verifiedOnly: false
   });
+
+  // Load context from simulators
+  useEffect(() => {
+    const savedContext = sessionStorage.getItem('searchContext');
+    if (savedContext) {
+      try {
+        const { product, origin, operation } = JSON.parse(savedContext);
+        
+        // Auto-apply filters based on context
+        const targetType = operation === 'export' ? 'buy' : 'sell';
+        
+        setFilters(prev => ({
+          ...prev,
+          type: targetType,
+          hsCode: product?.code || "",
+          country: origin || ""
+        }));
+
+        if (product?.code) {
+          setSearchQuery(product.code);
+        }
+      } catch (e) {
+        console.error('Error parsing search context', e);
+      }
+    }
+  }, []);
+
+  const handleCreatePostClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      setShowPostForm(true);
+    }
+  };
 
   // Fetch marketplace posts from API
   const { data: posts = [], isLoading, error } = useQuery({
@@ -38,8 +78,10 @@ export default function Marketplace() {
       
       const response = await fetch(`/api/marketplace/posts?${params.toString()}`);
       if (!response.ok) throw new Error('Failed to fetch posts');
-      return response.json();
-    }
+      const data = await response.json();
+      return data;
+    },
+    initialData: [] 
   });
 
   // Create post mutation
@@ -69,7 +111,7 @@ export default function Marketplace() {
     return true;
   });
 
-  // Calculate stats
+  // Calculate stats logic remains same but simplified for rewriting:
   const stats = {
     totalPosts: posts.length,
     verifiedCompanies: new Set(posts.filter((p: any) => p.company?.verified).map((p: any) => p.company?.id)).size,
@@ -83,8 +125,16 @@ export default function Marketplace() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-[#0A1929] flex flex-col font-sans">
       <Header />
+      <AuthGuardModal 
+        open={showAuthModal} 
+        onOpenChange={setShowAuthModal}
+        title={language === 'es' ? 'Acceso a Publicaciones' : 'Posting Access'}
+        description={language === 'es' 
+          ? 'Necesitas una cuenta verificada para publicar oportunidades de negocio.' 
+          : 'You need a verified account to post business opportunities.'}
+      />
       
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header Section */}
@@ -92,69 +142,77 @@ export default function Marketplace() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">
-                {language === 'es' ? '🌐 Marketplace B2B' : '🌐 B2B Marketplace'}
+                {language === 'es' ? '🌐 Mercado Global' : '🌐 Global Marketplace'}
               </h1>
-              <p className="text-slate-300">
+              <p className="text-slate-400">
                 {language === 'es' 
                   ? 'Conecta con empresas verificadas de comercio internacional'
                   : 'Connect with verified international trade companies'}
               </p>
             </div>
             <Button
-              onClick={() => setShowPostForm(true)}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold shadow-lg"
+              onClick={handleCreatePostClick}
+              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg shadow-blue-500/20"
             >
               <Plus className="w-5 h-5 mr-2" />
-              {language === 'es' ? 'Nueva Publicación' : 'New Post'}
+              {language === 'es' ? 'Publicar Solicitud' : 'Post Request'}
             </Button>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <Card className="bg-[#0D2137] shadow-sm border-cyan-900/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-300 text-sm">{language === 'es' ? 'Publicaciones Activas' : 'Active Posts'}</p>
+                    <p className="text-slate-400 text-sm font-medium">{language === 'es' ? 'Publicaciones Activas' : 'Active Posts'}</p>
                     <p className="text-white text-2xl font-bold">{stats.totalPosts}</p>
                   </div>
-                  <TrendingUp className="w-8 h-8 text-green-400" />
+                  <div className="p-2 bg-green-900/20 rounded-lg">
+                    <TrendingUp className="w-6 h-6 text-green-500" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <Card className="bg-[#0D2137] shadow-sm border-cyan-900/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-300 text-sm">{language === 'es' ? 'Empresas Verificadas' : 'Verified Companies'}</p>
+                    <p className="text-slate-400 text-sm font-medium">{language === 'es' ? 'Empresas Verificadas' : 'Verified Companies'}</p>
                     <p className="text-white text-2xl font-bold">{stats.verifiedCompanies}</p>
                   </div>
-                  <Package className="w-8 h-8 text-blue-400" />
+                  <div className="p-2 bg-blue-900/20 rounded-lg">
+                    <Package className="w-6 h-6 text-blue-500" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <Card className="bg-[#0D2137] shadow-sm border-cyan-900/30">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-300 text-sm">{language === 'es' ? 'Países' : 'Countries'}</p>
+                    <p className="text-slate-400 text-sm font-medium">{language === 'es' ? 'Países' : 'Countries'}</p>
                     <p className="text-white text-2xl font-bold">{stats.countries}</p>
                   </div>
-                  <Globe className="w-8 h-8 text-purple-400" />
+                  <div className="p-2 bg-purple-900/20 rounded-lg">
+                    <Globe className="w-6 h-6 text-purple-500" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
             
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+            <Card className="bg-white shadow-sm border-slate-200">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-slate-300 text-sm">{language === 'es' ? 'Hoy' : 'Today'}</p>
-                    <p className="text-white text-2xl font-bold">{stats.todayPosts}</p>
+                    <p className="text-slate-500 text-sm font-medium">{language === 'es' ? 'Nuevas Hoy' : 'New Today'}</p>
+                    <p className="text-slate-900 text-2xl font-bold">{stats.todayPosts}</p>
                   </div>
-                  <Calendar className="w-8 h-8 text-yellow-400" />
+                  <div className="p-2 bg-yellow-100 rounded-lg">
+                    <Calendar className="w-6 h-6 text-yellow-600" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -169,13 +227,13 @@ export default function Marketplace() {
                 placeholder={language === 'es' ? 'Buscar por producto o HS Code...' : 'Search by product or HS Code...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-slate-400"
+                className="pl-10 bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className="bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
             >
               <Filter className="w-5 h-5 mr-2" />
               {language === 'es' ? 'Filtros' : 'Filters'}
@@ -197,40 +255,48 @@ export default function Marketplace() {
           )}
         </div>
 
-        {/* Feed */}
-        <div className="space-y-4">
-          {isLoading ? (
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardContent className="p-12 text-center">
-                <div className="animate-spin w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                <p className="text-white">{language === 'es' ? 'Cargando publicaciones...' : 'Loading posts...'}</p>
-              </CardContent>
-            </Card>
-          ) : error ? (
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardContent className="p-12 text-center">
-                <p className="text-red-400">{language === 'es' ? 'Error al cargar publicaciones' : 'Error loading posts'}</p>
-              </CardContent>
-            </Card>
-          ) : filteredPosts.length === 0 ? (
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardContent className="p-12 text-center">
-                <Package className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-white text-xl font-bold mb-2">
-                  {language === 'es' ? 'No se encontraron publicaciones' : 'No posts found'}
-                </h3>
-                <p className="text-slate-300">
-                  {language === 'es' 
-                    ? 'Intenta ajustar los filtros o crea una nueva publicación'
-                    : 'Try adjusting the filters or create a new post'}
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredPosts.map((post: any) => (
-              <PostCard key={post.id} post={post} />
-            ))
-          )}
+        {/* Layout: Sidebar + Feed */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Left Sidebar - Hidden on mobile */}
+          <div className="hidden lg:block lg:col-span-1">
+            <MarketplaceSidebar />
+          </div>
+
+          {/* Main Feed */}
+          <div className="lg:col-span-3 space-y-4">
+            {isLoading ? (
+              <Card className="bg-white border-slate-200">
+                <CardContent className="p-12 text-center">
+                  <div className="animate-spin w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                  <p className="text-slate-500">{language === 'es' ? 'Cargando publicaciones...' : 'Loading posts...'}</p>
+                </CardContent>
+              </Card>
+            ) : error ? (
+              <Card className="bg-white border-slate-200">
+                <CardContent className="p-12 text-center">
+                  <p className="text-red-500">{language === 'es' ? 'Error al cargar publicaciones' : 'Error loading posts'}</p>
+                </CardContent>
+              </Card>
+            ) : filteredPosts.length === 0 ? (
+              <Card className="bg-white border-slate-200">
+                <CardContent className="p-12 text-center">
+                  <Package className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+                  <h3 className="text-slate-900 text-xl font-bold mb-2">
+                    {language === 'es' ? 'No se encontraron publicaciones' : 'No posts found'}
+                  </h3>
+                  <p className="text-slate-500">
+                    {language === 'es' 
+                      ? 'Intenta ajustar los filtros o crea una nueva publicación'
+                      : 'Try adjusting the filters or create a new post'}
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              filteredPosts.map((post: any) => (
+                <PostCard key={post.id} post={post} />
+              ))
+            )}
+          </div>
         </div>
       </div>
 

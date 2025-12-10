@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/hooks/use-language";
+import { Button } from "@/components/ui/button";
 import { MessageCircle, Search, Building2, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -59,12 +60,12 @@ export default function ChatList() {
   };
   
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="h-full flex flex-col bg-[#0A1929] border-r border-cyan-900/30">
       {/* Header */}
-      <div className="p-4 border-b border-white/10">
+      <div className="p-4 border-b border-cyan-900/30">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-white flex items-center">
-            <MessageCircle className="w-6 h-6 mr-2" />
+            <MessageCircle className="w-6 h-6 mr-2 text-cyan-400" />
             {language === 'es' ? 'Conversaciones' : 'Conversations'}
           </h2>
         </div>
@@ -77,7 +78,7 @@ export default function ChatList() {
             placeholder={language === 'es' ? 'Buscar empresa...' : 'Search company...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-slate-400"
+            className="pl-10 bg-[#0D2137] border-cyan-900/30 text-white placeholder:text-slate-500 focus:border-cyan-500"
           />
         </div>
       </div>
@@ -103,6 +104,15 @@ export default function ChatList() {
                   ? 'Contacta empresas desde el marketplace'
                   : 'Contact companies from the marketplace'}
               </p>
+              {!searchQuery && (
+                <Button 
+                   variant="outline" 
+                   className="mt-4 border-cyan-500/30 text-cyan-400 hover:bg-cyan-900/20"
+                   onClick={() => window.location.href = `/chat/demo-conversation`}
+                >
+                   {language === 'es' ? 'Iniciar Chat de Prueba' : 'Start Demo Chat'}
+                </Button>
+              )}
             </CardContent>
           </Card>
         ) : (
@@ -110,7 +120,7 @@ export default function ChatList() {
             <Card
               key={convo.id}
               onClick={() => navigate(`/chat/${convo.id}`)}
-              className="bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 hover:border-blue-500/50 transition-all cursor-pointer"
+              className="bg-[#0D2137] border-cyan-900/30 hover:border-cyan-500/50 transition-all cursor-pointer"
             >
               <CardContent className="p-4">
                 <div className="flex items-start justify-between">
@@ -142,7 +152,7 @@ export default function ChatList() {
                     
                     {/* Unread Badge */}
                     {convo.unreadCount > 0 && (
-                      <Badge className="bg-blue-600 text-white">
+                      <Badge className="bg-cyan-600 text-white">
                         {convo.unreadCount}
                       </Badge>
                     )}

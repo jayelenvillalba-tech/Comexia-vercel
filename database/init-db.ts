@@ -93,12 +93,32 @@ const createTables = [
         competition_level TEXT,
         logistics_complexity TEXT
     );`,
+    `CREATE TABLE IF NOT EXISTS country_requirements (
+        id TEXT PRIMARY KEY,
+        country_code TEXT NOT NULL,
+        hs_code TEXT NOT NULL,
+        required_documents TEXT,
+        technical_standards TEXT,
+        phytosanitary_reqs TEXT,
+        labeling_reqs TEXT,
+        packaging_reqs TEXT,
+        estimated_processing_time INTEGER,
+        additional_fees TEXT
+    );`,
+    `CREATE TABLE IF NOT EXISTS country_base_requirements (
+        id TEXT PRIMARY KEY,
+        country_code TEXT NOT NULL UNIQUE,
+        trade_bloc TEXT,
+        base_documents TEXT,
+        general_customs_process TEXT
+    );`,
     // ========== MARKETPLACE TABLES ==========
     `CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         company_id TEXT,
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
         role TEXT,
         verified INTEGER DEFAULT 0,
         phone TEXT,
@@ -209,17 +229,15 @@ const createTables = [
     );`
 ];
 
-async function main() {
+export async function initializeTables() {
     try {
         await initDatabase();
         for (const sql of createTables) {
             sqliteDb.exec(sql);
         }
-        console.log('✅ Tablas creadas exitosamente.');
+        console.log('✅ Tablas verificadas/creadas.');
         saveDatabase();
     } catch (error: any) {
         console.error('❌ Error creando tablas:', error.message);
     }
 }
-
-main();

@@ -287,10 +287,35 @@ export default function LogisticsSimulator({ open, onOpenChange, origin, destina
           </DialogHeader>
 
           <div className="space-y-4 mt-6">
-            <Button className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-6 text-lg font-semibold">
+            <Button 
+              onClick={() => {
+                sessionStorage.setItem('searchContext', JSON.stringify({
+                  product,
+                  origin,
+                  destination,
+                  operation: origin.includes('Argentina') ? 'export' : 'import',
+                  timestamp: Date.now()
+                }));
+                window.location.href = '/marketplace';
+              }}
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-6 text-lg font-semibold"
+            >
               {language === 'es' ? 'Crear Cuenta Gratis' : 'Create Free Account'}
             </Button>
-            <Button variant="outline" className="w-full border-cyan-900/30 text-cyan-400 hover:bg-cyan-900/20">
+            <Button 
+              onClick={() => {
+                sessionStorage.setItem('searchContext', JSON.stringify({
+                  product,
+                  origin,
+                  destination,
+                  operation: origin.includes('Argentina') ? 'export' : 'import',
+                  timestamp: Date.now()
+                }));
+                window.location.href = '/marketplace';
+              }}
+              variant="outline" 
+              className="w-full border-cyan-900/30 text-cyan-400 hover:bg-cyan-900/20"
+            >
               {language === 'es' ? 'Iniciar Sesión' : 'Login'}
             </Button>
             <p className="text-center text-xs text-gray-500">

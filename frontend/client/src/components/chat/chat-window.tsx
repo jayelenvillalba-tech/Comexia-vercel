@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/hooks/use-language";
-import { ArrowLeft, Send, Calculator, Building2, CheckCircle, Users, UserPlus, Sparkles, Phone } from "lucide-react";
+import { ArrowLeft, Send, Calculator, Building2, CheckCircle, Users, UserPlus, Sparkles, Phone, Paperclip, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -12,6 +12,8 @@ import RoleBadge from "./role-badge";
 import SmartReplies from "./smart-replies";
 import QuoteMessage from "./quote-message";
 import AudioCall from "./audio-call";
+import FileBubble from "./file-bubble";
+import PurchaseOrderDialog from "./purchase-order-dialog";
 
 interface Message {
   id: string;
@@ -35,6 +37,46 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   const [, navigate] = useLocation();
   const queryClient = useQueryClient();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showPODialog, setShowPODialog] = useState(false);
+
+  // File Upload Handler
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Create a mock file message
+      const fileMessage: Message = {
+        id: `m-${Date.now()}`,
+        conversationId,
+        senderId: userId,
+        content: JSON.stringify({
+          name: file.name,
+          size: `${(file.size / 1024).toFixed(1)} KB`,
+          type: file.name.split('.').pop() || 'file'
+        }),
+        createdAt: new Date().toISOString(),
+        read: false,
+        messageType: 'file'
+      };
+      
+      onSendMessage(fileMessage.content, 'file');
+    }
+  };
+
+  // PO Handler
+  const handlePOCreate = (orderData: any) => {
+    const poMessage: Message = {
+      id: `m-${Date.now()}`,
+      conversationId,
+      senderId: userId,
+      content: JSON.stringify(orderData),
+      createdAt: new Date().toISOString(),
+      read: false,
+      messageType: 'quote'
+    };
+    onSendMessage(poMessage.content, 'quote');
+  };
   const [messageText, setMessageText] = useState("");
   const [showParticipants, setShowParticipants] = useState(false);
   const [isTransferOpen, setIsTransferOpen] = useState(false);
@@ -47,6 +89,32 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   const { data: messages = [], isLoading } = useQuery<Message[]>({
     queryKey: ['messages', conversationId],
     queryFn: async () => {
+      // Handle demo conversations locally
+      if (conversationId.startsWith('demo-conv-')) {
+        return [
+          {
+            id: 'demo-msg-1',
+            content: language === 'es' 
+              ? 'Hola, me interesa tu publicación. ¿Podrías darme más detalles?' 
+              : 'Hi, I am interested in your post. Could you provide more details?',
+            senderId: userId,
+            messageType: 'text',
+            createdAt: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
+            sender: { name: 'Tú', role: 'Gerente de Compras' }
+          },
+          {
+            id: 'demo-msg-2',
+            content: language === 'es'
+              ? '¡Hola! Claro que sí. Tenemos disponibilidad inmediata para envío a Miami.'
+              : 'Hello! Yes, of course. We have immediate availability for shipping to Miami.',
+            senderId: 'demo-seller',
+            messageType: 'text',
+            createdAt: new Date(Date.now() - 1000 * 60 * 30), // 30 mins ago
+            sender: { name: 'Juan Carlos Pérez', role: 'Director de Exportaciones' }
+          }
+        ];
+      }
+
       const response = await fetch(`/api/chat/conversations/${conversationId}/messages?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch messages');
       return response.json();
@@ -59,13 +127,24 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   const { data: conversations = [] } = useQuery({
     queryKey: ['conversations', userId],
     queryFn: async () => {
-      const response = await fetch(`/api/chat/conversations?userId=${userId}`);
-      if (!response.ok) throw new Error('Failed to fetch conversations');
-      return response.json();
+      try {
+        const response = await fetch(`/api/chat/conversations?userId=${userId}`);
+        if (!response.ok) throw new Error('Failed to fetch conversations');
+        return await response.json();
+      } catch (error) {
+        console.warn('Backend seems down, returning empty conversations list');
+        return [];
+      }
     }
   });
   
-  const conversation = conversations.find((c: any) => c.id === conversationId);
+  const conversation = conversations.find((c: any) => c.id === conversationId) || (conversationId.startsWith('demo-conv-') ? {
+    id: conversationId,
+    company1Id: 'demo-company-1',
+    company2Id: 'demo-company-2',
+    company2: { name: 'Frigoríficos Very', sector: 'Alimentos' }, // Mock other company
+    status: 'active'
+  } : undefined);
   const lastMessage = messages[messages.length - 1];
   
   // Send message mutation
@@ -145,7 +224,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
   };
   
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="h-full flex flex-col bg-[#0A1929]">
       {/* Header */}
       <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-sm flex justify-between items-center">
         <div className="flex items-center">
@@ -178,7 +257,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
            <Button
             variant="ghost"
             size="sm"
-            className="text-purple-300 hover:text-white hover:bg-purple-500/20"
+            className="text-blue-300 hover:text-white hover:bg-blue-500/20"
             title={language === 'es' ? 'Asistente IA' : 'AI Assistant'}
           >
             <Sparkles className="w-5 h-5" />
@@ -265,12 +344,18 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
                       {/* Message bubble */}
                       {message.messageType === 'quote' ? (
                         <QuoteMessage content={message.content} />
+                      ) : message.messageType === 'file' ? (
+                        <FileBubble 
+                           fileName={JSON.parse(message.content).name} 
+                           fileSize={JSON.parse(message.content).size}
+                           fileType={JSON.parse(message.content).type}
+                        />
                       ) : (
                         <div
                           className={`rounded-2xl px-4 py-2 ${
                             isSent
-                              ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-br-none'
-                              : 'bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-bl-none'
+                              ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-br-none'
+                              : 'bg-[#0D2137] backdrop-blur-sm border border-cyan-900/30 text-white rounded-bl-none'
                           } ${message.pending ? 'opacity-50' : ''}`}
                         >
                           <p className="text-sm whitespace-pre-wrap break-words">
@@ -303,6 +388,18 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
             )}
             
             <div className="flex items-center space-x-2 mt-2">
+              <input 
+                 type="file" 
+                 ref={fileInputRef} 
+                 className="hidden" 
+                 onChange={handleFileSelect}
+              />
+              <PurchaseOrderDialog 
+                 open={showPODialog} 
+                 onOpenChange={setShowPODialog}
+                 onSubmit={handlePOCreate}
+              />
+
               {/* Quick actions */}
               <Button
                 variant="ghost"
@@ -311,6 +408,24 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
                 title={language === 'es' ? 'Calculadora de costos' : 'Cost calculator'}
               >
                 <Calculator className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-400 hover:text-white hover:bg-white/10"
+                title={language === 'es' ? 'Adjuntar archivo' : 'Attach file'}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Paperclip className="w-5 h-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-slate-400 hover:text-white hover:bg-white/10"
+                title={language === 'es' ? 'Generar Orden de Compra' : 'Generate PO'}
+                onClick={() => setShowPODialog(true)}
+              >
+                <FileText className="w-5 h-5" />
               </Button>
               
               {/* Message input */}
@@ -327,7 +442,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
               <Button
                 onClick={handleSend}
                 disabled={!messageText.trim() || sendMessageMutation.isPending}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white"
               >
                 <Send className="w-5 h-5" />
               </Button>

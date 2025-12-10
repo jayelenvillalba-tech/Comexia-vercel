@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 config();
 
 // Ruta al archivo de base de datos SQLite
-const dbPath = process.env.SQLITE_DB_PATH || path.join(__dirname, '../comexia.db');
+const dbPath = process.env.SQLITE_DB_PATH || path.join(__dirname, '../comexia_v2.db');
 
 console.log(`📁 Using SQLite database at: ${dbPath}`);
 

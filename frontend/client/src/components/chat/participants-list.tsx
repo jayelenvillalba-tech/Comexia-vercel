@@ -40,8 +40,8 @@ export default function ParticipantsList({ conversationId, onTransferClick }: Pa
   });
   
   return (
-    <div className="w-64 border-l border-white/10 bg-black/20 hidden md:flex flex-col">
-      <div className="p-4 border-b border-white/10 flex items-center justify-between">
+    <div className="w-64 border-l border-cyan-900/30 bg-black/20 hidden md:flex flex-col">
+      <div className="p-4 border-b border-cyan-900/30 flex items-center justify-between">
         <h3 className="text-white font-semibold flex items-center text-sm">
           <Users className="w-4 h-4 mr-2" />
           {language === 'es' ? 'Participantes' : 'Participants'}

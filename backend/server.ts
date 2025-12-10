@@ -1,14 +1,4 @@
 import express from 'express';
-import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { db, initDatabase } from '../database/db-sqlite';
-import { companies, hsSubpartidas, hsPartidas, hsChapters, hsSections } from '../shared/shared/schema-sqlite';
-import { eq, like, or, and, sql, desc } from 'drizzle-orm';
-import { countries, getCountryTreaties, getTariffReduction } from '../shared/shared/countries-data';
-import { getCountryCoordinates } from '../shared/shared/continental-coordinates';
-import { calculateCosts } from './routes/cost-calculator';
-import { analyzeMarket } from './routes/market-analysis';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,6 +10,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'backend/uploads')));
+app.use('/api/verifications', verificationRouter);
 
 // ========== API Routes ==========
 
@@ -43,6 +35,93 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
+// ========== Auth API ==========
+
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { name, email, password, companyName } = req.body;
+    
+    // Check if user exists
+    const existingUser = await db.select().from(users).where(eq(users.email, email));
+    
+    if (existingUser && existingUser.length > 0) {
+       return res.status(400).json({ status: 'error', message: 'User already exists' });
+    }
+
+    let companyId = null;
+    
+    // Create company if provided
+    if (companyName) {
+       const [newCompany] = await db.insert(companies).values({
+          name: companyName,
+          country: 'AR', // Default or from request
+          type: 'exporter', // Default
+          verified: false
+       }).returning();
+       companyId = newCompany.id;
+    }
+
+    // Hash Password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create User
+    const [newUser] = await db.insert(users).values({
+      name,
+      email,
+      password: hashedPassword, 
+      companyId,
+      role: 'admin',
+      verified: false
+    }).returning();
+
+    // Return user without password
+    const { password: _, ...userWithoutPassword } = newUser;
+    res.json(userWithoutPassword);
+
+  } catch (error: any) {
+    console.error('Registration error:', error);
+    res.status(500).json({ status: 'error', error: error.message });
+  }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Find user by email only
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    
+    if (!user) {
+      return res.status(401).json({ status: 'error', message: 'Invalid credentials' });
+    }
+
+    // Compare password
+    const validPassword = await bcrypt.compare(password, user.password);
+
+    if (!validPassword) {
+      return res.status(401).json({ status: 'error', message: 'Invalid credentials' });
+    }
+
+    // Get company info if exists
+    let company = null;
+    if (user.companyId) {
+       const [comp] = await db.select().from(companies).where(eq(companies.id, user.companyId));
+       company = comp;
+    }
+
+    const { password: _, ...userWithoutPassword } = user;
+    
+    res.json({
+       ...userWithoutPassword,
+       company: company || null
+    });
+
+  } catch (error: any) {
+    console.error('Login error:', error);
+    res.status(500).json({ status: 'error', error: error.message });
+  }
+});
+
 // ========== HS Codes API ==========
 
 // Search HS codes
@@ -60,7 +139,9 @@ app.get('/api/hs-codes/search', async (req, res) => {
       // Use direct SQL to search both tables
       const { sqliteDb } = await import('../database/db-sqlite');
       
-      console.log(`🔍 Searching HS codes with query: "${query}"`);
+      console.log(`🔍 Backend: Searching HS codes with query: "${query}"`);
+      console.log(`🔍 Backend: Limit: ${limit}, Offset: ${offset}`);
+      
       const partidasResults = sqliteDb.exec(`
         SELECT * FROM hs_partidas 
         WHERE 
@@ -89,7 +170,7 @@ app.get('/api/hs-codes/search', async (req, res) => {
         const columns = partidasResults[0].columns;
         partidasResults[0].values.forEach((row: any[]) => {
           const obj: any = {};
-          columns.forEach((col, idx) => {
+          columns.forEach((col: any, idx: any) => {
             obj[col] = row[idx];
           });
           results.push(obj);
@@ -375,6 +456,84 @@ app.get('/api/companies/:id', async (req, res) => {
   }
 });
 
+// Get country requirements
+// News API
+import { newsService } from './services/news-service.js';
+
+app.get('/api/news', async (req, res) => {
+  try {
+    const category = req.query.category as string;
+    const news = await newsService.getLatestNews(20, category);
+    res.json(news);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/country-requirements/:countryCode/:hsCode', async (req, res) => {
+  try {
+    const { countryCode, hsCode } = req.params;
+    console.log(`[DEBUG] Requesting Requirements (V2 Smart Layers): Country=${countryCode} HS=${hsCode}`);
+    
+    // 1. Fetch Base Requirements (Layer 1)
+    const baseReqs = await db.select().from(countryBaseRequirements)
+      .where(eq(countryBaseRequirements.countryCode, countryCode))
+      .limit(1);
+
+    // 2. Fetch Specific Requirements (Layer 2)
+    // SMART MATCHING: Find rules where the requested HS Code starts with the Rule's HS Code
+    // e.g. Request '0201' matches Rule '02' (Meat) or '0201' (Beef Cuts)
+    // We order by length(hs_code) DESC to get the most specific rule first
+    const specificReqs = await db.select().from(countryRequirements)
+      .where(and(
+        eq(countryRequirements.countryCode, countryCode),
+        sql`${hsCode} LIKE ${countryRequirements.hsCode} || '%'`
+      ))
+      .orderBy(desc(sql`length(${countryRequirements.hsCode})`))
+      .limit(1);
+
+    // 3. Merge Layers
+    const merged = RegulatoryMerger.merge(
+      baseReqs[0] || null,
+      specificReqs[0] || null,
+      countryCode,
+      hsCode
+    );
+
+    // [DEMO OVERRIDE] Keep US Beef Mock if needed, but merge it if possible?
+    // For now, if we have specific requirements in DB, we use them.
+    // If NOT, and it matches the demo case, we might want to inject.
+    // But let's trust the DB first. If DB is empty for specific, merged will just have base.
+    
+    // Check if we have meaningful specific data. If not, and it's the demo case, inject mock.
+    if (!specificReqs[0] && ['US', 'USA'].includes(countryCode.toUpperCase()) && hsCode.startsWith('0201')) {
+       console.log('[DEBUG] Injecting Mock Specifics for US Beef demo');
+       // We can manually construct a specific object and merge it
+       const mockSpecific = {
+          requiredDocuments: JSON.stringify([
+             { name: "Certificado Sanitario Veterinario (C.S.V.)", issuer: "SENASA", importance: "Mandatory" },
+             { name: "FSIS Form 9060-5", issuer: "USDA", importance: "Mandatory" }
+          ]),
+          technicalStandards: JSON.stringify(["FSIS Directive 9000.1"]),
+          phytosanitaryReqs: JSON.stringify(["Libre de Aftosa"]),
+          labelingReqs: JSON.stringify(["Country of Origin", "Net Weight"]),
+          packagingReqs: JSON.stringify(["Vacuum Packed"]),
+          estimatedProcessingTime: 45,
+          additionalFees: JSON.stringify({ inspection: "0.05 USD/lb" })
+       };
+       // Re-merge with mock
+       const mergedMock = RegulatoryMerger.merge(baseReqs[0] || null, mockSpecific as any, countryCode, hsCode);
+       return res.json(mergedMock);
+    }
+
+    res.json(merged);
+
+  } catch (error: any) {
+    console.error('Error fetching requirements:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ========== Cost Calculator API ==========
 
 app.post('/api/calculate-costs', calculateCosts);
@@ -386,7 +545,7 @@ app.get('/api/market-analysis', analyzeMarket);
 // ========== MARKETPLACE APIs ==========
 
 // Import marketplace tables
-import { users, marketplacePosts, subscriptions, verifications } from '../shared/shared/schema-sqlite';
+
 
 // Get all marketplace posts with filters
 app.get('/api/marketplace/posts', async (req, res) => {
@@ -604,6 +763,185 @@ app.get('/api/users/:id', async (req, res) => {
   }
 });
 
+// ========== CHAT ROUTES ==========
+
+// Get user conversations
+app.get('/api/chat/conversations', async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) return res.status(400).json({ error: 'UserId required' });
+    
+    // Get conversations where user is a participant
+    const userConvs = await db.select().from(conversationParticipants)
+      .where(eq(conversationParticipants.userId, userId as string));
+      
+    const convIds = userConvs.map(uc => uc.conversationId);
+    
+    if (convIds.length === 0) return res.json([]);
+    
+    const convs = await db.select().from(conversations)
+      .where(sql`${conversations.id} IN ${convIds}`)
+      .orderBy(desc(conversations.lastMessageAt));
+      
+    // Enrich with other company info
+    const enrichedConvs = await Promise.all(convs.map(async (conv) => {
+      const company1 = await db.select().from(companies).where(eq(companies.id, conv.company1Id)).limit(1);
+      const company2 = await db.select().from(companies).where(eq(companies.id, conv.company2Id)).limit(1);
+      
+      return {
+        ...conv,
+        company1: company1[0],
+        company2: company2[0]
+      };
+    }));
+    
+    res.json(enrichedConvs);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create or get conversation
+app.post('/api/chat/conversations', async (req, res) => {
+  try {
+    const { userId, otherCompanyId, postId, initialMessage } = req.body;
+    
+    // Get user's company
+    const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    if (user.length === 0) return res.status(404).json({ error: 'User not found' });
+    
+    const company1Id = user[0].companyId;
+    
+    // Check if conversation already exists
+    const existingConv = await db.select().from(conversations)
+      .where(
+        and(
+          eq(conversations.postId, postId),
+          or(
+            and(eq(conversations.company1Id, company1Id!), eq(conversations.company2Id, otherCompanyId)),
+            and(eq(conversations.company1Id, otherCompanyId), eq(conversations.company2Id, company1Id!))
+          )
+        )
+      ).limit(1);
+      
+    if (existingConv.length > 0) {
+      return res.json(existingConv[0]);
+    }
+    
+    // Create new conversation
+    const newConv = {
+      id: crypto.randomUUID(),
+      postId,
+      company1Id: company1Id!,
+      company2Id: otherCompanyId,
+      status: 'active',
+      createdAt: new Date(),
+      lastMessageAt: new Date()
+    };
+    
+    await db.insert(conversations).values(newConv);
+    
+    // Add participants
+    await db.insert(conversationParticipants).values([
+      {
+        id: crypto.randomUUID(),
+        conversationId: newConv.id,
+        userId: userId,
+        role: user[0].role || 'tecnico',
+        accessLevel: 'full',
+        addedAt: new Date(),
+        isActive: true
+      },
+      // Add a placeholder participant for the other company (to be claimed)
+      // For demo purposes, we'll find a user from that company
+      {
+        id: crypto.randomUUID(),
+        conversationId: newConv.id,
+        userId: 'demo-user-very', // Fallback
+        role: 'admin',
+        accessLevel: 'full',
+        addedAt: new Date(),
+        isActive: true
+      }
+    ]);
+    
+    // Send initial message
+    if (initialMessage) {
+      await db.insert(messages).values({
+        id: crypto.randomUUID(),
+        conversationId: newConv.id,
+        senderId: userId,
+        content: initialMessage,
+        messageType: 'text',
+        createdAt: new Date(),
+        readAt: null
+      });
+    }
+    
+    res.status(201).json(newConv);
+  } catch (error: any) {
+    console.error('Error creating conversation:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get conversation details
+app.get('/api/chat/conversations/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const conversation = await db.select().from(conversations).where(eq(conversations.id, id)).limit(1);
+    
+    if (conversation.length === 0) return res.status(404).json({ error: 'Conversation not found' });
+    
+    // Get participants
+    const participants = await db.select().from(conversationParticipants)
+      .where(eq(conversationParticipants.conversationId, id));
+      
+    // Get messages
+    const msgs = await db.select().from(messages)
+      .where(eq(messages.conversationId, id))
+      .orderBy(messages.createdAt);
+      
+    res.json({
+      ...conversation[0],
+      participants,
+      messages: msgs
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Send message
+app.post('/api/chat/conversations/:id/messages', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { senderId, content, type = 'text', metadata } = req.body;
+    
+    const newMessage = {
+      id: crypto.randomUUID(),
+      conversationId: id,
+      senderId,
+      content,
+      messageType: type,
+      metadata: metadata ? JSON.stringify(metadata) : null,
+      createdAt: new Date(),
+      readAt: null
+    };
+    
+    await db.insert(messages).values(newMessage);
+    
+    // Update conversation last message
+    await db.update(conversations)
+      .set({ lastMessageAt: new Date() })
+      .where(eq(conversations.id, id));
+      
+    res.status(201).json(newMessage);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Get pending verifications (admin)
 app.get('/api/admin/verifications', async (req, res) => {
   try {
@@ -650,11 +988,11 @@ app.put('/api/admin/verifications/:id', async (req, res) => {
 });
 
 
-import { AIService } from './services/ai-service';
+import { AIService } from './services/ai-service.js';
 
 // ========== CHAT APIs ==========
 
-import { conversations, messages, conversationParticipants, chatInvites } from '../shared/shared/schema-sqlite';
+
 
 // Get all conversations for current user (mock user for now)
 app.get('/api/chat/conversations', async (req, res) => {
@@ -840,13 +1178,13 @@ app.get('/api/chat/conversations/:id/messages', async (req, res) => {
     
     // Mark messages as read (except own messages)
     const unreadIds = enriched
-      .filter(m => m.senderId !== userId && !m.readAt)
-      .map(m => m.id);
+      .filter((m: any) => m.senderId !== userId && !m.readAt)
+      .map((m: any) => m.id);
     
     if (unreadIds.length > 0) {
       await db.update(messages)
         .set({ readAt: new Date() })
-        .where(sql`${messages.id} IN (${sql.join(unreadIds.map(id => sql`${id}`), sql`, `)})`);
+        .where(sql`${messages.id} IN (${sql.join(unreadIds.map((id: any) => sql`${id}`), sql`, `)})`);
     }
     
     res.json(enriched);
@@ -1134,7 +1472,7 @@ app.post('/api/chat/ai/query', async (req, res) => {
       .orderBy(desc(messages.createdAt))
       .limit(10);
       
-    const context = recentMessages.reverse().map(m => ({
+    const context = recentMessages.reverse().map((m: any) => ({
       role: 'user',
       content: m.content || ''
     }));
@@ -1257,12 +1595,13 @@ app.post('/api/chat/invites/:token/join', async (req, res) => {
 });
 
 // Serve frontend
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.listen(PORT, async () => {
-  await initDatabase();
-  console.log(`🚀 ComexIA Server running on http://localhost:${PORT}`);
+  await initializeTables();
+  console.log(`Server running on port ${PORT}`);
   console.log(`📁 SQLite Database connected`);
 });

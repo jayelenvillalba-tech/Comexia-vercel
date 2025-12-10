@@ -55,9 +55,10 @@ export default function HsCodeSearch({ onProductSelected, onPartidaSelected }: H
   })).filter(group => group.countries.length > 0);
 
   // Search HS items with country and operation filters
-  const { data: searchResults, isLoading } = useQuery({
+  const { data: searchResults, isLoading, error } = useQuery({
     queryKey: ["/api/hs-search", searchQuery, originCountry, operationType],
     queryFn: async () => {
+      console.log('🔍 Frontend: Executing search for:', searchQuery);
       if (!searchQuery.trim() || searchQuery.length < 3) return { sections: [], chapters: [], partidas: [], subpartidas: [], warnings: [] };
       
       const params = new URLSearchParams({
@@ -66,9 +67,12 @@ export default function HsCodeSearch({ onProductSelected, onPartidaSelected }: H
         ...(operationType && operationType !== 'all' && { operation: operationType })
       });
       
+      console.log('🔍 Frontend: Fetching URL:', `/api/hs-codes/search?${params}`);
       const response = await fetch(`/api/hs-codes/search?${params}`);
         if (!response.ok) throw new Error('Failed to search HS items');
         const data = await response.json();
+        console.log('✅ Frontend: Received data:', data);
+        
         // Backend returns { results: HSCode[] }
         return { 
           sections: [],
@@ -80,6 +84,8 @@ export default function HsCodeSearch({ onProductSelected, onPartidaSelected }: H
     },
     enabled: searchQuery.length >= 3
   });
+
+  console.log('🎨 Render: isLoading:', isLoading, 'Results:', searchResults?.subpartidas?.length);
 
   const handleProductSelect = (item: HsSubpartida | HsPartida) => {
     // Validation: ensure country and operation are selected and not 'all'
@@ -247,23 +253,38 @@ export default function HsCodeSearch({ onProductSelected, onPartidaSelected }: H
                 className="pl-10 pr-24 bg-slate-900/90 border-white/10 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-blue-500/50 focus:border-transparent h-12"
               />
               <div className="absolute right-1 top-1 bottom-1">
-                <Button 
-                  size="sm"
-                  className="h-full bg-blue-600 hover:bg-blue-500 text-white px-4"
-                  onClick={() => {
-                    if (allResults.length > 0) {
-                      handleProductSelect(allResults[0]);
-                    } else if (searchQuery.length >= 3) {
-                      toast({
-                        title: language === 'es' ? 'Buscando...' : 'Searching...',
-                        description: language === 'es' ? 'No se encontraron resultados exactos. Intenta con otro término.' : 'No exact results found. Try another term.',
-                        variant: "default",
-                      });
-                    }
-                  }}
-                >
-                  {language === 'es' ? 'BUSCAR' : 'SEARCH'}
-                </Button>
+                  <Button 
+                    size="sm"
+                    className={`h-full px-4 ${
+                      (!originCountry || !operationType) 
+                        ? 'bg-gray-600 cursor-not-allowed' 
+                        : 'bg-blue-600 hover:bg-blue-500'
+                    } text-white`}
+                    onClick={() => {
+                      if (!originCountry || !operationType) {
+                        toast({
+                          title: language === 'es' ? 'Filtros requeridos' : 'Filters required',
+                          description: language === 'es' 
+                            ? 'Por favor selecciona un país y tipo de operación para buscar.' 
+                            : 'Please select a country and operation type to search.',
+                          variant: "default",
+                        });
+                        return;
+                      }
+
+                      if (allResults.length > 0) {
+                        handleProductSelect(allResults[0]);
+                      } else if (searchQuery.length >= 3) {
+                        toast({
+                          title: language === 'es' ? 'Buscando...' : 'Searching...',
+                          description: language === 'es' ? 'No se encontraron resultados exactos. Intenta con otro término.' : 'No exact results found. Try another term.',
+                          variant: "default",
+                        });
+                      }
+                    }}
+                  >
+                    {language === 'es' ? 'BUSCAR' : 'SEARCH'}
+                  </Button>
               </div>
             </div>
           </div>

@@ -44,7 +44,7 @@ export default function Home() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              <a href="#" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm">
+              <a href="/news" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm">
                 {language === 'es' ? 'NOTICIAS' : 'NEWS'}
               </a>
               <a href="#" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm">
@@ -76,7 +76,10 @@ export default function Home() {
                 </button>
               </div>
 
-              <Button className="bg-cyan-600 hover:bg-cyan-700 text-white text-sm">
+              <Button 
+                onClick={() => navigate('/auth')}
+                className="bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
+              >
                 {language === 'es' ? 'Iniciar sesión' : 'Login'}
               </Button>
             </nav>

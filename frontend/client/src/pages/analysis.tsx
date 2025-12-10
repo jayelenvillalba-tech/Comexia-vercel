@@ -241,6 +241,87 @@ export default function Analysis() {
                   {language === 'es' ? 'Calculadora de Costos' : 'Cost Calculator'}
                 </Button>
               </div>
+
+              {/* Regulatory Documentation Section */}
+              {selectedCountry === 'Estados Unidos' && code === '0201' && (
+                <div className="bg-[#0A1929] rounded-lg p-4 border border-purple-500/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-purple-300 flex items-center gap-2">
+                      📋 {language === 'es' ? 'Documentación Reglamentaria Requerida' : 'Required Regulatory Documentation'}
+                    </h3>
+                    <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">
+                      {code} → US
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                    {/* Document 1 */}
+                    <div className="bg-[#0D2137] p-3 rounded border border-purple-900/30">
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="text-xs font-bold text-white">Certificado Sanitario Veterinario (C.S.V.)</h4>
+                        <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">SENASA</span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mb-2">
+                        Certifica que la carne proviene de animales sanos, con inspección ante/post mortem.
+                      </p>
+                      <div className="text-[10px] bg-gray-800/50 p-2 rounded">
+                        <span className="font-semibold text-gray-300">Requisito: </span>
+                        <span className="text-gray-400">Establecimiento autorizado, Vacunación, Trazabilidad completa.</span>
+                      </div>
+                      <a href="https://www.argentina.gob.ar/senasa" target="_blank" rel="noopener noreferrer" className="block mt-2 text-[10px] text-cyan-400 hover:underline">
+                        Ver fuente oficial →
+                      </a>
+                    </div>
+
+                    {/* Document 2 */}
+                    <div className="bg-[#0D2137] p-3 rounded border border-purple-900/30">
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="text-xs font-bold text-white">FSIS Form 9060-5</h4>
+                        <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">USDA/FSIS</span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mb-2">
+                        Certificado de Salubridad de Exportación de Carnes y Aves.
+                      </p>
+                      <div className="text-[10px] bg-gray-800/50 p-2 rounded">
+                        <span className="font-semibold text-gray-300">Requisito: </span>
+                        <span className="text-gray-400">Requiere inspección oficial en puerto de entrada.</span>
+                      </div>
+                      <a href="https://www.fsis.usda.gov/" target="_blank" rel="noopener noreferrer" className="block mt-2 text-[10px] text-cyan-400 hover:underline">
+                        Ver fuente oficial →
+                      </a>
+                    </div>
+
+                    {/* Document 3 */}
+                    <div className="bg-[#0D2137] p-3 rounded border border-purple-900/30">
+                      <div className="flex justify-between items-start mb-1">
+                        <h4 className="text-xs font-bold text-white">Etiquetado Aprobado (Label Approval)</h4>
+                        <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">USDA/FSIS</span>
+                      </div>
+                      <p className="text-[10px] text-gray-400 mb-2">
+                        Aprobación de etiquetas genéricas o específicas.
+                      </p>
+                      <div className="text-[10px] bg-gray-800/50 p-2 rounded">
+                        <span className="font-semibold text-gray-300">Requisito: </span>
+                        <span className="text-gray-400">Incluir país de origen, establecimiento, peso neto.</span>
+                      </div>
+                      <a href="https://www.fsis.usda.gov/" target="_blank" rel="noopener noreferrer" className="block mt-2 text-[10px] text-cyan-400 hover:underline">
+                        Ver fuente oficial →
+                      </a>
+                    </div>
+                  </div>
+
+                  <Button 
+                    onClick={() => {
+                      alert('Función de descarga PDF en desarrollo. Ver regulatory-docs-complete-guide.md para implementación completa.');
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="w-full text-xs border-purple-500/30 text-purple-300 hover:bg-purple-500/10"
+                  >
+                    📄 Descargar Guía PDF
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             // Lists Panel

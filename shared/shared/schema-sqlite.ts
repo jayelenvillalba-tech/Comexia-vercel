@@ -132,6 +132,14 @@ export const countryRequirements = sqliteTable("country_requirements", {
   additionalFees: text("additional_fees"), // JSON string
 });
 
+export const countryBaseRequirements = sqliteTable("country_base_requirements", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  countryCode: text("country_code").notNull().unique(),
+  tradeBloc: text("trade_bloc"), // EU, MERCOSUR, USMCA, ASEAN, etc.
+  baseDocuments: text("base_documents"), // JSON string array of standard docs
+  generalCustomsProcess: text("general_customs_process"),
+});
+
 export const shipments = sqliteTable("shipments", {
   id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   trackingNumber: text("tracking_number").notNull().unique(),

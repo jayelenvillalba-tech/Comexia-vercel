@@ -34,8 +34,10 @@ async function main() {
       )
     `);
 
+    sqliteDb.run(`DROP TABLE IF EXISTS hs_partidas`);
+
     sqliteDb.run(`
-      CREATE TABLE IF NOT EXISTS hs_partidas (
+      CREATE TABLE hs_partidas (
         id TEXT PRIMARY KEY,
         code TEXT NOT NULL UNIQUE,
         description TEXT NOT NULL,

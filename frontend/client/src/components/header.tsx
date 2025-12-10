@@ -1,10 +1,13 @@
-import { Globe, User, Shield, Home, Package } from "lucide-react";
+import { Globe, User, Shield, Home, Package, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
+import { useUser } from "@/context/user-context";
 import { useLocation } from "wouter";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Header() {
   const { language, setLanguage, t } = useLanguage();
+  const { user } = useUser();
   const [, navigate] = useLocation();
 
   return (
@@ -36,7 +39,7 @@ export default function Header() {
               <Home className="w-4 h-4" />
               {language === 'es' ? 'INICIO' : 'HOME'}
             </a>
-            <a href="#" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm">
+            <a href="/news" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm">
               {language === 'es' ? 'NOTICIAS' : 'NEWS'}
             </a>
             <a href="#" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm">
@@ -49,12 +52,16 @@ export default function Header() {
               <Package className="w-4 h-4" />
               MARKETPLACE
             </a>
-            <a href="#" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm">
-              {language === 'es' ? 'QUIENES SOMOS' : 'ABOUT US'}
-            </a>
             
+            {user && (
+              <a href="/chat" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm font-medium flex items-center gap-1">
+                <MessageCircle className="w-4 h-4 text-cyan-400" />
+                CHATS
+              </a>
+            )}
+
             {/* Language Toggle */}
-            <div className="flex items-center gap-1 border border-cyan-900/30 rounded-md overflow-hidden">
+            <div className="flex items-center gap-1 border border-cyan-900/30 rounded-md overflow-hidden bg-[#0A1929]">
               <button
                 onClick={() => setLanguage('es')}
                 className={`px-3 py-1 text-xs transition-colors ${
@@ -77,25 +84,29 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Admin Button */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/admin')}
-              className="bg-purple-600/20 text-purple-300 border-purple-500/30 hover:bg-purple-600/30 hover:text-purple-200"
-            >
-              <Shield className="w-4 h-4 mr-2" />
-              Admin
-            </Button>
-
-            <Button 
-              className="bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
-              onClick={() => navigate('/admin')}
-            >
-              {language === 'es' ? 'Iniciar sesión' : 'Login'}
-            </Button>
+            {user ? (
+               <Button 
+                onClick={() => navigate('/profile')}
+                variant="ghost" 
+                className="flex items-center gap-2 hover:bg-slate-800 text-white px-2"
+              >
+                 <Avatar className="w-8 h-8 border border-cyan-500/50">
+                    <AvatarImage src={user.avatar || "/placeholder-user.jpg"} />
+                    <AvatarFallback className="bg-cyan-900 text-cyan-200">{user.name?.substring(0,2)?.toUpperCase() || "U"}</AvatarFallback>
+                 </Avatar>
+                 <span className="hidden lg:inline text-sm max-w-[100px] truncate">{user.name || "Usuario"}</span>
+              </Button>
+            ) : (
+              <Button 
+                className="bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
+                onClick={() => navigate('/auth')}
+              >
+                {language === 'es' ? 'Iniciar sesión' : 'Login'}
+              </Button>
+            )}
           </nav>
         </div>
+
       </div>
     </header>
   );

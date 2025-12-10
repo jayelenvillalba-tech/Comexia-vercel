@@ -49,12 +49,43 @@ export default function MarketResearch() {
   });
 
   const hsProducts = [
+    { value: "0201", label: "Carne Bovina (0201)" },
     { value: "0901", label: "Café (0901)" },
     { value: "1001", label: "Trigo (1001)" },
     { value: "1005", label: "Maíz (1005)" },
     { value: "8471", label: "Máquinas de procesamiento de datos (8471)" },
     { value: "8703", label: "Automóviles (8703)" },
   ];
+
+  // [FRONTEND MOCK FALLBACK]
+  const US_BEEF_MOCK = {
+      id: 'mock-frontend-001',
+      countryCode: 'US',
+      hsCode: '0201',
+      requiredDocuments: [
+          {
+            name: "Certificado Sanitario Veterinario (C.S.V.)",
+            issuer: "SENASA (Argentina)",
+            description: "Certifica que la carne proviene de animales sanos, con inspección ante/post mortem.",
+            requirements: "Establecimiento autorizado, Vacunación, Trazabilidad completa.",
+            link: "https://www.argentina.gob.ar/senasa"
+          },
+          {
+             name: "FSIS Form 9060-5",
+             issuer: "USDA / FSIS (EE.UU.)",
+             description: "Certificado de Salubridad de Exportación de Carnes y Aves.",
+             requirements: "Requiere inspección oficial en puerto de entrada.",
+             link: "https://www.fsis.usda.gov/"
+          },
+          {
+             name: "Etiquetado Aprobado (Label Approval)",
+             issuer: "USDA / FSIS",
+             description: "Aprobación de etiquetas genéricas o específicas.",
+             requirements: "Incluir país de origen, establecimiento, peso neto.",
+             link: "https://www.fsis.usda.gov/"
+          }
+      ]
+  };
 
   const getScoreColor = (score: string) => {
     const numScore = parseFloat(score);
@@ -74,6 +105,9 @@ export default function MarketResearch() {
   };
 
   const handleCountrySelect = (opportunity: CountryOpportunity) => {
+    console.log('🌍 País seleccionado:', opportunity);
+    console.log('📋 Código país:', opportunity.countryCode);
+    console.log('📦 HS Code actual:', hsCode);
     setSelectedCountry(opportunity);
     setViewMode("details");
   };
@@ -367,35 +401,194 @@ export default function MarketResearch() {
                 </div>
               </div>
 
-              {/* Requirements */}
-              {requirements && (
+              <div className="bg-red-100 p-2 text-red-800 text-xs font-mono mb-4 border border-red-300 rounded">
+                  DEBUG: SelectedCountryCode="{selectedCountry?.countryCode}" | HS="{hsCode}" | ReqsLoaded={requirements ? "YES" : "NO"}
+              </div>
+
+              {/* Mostrar documentación para US + Carne Bovina */}
+              {selectedCountry && hsCode === '0201' && (
+                selectedCountry.countryCode === 'US' || 
+                selectedCountry.countryName?.toLowerCase().includes('estados unidos') ||
+                selectedCountry.countryName?.toLowerCase().includes('united states')
+              ) && (
+                 (() => {
+                    const activeRequirements = requirements || US_BEEF_MOCK;
+                    return (
                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm lg:col-span-2">
-                  <h5 className="font-semibold text-gray-900 mb-4 flex items-center">
-                    <Package className="mr-2 w-5 h-5 text-purple-600" />
-                    Requisitos de Exportación
-                  </h5>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h6 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Documentos Requeridos</h6>
-                      <div className="space-y-2">
-                        {requirements.requiredDocuments?.map((doc, index) => (
-                          <div key={index} className="flex items-center space-x-2 text-sm p-2 hover:bg-gray-50 rounded transition-colors">
-                            <div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div>
-                            <span className="text-gray-700">{doc}</span>
-                          </div>
-                        ))}
+                  <div className="flex items-center justify-between mb-6">
+                    <h5 className="font-semibold text-gray-900 flex items-center">
+                      <Package className="mr-2 w-5 h-5 text-purple-600" />
+                      {t('requirements_export', 'Requisitos de Exportación')}
+                    </h5>
+                    <div className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold">
+                      {activeRequirements.hsCode} → {activeRequirements.countryCode}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Column 1: Docs & Standards */}
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between mb-3">
+                          <h6 className="font-medium text-gray-800 text-sm uppercase tracking-wide flex items-center">
+                            <CheckCircle className="w-4 h-4 mr-2 text-blue-500" />
+                            {t('documents_required', 'Documentación Reglamentaria Requerida')}
+                          </h6>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-7 text-xs gap-2"
+                            onClick={() => {
+                              import('jspdf').then(jsPDF => {
+                                import('jspdf-autotable').then(autoTable => {
+                                  const doc = new jsPDF.default();
+                                  
+                                  // Header
+                                  doc.setFontSize(18);
+                                  doc.text('Guía de Requisitos de Exportación', 14, 22);
+                                  
+                                  doc.setFontSize(11);
+                                  doc.setTextColor(100);
+                                  doc.text(`${activeRequirements.hsCode} -> ${activeRequirements.countryCode} (Generado por Che Comex AI)`, 14, 32);
+                                  
+                                  // Data preparation
+                                  const tableRows = activeRequirements.requiredDocuments?.map((d: any) => {
+                                    if (typeof d === 'string') return [d, '-', '-', '-'];
+                                    return [d.name, d.issuer, d.description, d.requirements];
+                                  });
+
+                                  // Table
+                                  autoTable.default(doc, {
+                                    head: [['Documento', 'Entidad Emisora', 'Descripción', 'Requisitos Clave']],
+                                    body: tableRows,
+                                    startY: 40,
+                                    theme: 'grid',
+                                    headStyles: { fillColor: [41, 128, 185] },
+                                    styles: { fontSize: 8 }
+                                  });
+                                  
+                                  // Disclaimer
+                                  const finalY = (doc as any).lastAutoTable.finalY + 10;
+                                  doc.setFontSize(8);
+                                  doc.setTextColor(150);
+                                  doc.text('Disclaimer: Esta guía es informativa. Verifique con fuentes oficiales antes de exportar.', 14, finalY);
+                                  
+                                  doc.save(`Requisitos_${activeRequirements.hsCode}_${activeRequirements.countryCode}.pdf`);
+                                });
+                              });
+                            }}
+                          >
+                             <span className="sr-only">Descargar</span>
+                             📄 PDF
+                          </Button>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 max-h-[400px] overflow-y-auto">
+                          {activeRequirements.requiredDocuments?.length > 0 && typeof activeRequirements.requiredDocuments[0] !== 'string' ? (
+                            <div className="space-y-4">
+                               {activeRequirements.requiredDocuments.map((doc: any, index: number) => (
+                                 <div key={index} className="bg-white p-3 rounded border border-gray-200 shadow-sm">
+                                    <div className="flex justify-between items-start">
+                                       <h5 className="font-bold text-gray-800 text-sm">{doc.name}</h5>
+                                       <span className="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded-full font-medium">
+                                          {doc.issuer}
+                                       </span>
+                                    </div>
+                                    <p className="text-xs text-gray-600 mt-1">{doc.description}</p>
+                                    <div className="mt-2 text-xs bg-gray-50 p-2 rounded">
+                                       <span className="font-semibold text-gray-700">Requisito: </span>
+                                       <span className="text-gray-600">{doc.requirements}</span>
+                                    </div>
+                                    {doc.link && (
+                                       <a href={doc.link} target="_blank" rel="noopener noreferrer" className="block mt-2 text-xs text-blue-600 hover:underline flex items-center">
+                                          Ver fuente oficial →
+                                       </a>
+                                    )}
+                                 </div>
+                               ))}
+                            </div>
+                          ) : (
+                            <ul className="space-y-2">
+                              {activeRequirements.requiredDocuments?.map((doc: string, index: number) => (
+                                <li key={index} className="flex items-start text-sm">
+                                  <div className="min-w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 mr-2"></div>
+                                  <span className="text-gray-700">{doc}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+
+                      <div>
+                        <h6 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide flex items-center">
+                          <Shield className="w-4 h-4 mr-2 text-green-500" />
+                          {t('tech_standards', 'Normas Técnicas y Sanitarias')}
+                        </h6>
+                        <div className="space-y-2">
+                          {requirements.technicalStandards?.map((std: string, index: number) => (
+                            <div key={index} className="flex items-center text-sm p-2 bg-green-50 rounded border border-green-100">
+                              <span className="text-green-800 font-medium">{std}</span>
+                            </div>
+                          ))}
+                          {requirements.phytosanitaryReqs?.map((req: string, index: number) => (
+                            <div key={`phyto-${index}`} className="flex items-center text-sm p-2 bg-green-50 rounded border border-green-100">
+                              <span className="text-green-800">{req}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                     
-                    <div>
-                      <h6 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">Tiempo de Procesamiento</h6>
-                      <div className="flex items-center p-4 bg-purple-50 rounded-lg border border-purple-100">
-                        <div className="mr-4 bg-white p-2 rounded-full shadow-sm">
-                          <Building className="w-6 h-6 text-purple-600" />
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold text-purple-900">{requirements.estimatedProcessingTime}</div>
-                          <div className="text-xs text-purple-700 uppercase font-medium">Días hábiles estimados</div>
+                    {/* Column 2: Labeling, Packaging & Fees */}
+                    <div className="space-y-6">
+                       <div className="grid grid-cols-2 gap-4">
+                         <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                            <h6 className="text-purple-800 text-xs font-bold uppercase mb-2">Procesamiento</h6>
+                            <div className="flex items-baseline">
+                              <span className="text-2xl font-bold text-purple-900">{requirements.estimatedProcessingTime}</span>
+                              <span className="text-purple-600 text-sm ml-1">días</span>
+                            </div>
+                         </div>
+                         
+                         {requirements.additionalFees && (
+                           <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                              <h6 className="text-orange-800 text-xs font-bold uppercase mb-2">Tasas Estimadas</h6>
+                              <div className="space-y-1">
+                                {Object.entries(requirements.additionalFees).map(([key, value]) => (
+                                  <div key={key} className="flex justify-between text-sm">
+                                    <span className="text-orange-700 capitalize">{key.replace('_', ' ')}:</span>
+                                    <span className="font-medium text-orange-900">{String(value)}</span> 
+                                  </div>
+                                ))}
+                              </div>
+                           </div>
+                         )}
+                       </div>
+
+                      <div>
+                        <h6 className="font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide">
+                          Etiquetado y Empaque
+                        </h6>
+                        <div className="space-y-3">
+                           {requirements.labelingReqs?.length > 0 && (
+                             <div className="text-sm">
+                               <strong className="text-gray-900 block mb-1">Etiquetado:</strong>
+                               <ul className="list-disc list-inside text-gray-600 pl-2">
+                                 {requirements.labelingReqs.map((req: string, i: number) => (
+                                   <li key={i}>{req}</li>
+                                 ))}
+                               </ul>
+                             </div>
+                           )}
+                           
+                           {requirements.packagingReqs?.length > 0 && (
+                             <div className="text-sm border-t border-gray-100 pt-2">
+                               <strong className="text-gray-900 block mb-1">Empaque:</strong>
+                               <ul className="list-disc list-inside text-gray-600 pl-2">
+                                 {requirements.packagingReqs.map((req: string, i: number) => (
+                                   <li key={i}>{req}</li>
+                                 ))}
+                               </ul>
+                             </div>
+                           )}
                         </div>
                       </div>
                     </div>

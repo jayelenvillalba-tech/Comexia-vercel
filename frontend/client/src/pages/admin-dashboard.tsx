@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/hooks/use-language";
 import Header from "@/components/header";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock admin user
 const ADMIN_PASSWORD = "admin123"; // En producción, esto debe estar en el backend
@@ -74,11 +76,43 @@ const mockSubscriptions = [
 
 export default function AdminDashboard() {
   const { language } = useLanguage();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [, navigate] = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [activeTab, setActiveTab] = useState<"overview" | "verifications" | "subscriptions" | "posts">("overview");
-  const [searchQuery, setSearchQuery] = useState("");
+
+  // Fetch pending verifications
+  const { data: verifications = [] } = useQuery({
+    queryKey: ['verifications'],
+    queryFn: async () => {
+      const res = await fetch('/api/verifications');
+      if (!res.ok) throw new Error('Failed to fetch verifications');
+      return res.json();
+    },
+    enabled: isAuthenticated
+  });
+
+  const approveMutation = useMutation({
+    mutationFn: async (id: string) => {
+       await fetch(`/api/verifications/${id}/approve`, { method: 'POST' });
+    },
+    onSuccess: () => {
+       queryClient.invalidateQueries({ queryKey: ['verifications'] });
+       toast({ title: "Verificación aprobada" });
+    }
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: async (id: string) => {
+       await fetch(`/api/verifications/${id}/reject`, { method: 'POST' });
+    },
+    onSuccess: () => {
+       queryClient.invalidateQueries({ queryKey: ['verifications'] });
+       toast({ title: "Verificación rechazada", variant: "destructive" });
+    }
+  });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,13 +129,11 @@ export default function AdminDashboard() {
   };
 
   const handleApproveVerification = (id: string) => {
-    console.log('Approving verification:', id);
-    // TODO: Connect to backend
+    approveMutation.mutate(id);
   };
 
   const handleRejectVerification = (id: string) => {
-    console.log('Rejecting verification:', id);
-    // TODO: Connect to backend
+    rejectMutation.mutate(id);
   };
 
   // Login Screen
@@ -306,7 +338,12 @@ export default function AdminDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {mockPendingVerifications.map((verification) => (
+                {verifications.length === 0 && (
+                  <p className="text-slate-400 text-center py-4">
+                    {language === 'es' ? 'No hay verificaciones pendientes.' : 'No pending verifications.'}
+                  </p>
+                )}
+                {verifications.map((verification: any) => (
                   <div
                     key={verification.id}
                     className="bg-white/5 p-4 rounded-lg border border-white/10"
@@ -314,20 +351,17 @@ export default function AdminDashboard() {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-white font-bold">{verification.entityName}</h3>
-                          <Badge className={verification.type === "company"
+                          <h3 className="text-white font-bold">{verification.entityName || "Unknown"}</h3>
+                          <Badge className={verification.entityType === "company"
                             ? "bg-purple-500/20 text-purple-300 border-purple-500/30"
                             : "bg-blue-500/20 text-blue-300 border-blue-500/30"
                           }>
-                            {verification.type === "company"
+                            {verification.entityType === "company"
                               ? (language === 'es' ? 'Empresa' : 'Company')
                               : (language === 'es' ? 'Empleado' : 'Employee')
                             }
                           </Badge>
                         </div>
-                        {verification.type === "employee" && (
-                          <p className="text-slate-400 text-sm">{verification.company}</p>
-                        )}
                         <p className="text-slate-400 text-xs mt-1">
                           {new Date(verification.submittedAt).toLocaleString()}
                         </p>
@@ -339,18 +373,41 @@ export default function AdminDashboard() {
                         {language === 'es' ? 'Documentos:' : 'Documents:'}
                       </p>
                       <div className="flex flex-wrap gap-2">
-                        {verification.documents.map((doc, index) => (
-                          <Badge key={index} variant="outline" className="text-slate-300 border-slate-500">
-                            📄 {doc}
-                          </Badge>
-                        ))}
+                        {/* Parse documents if string (SQLite stores JSON as string usually) */}
+                        {(() => {
+                            try {
+                                const docs = typeof verification.documents === 'string' 
+                                    ? JSON.parse(verification.documents) 
+                                    : verification.documents;
+                                return Array.isArray(docs) ? docs.map((doc: string, index: number) => {
+                                  // Extract readable name from URL: /uploads/documents-123-CUIT_File.pdf -> CUIT_File.pdf
+                                  const parts = doc.split('/');
+                                  const rawName = parts[parts.length - 1];
+                                  // Remove multer prefix if possible (documents-timestamp-)
+                                  const cleanName = rawName.replace(/^documents-\d+-/, '');
+                                  
+                                  return (
+                                    <a key={index} href={doc} target="_blank" rel="noreferrer">
+                                      <Badge variant="outline" className="text-slate-300 border-slate-500 hover:bg-white/10 cursor-pointer flex gap-1 items-center" title={cleanName}>
+                                        <div className="bg-slate-700/50 p-1 rounded-sm"><FileText size={10} /></div>
+                                        <span className="truncate max-w-[150px]">{cleanName}</span>
+                                      </Badge>
+                                    </a>
+                                  );
+                                }) : null;
+                            } catch(e) { return null; }
+                        })()}
                       </div>
+                      {verification.notes && (
+                         <p className="text-slate-400 text-sm mt-2 italic">"{verification.notes}"</p>
+                      )}
                     </div>
 
                     <div className="flex gap-2">
                       <Button
                         onClick={() => handleApproveVerification(verification.id)}
                         className="flex-1 bg-green-600 hover:bg-green-700"
+                        disabled={approveMutation.isPending}
                       >
                         <CheckCircle className="w-4 h-4 mr-2" />
                         {language === 'es' ? 'Aprobar' : 'Approve'}
@@ -359,6 +416,7 @@ export default function AdminDashboard() {
                         onClick={() => handleRejectVerification(verification.id)}
                         variant="outline"
                         className="flex-1 bg-red-600/20 border-red-500/30 text-red-300 hover:bg-red-600/30"
+                        disabled={rejectMutation.isPending}
                       >
                         <XCircle className="w-4 h-4 mr-2" />
                         {language === 'es' ? 'Rechazar' : 'Reject'}

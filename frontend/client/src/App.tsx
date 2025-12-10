@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/hooks/use-language";
+import { UserProvider } from "@/context/user-context";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Landing from "@/pages/landing";
@@ -19,6 +20,9 @@ import CompanyProfile from "@/pages/company-profile";
 import ChatPage from "@/pages/chat";
 import ChatConversationPage from "@/pages/chat-conversation";
 import JoinChat from "@/pages/join-chat";
+import ProfilePage from "@/pages/profile";
+import NewsPage from "@/pages/news";
+import AuthPage from "@/pages/auth";
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -74,11 +78,15 @@ function Router() {
       <Route path="/expansion-dashboard" component={ExpansionDashboard} />
       <Route path="/marketplace" component={Marketplace} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/profile" component={ProfilePage} />
+      <Route path="/news" component={NewsPage} />
       <Route path="/company/:id" component={CompanyProfile} />
       <Route path="/chat" component={ChatPage} />
       <Route path="/chat/:id" component={ChatConversationPage} />
       <Route path="/join-chat/:token" component={JoinChat} />
       <Route path="/landing" component={Landing} />
+      <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -88,12 +96,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-        <TooltipProvider>
-          <Toaster />
-          <ErrorBoundary>
-            <Router />
-          </ErrorBoundary>
-        </TooltipProvider>
+        <UserProvider>
+          <TooltipProvider>
+            <Toaster />
+            <ErrorBoundary>
+              <Router />
+            </ErrorBoundary>
+          </TooltipProvider>
+        </UserProvider>
       </LanguageProvider>
     </QueryClientProvider>
   );
