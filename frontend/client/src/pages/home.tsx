@@ -31,13 +31,15 @@ export default function Home() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
-                <Globe className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1 overflow-hidden shadow-lg border border-cyan-400/30">
+                <img src="/logo.png" alt="Che.Comex Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">Che.Comex</h1>
-                <p className="text-xs text-cyan-400">
-                  {language === 'es' ? 'El Futuro del Comercio Global' : 'Future of Global Commerce'}
+                <h1 className="text-2xl font-black text-white tracking-tighter">
+                  CHE.<span className="text-cyan-400">COMEX</span>
+                </h1>
+                <p className="text-[10px] uppercase tracking-widest text-cyan-500 font-bold opacity-80">
+                  {language === 'es' ? 'Inteligencia de Comercio Global' : 'Global Trade Intelligence'}
                 </p>
               </div>
             </div>
