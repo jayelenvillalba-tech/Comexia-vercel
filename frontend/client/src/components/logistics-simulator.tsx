@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/hooks/use-language';
-import { Ship, Plane, Truck, DollarSign, Clock, Package, TrendingUp, Lock } from 'lucide-react';
+import { Ship, Plane, Truck, DollarSign, Clock, Package, TrendingUp, Lock, RefreshCw } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 
 interface LogisticsSimulatorProps {
   open: boolean;
@@ -14,67 +15,42 @@ interface LogisticsSimulatorProps {
   product: string;
 }
 
+interface RouteOption {
+  id: string;
+  name: string;
+  modes: { icon: string, label: string, duration: string }[];
+  totalDuration: string;
+  cost: string;
+  incoterm: string;
+  recommended: boolean;
+  details: {
+    port: string;
+    insurance: string;
+    customs: string;
+    risk: string;
+  };
+}
+
 export default function LogisticsSimulator({ open, onOpenChange, origin, destination, product }: LogisticsSimulatorProps) {
   const { language } = useLanguage();
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // Mock logistics data
-  const routes = [
-    {
-      id: 'sea-truck',
-      name: language === 'es' ? 'Marítimo + Terrestre' : 'Sea + Land',
-      modes: [
-        { icon: Ship, label: language === 'es' ? 'Barco' : 'Ship', duration: '25-30 días' },
-        { icon: Truck, label: language === 'es' ? 'Camión' : 'Truck', duration: '2-3 días' }
-      ],
-      totalDuration: '27-33 días',
-      cost: '$2,500 - $3,200',
-      incoterm: 'CIF',
-      recommended: true,
-      details: {
-        port: 'Puerto de Buenos Aires → Puerto de Shanghai',
-        insurance: language === 'es' ? 'Incluido' : 'Included',
-        customs: language === 'es' ? 'Destino' : 'Destination',
-        risk: language === 'es' ? 'Bajo' : 'Low'
-      }
-    },
-    {
-      id: 'air-truck',
-      name: language === 'es' ? 'Aéreo + Terrestre' : 'Air + Land',
-      modes: [
-        { icon: Plane, label: language === 'es' ? 'Avión' : 'Plane', duration: '5-7 días' },
-        { icon: Truck, label: language === 'es' ? 'Camión' : 'Truck', duration: '1-2 días' }
-      ],
-      totalDuration: '6-9 días',
-      cost: '$8,500 - $12,000',
-      incoterm: 'FOB',
-      recommended: false,
-      details: {
-        port: 'Aeropuerto Ezeiza → Aeropuerto Pudong',
-        insurance: language === 'es' ? 'No incluido' : 'Not included',
-        customs: language === 'es' ? 'Origen' : 'Origin',
-        risk: language === 'es' ? 'Medio' : 'Medium'
-      }
-    },
-    {
-      id: 'sea-only',
-      name: language === 'es' ? 'Solo Marítimo (Puerto a Puerto)' : 'Sea Only (Port to Port)',
-      modes: [
-        { icon: Ship, label: language === 'es' ? 'Barco' : 'Ship', duration: '25-30 días' }
-      ],
-      totalDuration: '25-30 días',
-      cost: '$1,800 - $2,400',
-      incoterm: 'FOB',
-      recommended: false,
-      details: {
-        port: 'Puerto de Buenos Aires → Puerto de Shanghai',
-        insurance: language === 'es' ? 'No incluido' : 'Not included',
-        customs: language === 'es' ? 'Origen' : 'Origin',
-        risk: language === 'es' ? 'Alto' : 'High'
-      }
-    }
-  ];
+  // Dynamic Data Fetching
+  const { data, isLoading, isError } = useQuery<{data: RouteOption[]}>({
+     queryKey: ['logistics', origin, destination, product],
+     queryFn: async () => {
+        if (!origin || !destination) return { data: [] };
+        const res = await fetch(`/api/logistics/estimate?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&product=${encodeURIComponent(product)}`);
+        if (!res.ok) throw new Error('API Error');
+        return res.json();
+     },
+     enabled: open && !!origin && !!destination
+  });
+
+  const routes = data?.data || [];
+
+  const icons: Record<string, any> = { ship: Ship, plane: Plane, truck: Truck };
 
   const incotermComparison = [
     {
@@ -113,9 +89,9 @@ export default function LogisticsSimulator({ open, onOpenChange, origin, destina
   const handleSelectRoute = (routeId: string) => {
     setSelectedRoute(routeId);
     // Show login modal after viewing 2 routes (demo limitation)
-    if (selectedRoute && selectedRoute !== routeId) {
-      setTimeout(() => setShowLoginModal(true), 1000);
-    }
+    // if (selectedRoute && selectedRoute !== routeId) {
+    //   setTimeout(() => setShowLoginModal(true), 1000);
+    // }
   };
 
   return (
@@ -124,7 +100,7 @@ export default function LogisticsSimulator({ open, onOpenChange, origin, destina
         <DialogContent className="max-w-6xl bg-[#0D2137] border-cyan-900/30 text-white max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-cyan-400">
-              {language === 'es' ? 'Simulador de Logística (Incoterm)' : 'Logistics Simulator (Incoterm)'}
+              {language === 'es' ? 'Simulador de Logística (Real-Time)' : 'Logistics Simulator (Real-Time)'}
             </DialogTitle>
             <DialogDescription className="text-gray-400">
               {origin} → {destination} | {product}
@@ -134,9 +110,16 @@ export default function LogisticsSimulator({ open, onOpenChange, origin, destina
           <div className="space-y-6 mt-4">
             {/* Routes Comparison */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                 {language === 'es' ? 'Opciones de Transporte' : 'Transport Options'}
+                {isLoading && <RefreshCw className="w-4 h-4 animate-spin text-cyan-400"/>}
               </h3>
+              
+              {isLoading ? (
+                  <div className="text-center py-10 text-gray-500">Calculando mejores rutas...</div>
+              ) : routes.length === 0 ? (
+                  <div className="text-center py-10 text-gray-500">No routes found or check inputs.</div>
+              ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {routes.map((route) => (
                   <Card
@@ -158,14 +141,16 @@ export default function LogisticsSimulator({ open, onOpenChange, origin, destina
                       
                       {/* Transport modes */}
                       <div className="flex items-center gap-2">
-                        {route.modes.map((mode, idx) => (
+                        {route.modes.map((mode, idx) => {
+                          const Icon = icons[mode.icon] || Ship;
+                          return (
                           <div key={idx} className="flex items-center gap-1">
-                            <mode.icon className="w-5 h-5 text-cyan-400" />
+                            <Icon className="w-5 h-5 text-cyan-400" />
                             {idx < route.modes.length - 1 && (
                               <span className="text-gray-500">→</span>
                             )}
                           </div>
-                        ))}
+                        )})}
                       </div>
 
                       <div className="space-y-2 text-sm">
@@ -186,6 +171,7 @@ export default function LogisticsSimulator({ open, onOpenChange, origin, destina
                   </Card>
                 ))}
               </div>
+              )}
             </div>
 
             {/* Selected Route Details */}
@@ -263,66 +249,6 @@ export default function LogisticsSimulator({ open, onOpenChange, origin, destina
                 ))}
               </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Login/Register Modal for Demo */}
-      <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
-        <DialogContent className="bg-[#0D2137] border-cyan-900/30 text-white">
-          <DialogHeader>
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-16 h-16 bg-cyan-600/20 rounded-full flex items-center justify-center">
-                <Lock className="w-8 h-8 text-cyan-400" />
-              </div>
-            </div>
-            <DialogTitle className="text-2xl font-bold text-center text-cyan-400">
-              {language === 'es' ? '¡Desbloquea Todas las Funciones!' : 'Unlock All Features!'}
-            </DialogTitle>
-            <DialogDescription className="text-center text-gray-400">
-              {language === 'es'
-                ? 'Has alcanzado el límite de la versión demo. Regístrate para acceder a todas las herramientas de simulación.'
-                : 'You\'ve reached the demo version limit. Register to access all simulation tools.'}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 mt-6">
-            <Button 
-              onClick={() => {
-                sessionStorage.setItem('searchContext', JSON.stringify({
-                  product,
-                  origin,
-                  destination,
-                  operation: origin.includes('Argentina') ? 'export' : 'import',
-                  timestamp: Date.now()
-                }));
-                window.location.href = '/marketplace';
-              }}
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-6 text-lg font-semibold"
-            >
-              {language === 'es' ? 'Crear Cuenta Gratis' : 'Create Free Account'}
-            </Button>
-            <Button 
-              onClick={() => {
-                sessionStorage.setItem('searchContext', JSON.stringify({
-                  product,
-                  origin,
-                  destination,
-                  operation: origin.includes('Argentina') ? 'export' : 'import',
-                  timestamp: Date.now()
-                }));
-                window.location.href = '/marketplace';
-              }}
-              variant="outline" 
-              className="w-full border-cyan-900/30 text-cyan-400 hover:bg-cyan-900/20"
-            >
-              {language === 'es' ? 'Iniciar Sesión' : 'Login'}
-            </Button>
-            <p className="text-center text-xs text-gray-500">
-              {language === 'es'
-                ? '✓ Acceso ilimitado a simuladores  ✓ Comparaciones detalladas  ✓ Exportar reportes'
-                : '✓ Unlimited simulator access  ✓ Detailed comparisons  ✓ Export reports'}
-            </p>
           </div>
         </DialogContent>
       </Dialog>

@@ -316,6 +316,7 @@ export const users = sqliteTable("users", {
   companyId: text("company_id").references(() => companies.id),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+  password: text("password").notNull(),
   role: text("role"), // "Director", "Manager", etc.
   primaryRole: text("primary_role").default("tecnico"), // 'tecnico' | 'compras' | 'logistica' | 'admin'
   verified: integer("verified", { mode: "boolean" }).default(false),
@@ -472,3 +473,26 @@ export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 export type InsertConversation = z.infer<typeof insertConversationSchema>;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type InsertVerification = z.infer<typeof insertVerificationSchema>;
+// Regulatory Rules for the Dynamic Engine
+export const regulatoryRules = sqliteTable("regulatory_rules", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  hsChapter: text("hs_chapter"), // e.g., "85" or null for global
+  countryCode: text("country_code"), // Destination country (e.g., "US", "EU")
+  originCountryCode: text("origin_country_code"), // Origin country (e.g., "AR", "CN")
+  documentName: text("document_name").notNull(),
+  issuer: text("issuer"),
+  description: text("description"),
+  requirements: text("requirements"),
+  priority: integer("priority").default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
+});
+
+export const sanctionsList = sqliteTable("sanctions_list", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  countryCode: text("country_code"), // "RU", "IR", or "GLOBAL"
+  hsChapter: text("hs_chapter"), // e.g., "27" for Oil
+  authority: text("authority").notNull(), // "OFAC", "EU", "UN"
+  message: text("message").notNull(),
+  severity: text("severity").notNull(), // "CRITICAL", "WARNING"
+  updatedAt: integer("updated_at", { mode: "timestamp" }).$defaultFn(() => new Date()),
+});

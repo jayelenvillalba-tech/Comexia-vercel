@@ -12,8 +12,10 @@ import Landing from "@/pages/landing";
 import TradeFlow from "@/pages/trade-flow";
 import CompanyMap from "@/pages/company-map";
 import Analysis from "@/pages/analysis";
+import AlertsCenter from "@/pages/alerts-center";
 import SouthAmericaAnalysis from "@/pages/south-america-analysis";
 import ExpansionDashboard from "@/pages/expansion-dashboard";
+import CoverageDashboard from "@/pages/dashboard-coverage";
 import Marketplace from "@/pages/marketplace";
 import AdminDashboard from "@/pages/admin-dashboard";
 import CompanyProfile from "@/pages/company-profile";
@@ -23,6 +25,8 @@ import JoinChat from "@/pages/join-chat";
 import ProfilePage from "@/pages/profile";
 import NewsPage from "@/pages/news";
 import AuthPage from "@/pages/auth";
+import CheckoutSuccessPage from "@/pages/checkout-success";
+import { AlertsTicker } from "@/components/alerts-ticker";
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -75,7 +79,9 @@ function Router() {
       <Route path="/company-map" component={CompanyMap} />
       <Route path="/analysis" component={Analysis} />
       <Route path="/south-america" component={SouthAmericaAnalysis} />
+      <Route path="/alerts" component={AlertsCenter} />
       <Route path="/expansion-dashboard" component={ExpansionDashboard} />
+      <Route path="/coverage" component={CoverageDashboard} />
       <Route path="/marketplace" component={Marketplace} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin" component={AdminDashboard} />
@@ -87,6 +93,7 @@ function Router() {
       <Route path="/join-chat/:token" component={JoinChat} />
       <Route path="/landing" component={Landing} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/checkout/success" component={CheckoutSuccessPage} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -100,6 +107,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <ErrorBoundary>
+              <AlertsTicker />
               <Router />
             </ErrorBoundary>
           </TooltipProvider>

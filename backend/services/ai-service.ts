@@ -1,45 +1,61 @@
 
+import { RegulatoryEngine } from './regulatory-engine.js';
+
 interface Message {
   role: 'user' | 'system' | 'assistant';
   content: string;
 }
 
 export class AIService {
-  // Mock smart replies based on context
+  // Enhanced Smart Replies with Negotiation heuristics
   static async generateSmartReplies(context: any[]): Promise<string[]> {
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Simulate AI processing delay slightly for realism
+    await new Promise(resolve => setTimeout(resolve, 600));
     
+    // Get last message from partner
     const lastMessage = context[context.length - 1]?.content?.toLowerCase() || '';
     
-    if (lastMessage.includes('precio') || lastMessage.includes('costo')) {
+    // 1. Price Negotiation Context
+    if (lastMessage.includes('precio') || lastMessage.includes('price') || lastMessage.includes('usd') || lastMessage.includes('$')) {
       return [
-        "Puedo enviarte una cotización formal",
-        "El precio depende del volumen",
-        "¿Qué Incoterm prefieres?"
+        "El precio es aceptable, por favor envíe la Factura Proforma.",
+        "Buscamos un precio más competitivo dado el volumen.",
+        "¿Este precio incluye el flete (Incoterm CIF)?"
       ];
     }
     
-    if (lastMessage.includes('envío') || lastMessage.includes('flete')) {
+    // 2. Logistics / Shipping Context
+    if (lastMessage.includes('envío') || lastMessage.includes('shipping') || lastMessage.includes('flete') || lastMessage.includes('transit')) {
       return [
-        "Hacemos envíos a todo el país",
-        "Podemos coordinar con tu forwarder",
-        "El tiempo de tránsito es de 15 días"
+        "Preferimos usar nuestro propio forwarder (FOB).",
+        "¿Cuál es el tiempo estimado de tránsito?",
+        "Necesitamos el envío aéreo por urgencia."
       ];
     }
     
-    if (lastMessage.includes('hola') || lastMessage.includes('buenos días')) {
+    // 3. Quality / Specs Context
+    if (lastMessage.includes('calidad') || lastMessage.includes('quality') || lastMessage.includes('certifica')) {
       return [
-        "¡Hola! ¿En qué puedo ayudarte?",
-        "Buenos días, ¿buscas algún producto específico?",
-        "Hola, gracias por contactarnos"
+        "¿Cuentan con análisis de laboratorio reciente?",
+        "Requerimos certificación SGS antes del embarque.",
+        "La calidad cumple con nuestros estándares."
       ];
     }
     
+    // 4. Closing / Agreement
+    if (lastMessage.includes('acuerdo') || lastMessage.includes('deal') || lastMessage.includes('contrato')) {
+      return [
+        "Estamos listos para firmar.",
+        "Por favor envíe el borrador del contrato.",
+        "Necesitamos revisar una cláusula más."
+      ];
+    }
+
+    // Default commercial courtesy
     return [
-      "Entendido, déjame revisar",
-      "¿Podrías darme más detalles?",
-      "Te confirmo en un momento"
+      "Gracias, revisaré la información.",
+      "¿Podríamos agendar una llamada breve?",
+      "Por favor envíeme más detalles técnicos."
     ];
   }
 
@@ -57,8 +73,24 @@ export class AIService {
       return "Recomendamos FOB para mayor control del flete, o CIF si prefieres que el vendedor se encargue del seguro y transporte principal.";
     }
     
-    if (q.includes('documentos') || q.includes('requisitos')) {
-      return "Generalmente necesitarás: Factura Comercial, Packing List, Bill of Lading (B/L) y Certificado de Origen si aplica tratado.";
+    // REAL DATA INTEGRATION: Regulatory Requirements
+    if (q.includes('documentos') || q.includes('requisitos') || q.includes('exportar')) {
+      // Very basic extraction logic for MVP
+      let countryCode = 'CN'; // Default to China for demo if not found
+      if (q.includes('estados unidos') || q.includes('usa') || q.includes('eeuu')) countryCode = 'US';
+      if (q.includes('españa') || q.includes('europa') || q.includes('ue')) countryCode = 'ES'; // UE trigger
+      if (q.includes('brasil')) countryCode = 'BR';
+      
+      let hsCode = '0000'; // Default
+      // Try to sniff HS Code or Product Chapter
+      if (q.includes('quimico') || q.includes('químico')) hsCode = '2800';
+      if (q.includes('carne') || q.includes('beef')) hsCode = '0201';
+      if (q.includes('pharma') || q.includes('medicamento')) hsCode = '3004';
+
+      const requirements = RegulatoryEngine.determineRequiredDocuments(hsCode, countryCode);
+      const reqList = requirements.map(r => `- ${r.name}: ${r.requirements}`).join('\n');
+
+      return `Para exportar a ${countryCode} (HS aprox ${hsCode}), necesitarás:\n\n${reqList}\n\n¿Necesitas ayuda con alguno de estos trámites?`;
     }
     
     return "Esa es una buena pregunta técnica. Te sugiero consultar la sección de regulaciones o usar la herramienta de clasificación arancelaria para estar seguro.";

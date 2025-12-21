@@ -146,8 +146,46 @@ export default function CompanyProfile() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0A1929] flex items-center justify-center">
-        <div className="animate-spin w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full"></div>
+      <div className="min-h-screen bg-[#0A1929]">
+        <Header />
+        <div className="container mx-auto px-4 py-6 max-w-7xl">
+           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+             {/* Left Column Skeleton */}
+             <div className="lg:col-span-8 space-y-6">
+               <Card className="bg-[#0D2137] border-cyan-900/30 overflow-hidden">
+                 <div className="h-48 bg-gray-800 animate-pulse" /> {/* Cover */}
+                 <CardContent className="px-6 pb-6 pt-0 relative">
+                    <div className="absolute -top-16 left-6">
+                      <div className="w-32 h-32 rounded-xl bg-gray-700 animate-pulse border-4 border-[#0D2137]" /> {/* Logo */}
+                    </div>
+                    <div className="flex justify-end pt-4 gap-3 mb-12">
+                      <div className="w-24 h-10 bg-gray-700 rounded animate-pulse" />
+                      <div className="w-24 h-10 bg-gray-700 rounded animate-pulse" />
+                    </div>
+                    <div className="space-y-4">
+                       <div className="w-3/4 h-8 bg-gray-700 rounded animate-pulse" />
+                       <div className="w-1/2 h-6 bg-gray-800 rounded animate-pulse" />
+                       <div className="flex gap-4">
+                         <div className="w-24 h-6 bg-gray-800 rounded animate-pulse" />
+                         <div className="w-24 h-6 bg-gray-800 rounded animate-pulse" />
+                       </div>
+                    </div>
+                 </CardContent>
+               </Card>
+             </div>
+             {/* Sidebar Skeleton */}
+             <div className="lg:col-span-4 space-y-6">
+               <Card className="bg-[#0D2137] border-cyan-900/30 h-64">
+                  <CardHeader><div className="w-1/2 h-6 bg-gray-800 rounded animate-pulse" /></CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="w-full h-4 bg-gray-800 rounded animate-pulse" />
+                    <div className="w-full h-4 bg-gray-800 rounded animate-pulse" />
+                    <div className="w-3/4 h-4 bg-gray-800 rounded animate-pulse" />
+                  </CardContent>
+               </Card>
+             </div>
+           </div>
+        </div>
       </div>
     );
   }

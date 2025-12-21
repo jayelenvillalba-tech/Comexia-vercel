@@ -17,6 +17,7 @@ export interface CountryData {
   restrictions?: string[]; // Specific trade restrictions
   majorExports?: string[]; // Main export categories
   majorImports?: string[]; // Main import categories
+  dataProtection?: 'GDPR' | 'LGPD' | 'CCPA' | 'PIPL' | 'General'; // Data Privacy Standard
 }
 
 // Tratados comerciales principales (actualizados a 2024)
@@ -252,30 +253,30 @@ export const tradeTreaties: TradeTreaty[] = [
 // Lista completa de países (195+ países)
 export const countries: CountryData[] = [
   // América del Sur - COMPLETA Y SIN DUPLICADOS
-  { code: 'AR', name: 'Argentina', nameEn: 'Argentina', region: 'South America', treaties: ['mercosur', 'aladi', 'prosur', 'eu_mercosur', 'efta_mercosur'], majorExports: ['beef', 'wheat', 'soybeans', 'lithium'], majorImports: ['machinery', 'vehicles', 'chemicals'] },
-  { code: 'BR', name: 'Brasil', nameEn: 'Brazil', region: 'South America', treaties: ['mercosur', 'aladi', 'prosur', 'eu_mercosur', 'efta_mercosur'], majorExports: ['soybeans', 'iron_ore', 'coffee', 'sugar'], majorImports: ['crude_oil', 'machinery', 'electronics'] },
-  { code: 'CL', name: 'Chile', nameEn: 'Chile', region: 'South America', treaties: ['aladi', 'cptpp', 'pacific_alliance', 'prosur'], majorExports: ['copper', 'wine', 'salmon', 'lithium'], majorImports: ['crude_oil', 'machinery', 'vehicles'] },
-  { code: 'CO', name: 'Colombia', nameEn: 'Colombia', region: 'South America', treaties: ['aladi', 'pacific_alliance', 'can', 'prosur'], majorExports: ['coffee', 'petroleum', 'coal', 'flowers'], majorImports: ['machinery', 'chemicals', 'vehicles'] },
+  { code: 'AR', name: 'Argentina', nameEn: 'Argentina', region: 'South America', treaties: ['mercosur', 'aladi', 'prosur', 'eu_mercosur', 'efta_mercosur'], majorExports: ['beef', 'wheat', 'soybeans', 'lithium'], majorImports: ['machinery', 'vehicles', 'chemicals'], dataProtection: 'General' },
+  { code: 'BR', name: 'Brasil', nameEn: 'Brazil', region: 'South America', treaties: ['mercosur', 'aladi', 'prosur', 'eu_mercosur', 'efta_mercosur'], majorExports: ['soybeans', 'iron_ore', 'coffee', 'sugar'], majorImports: ['crude_oil', 'machinery', 'electronics'], dataProtection: 'LGPD' },
+  { code: 'CL', name: 'Chile', nameEn: 'Chile', region: 'South America', treaties: ['aladi', 'cptpp', 'pacific_alliance', 'prosur'], majorExports: ['copper', 'wine', 'salmon', 'lithium'], majorImports: ['crude_oil', 'machinery', 'vehicles'], dataProtection: 'General' },
+  { code: 'CO', name: 'Colombia', nameEn: 'Colombia', region: 'South America', treaties: ['aladi', 'pacific_alliance', 'can', 'prosur'], majorExports: ['coffee', 'petroleum', 'coal', 'flowers'], majorImports: ['machinery', 'chemicals', 'vehicles'], dataProtection: 'General' },
   { code: 'PE', name: 'Perú', nameEn: 'Peru', region: 'South America', treaties: ['aladi', 'pacific_alliance', 'cptpp', 'can', 'prosur'], majorExports: ['copper', 'gold', 'zinc', 'fishmeal'], majorImports: ['machinery', 'vehicles', 'chemicals'] },
   { code: 'EC', name: 'Ecuador', nameEn: 'Ecuador', region: 'South America', treaties: ['aladi', 'can', 'prosur'], majorExports: ['petroleum', 'bananas', 'shrimp', 'cocoa'], majorImports: ['machinery', 'vehicles', 'chemicals'] },
-  { code: 'UY', name: 'Uruguay', nameEn: 'Uruguay', region: 'South America', treaties: ['mercosur', 'aladi', 'prosur', 'eu_mercosur', 'efta_mercosur'], majorExports: ['beef', 'soybeans', 'dairy', 'wool'], majorImports: ['crude_oil', 'machinery', 'chemicals'] },
+  { code: 'UY', name: 'Uruguay', nameEn: 'Uruguay', region: 'South America', treaties: ['mercosur', 'aladi', 'prosur', 'eu_mercosur', 'efta_mercosur'], majorExports: ['beef', 'soybeans', 'dairy', 'wool'], majorImports: ['crude_oil', 'machinery', 'chemicals'], dataProtection: 'General' },
   { code: 'PY', name: 'Paraguay', nameEn: 'Paraguay', region: 'South America', treaties: ['mercosur', 'aladi', 'prosur', 'eu_mercosur', 'efta_mercosur'], majorExports: ['soybeans', 'beef', 'electricity'], majorImports: ['machinery', 'fuel', 'chemicals'] },
   { code: 'BO', name: 'Bolivia', nameEn: 'Bolivia', region: 'South America', treaties: ['mercosur', 'aladi', 'can', 'unasur', 'eu_mercosur', 'efta_mercosur'], majorExports: ['natural_gas', 'zinc', 'silver', 'tin'], majorImports: ['machinery', 'vehicles', 'fuel'] },
   { code: 'VE', name: 'Venezuela', nameEn: 'Venezuela', region: 'South America', treaties: ['aladi', 'unasur'], majorExports: ['petroleum', 'bauxite', 'iron_ore'], majorImports: ['machinery', 'food', 'chemicals'], restrictions: ['us_sanctions', 'eu_sanctions'] },
   { code: 'GY', name: 'Guyana', nameEn: 'Guyana', region: 'South America', treaties: ['caricom', 'prosur', 'unasur'], majorExports: ['petroleum', 'gold', 'bauxite', 'rice'], majorImports: ['machinery', 'food', 'fuel'] },
   { code: 'SR', name: 'Suriname', nameEn: 'Suriname', region: 'South America', treaties: ['caricom', 'unasur'], majorExports: ['petroleum', 'gold', 'bauxite', 'rice'], majorImports: ['machinery', 'food', 'fuel'] },
-  { code: 'GF', name: 'Guayana Francesa', nameEn: 'French Guiana', region: 'South America', treaties: ['eu'], majorExports: ['gold', 'timber', 'shrimp'], majorImports: ['machinery', 'food', 'fuel'] },
+  { code: 'GF', name: 'Guayana Francesa', nameEn: 'French Guiana', region: 'South America', treaties: ['eu'], majorExports: ['gold', 'timber', 'shrimp'], majorImports: ['machinery', 'food', 'fuel'], dataProtection: 'GDPR' },
 
   // América del Norte
-  { code: 'US', name: 'Estados Unidos', nameEn: 'United States', region: 'North America', treaties: ['usmca'], majorExports: ['machinery', 'oil', 'aircraft', 'electronics'], majorImports: ['electronics', 'machinery', 'vehicles', 'oil'] },
-  { code: 'CA', name: 'Canadá', nameEn: 'Canada', region: 'North America', treaties: ['usmca', 'cptpp'], majorExports: ['oil', 'gold', 'lumber', 'wheat'], majorImports: ['machinery', 'electronics', 'vehicles'] },
-  { code: 'MX', name: 'México', nameEn: 'Mexico', region: 'North America', treaties: ['usmca', 'aladi', 'cptpp', 'pacific_alliance'], majorExports: ['vehicles', 'machinery', 'oil', 'electronics'], majorImports: ['machinery', 'electronics', 'chemicals'] },
+  { code: 'US', name: 'Estados Unidos', nameEn: 'United States', region: 'North America', treaties: ['usmca'], majorExports: ['machinery', 'oil', 'aircraft', 'electronics'], majorImports: ['electronics', 'machinery', 'vehicles', 'oil'], dataProtection: 'CCPA' },
+  { code: 'CA', name: 'Canadá', nameEn: 'Canada', region: 'North America', treaties: ['usmca', 'cptpp'], majorExports: ['oil', 'gold', 'lumber', 'wheat'], majorImports: ['machinery', 'electronics', 'vehicles'], dataProtection: 'General' },
+  { code: 'MX', name: 'México', nameEn: 'Mexico', region: 'North America', treaties: ['usmca', 'aladi', 'cptpp', 'pacific_alliance'], majorExports: ['vehicles', 'machinery', 'oil', 'electronics'], majorImports: ['machinery', 'electronics', 'chemicals'], dataProtection: 'General' },
 
   // Europa
-  { code: 'DE', name: 'Alemania', nameEn: 'Germany', region: 'Europe', treaties: ['eu'], majorExports: ['vehicles', 'machinery', 'chemicals', 'electronics'], majorImports: ['machinery', 'electronics', 'vehicles', 'oil'] },
-  { code: 'FR', name: 'Francia', nameEn: 'France', region: 'Europe', treaties: ['eu'], majorExports: ['aircraft', 'machinery', 'chemicals', 'wine'], majorImports: ['machinery', 'vehicles', 'electronics', 'oil'] },
-  { code: 'IT', name: 'Italia', nameEn: 'Italy', region: 'Europe', treaties: ['eu'], majorExports: ['machinery', 'vehicles', 'textiles', 'food'], majorImports: ['machinery', 'chemicals', 'vehicles', 'oil'] },
-  { code: 'ES', name: 'España', nameEn: 'Spain', region: 'Europe', treaties: ['eu'], majorExports: ['machinery', 'vehicles', 'food', 'textiles'], majorImports: ['machinery', 'chemicals', 'fuel', 'food'] },
+  { code: 'DE', name: 'Alemania', nameEn: 'Germany', region: 'Europe', treaties: ['eu'], majorExports: ['vehicles', 'machinery', 'chemicals', 'electronics'], majorImports: ['machinery', 'electronics', 'vehicles', 'oil'], dataProtection: 'GDPR' },
+  { code: 'FR', name: 'Francia', nameEn: 'France', region: 'Europe', treaties: ['eu'], majorExports: ['aircraft', 'machinery', 'chemicals', 'wine'], majorImports: ['machinery', 'vehicles', 'electronics', 'oil'], dataProtection: 'GDPR' },
+  { code: 'IT', name: 'Italia', nameEn: 'Italy', region: 'Europe', treaties: ['eu'], majorExports: ['machinery', 'vehicles', 'textiles', 'food'], majorImports: ['machinery', 'chemicals', 'vehicles', 'oil'], dataProtection: 'GDPR' },
+  { code: 'ES', name: 'España', nameEn: 'Spain', region: 'Europe', treaties: ['eu'], majorExports: ['machinery', 'vehicles', 'food', 'textiles'], majorImports: ['machinery', 'chemicals', 'fuel', 'food'], dataProtection: 'GDPR' },
   { code: 'UK', name: 'Reino Unido', nameEn: 'United Kingdom', region: 'Europe', treaties: ['cptpp'], majorExports: ['machinery', 'vehicles', 'chemicals', 'oil'], majorImports: ['machinery', 'vehicles', 'electronics', 'food'] },
   { code: 'NL', name: 'Países Bajos', nameEn: 'Netherlands', region: 'Europe', treaties: ['eu'], majorExports: ['machinery', 'chemicals', 'fuel', 'food'], majorImports: ['machinery', 'fuel', 'electronics', 'food'] },
   { code: 'BE', name: 'Bélgica', nameEn: 'Belgium', region: 'Europe', treaties: ['eu'], majorExports: ['machinery', 'chemicals', 'diamonds', 'metals'], majorImports: ['machinery', 'chemicals', 'fuel', 'diamonds'] },
@@ -528,7 +529,45 @@ export const countries: CountryData[] = [
   { code: 'HT', name: 'Haití', nameEn: 'Haiti', region: 'Caribbean', treaties: [], majorExports: ['textiles', 'coffee'], majorImports: ['machinery', 'fuel', 'food'] },
   { code: 'TT', name: 'Trinidad y Tobago', nameEn: 'Trinidad and Tobago', region: 'Caribbean', treaties: [], majorExports: ['oil', 'gas', 'chemicals'], majorImports: ['machinery', 'food', 'vehicles'] },
   { code: 'BB', name: 'Barbados', nameEn: 'Barbados', region: 'Caribbean', treaties: [], majorExports: ['sugar', 'rum', 'chemicals'], majorImports: ['machinery', 'fuel', 'food'] },
-  { code: 'BS', name: 'Bahamas', nameEn: 'Bahamas', region: 'Caribbean', treaties: [], majorExports: ['fish', 'rum'], majorImports: ['machinery', 'fuel', 'food'] }
+  { code: 'BS', name: 'Bahamas', nameEn: 'Bahamas', region: 'Caribbean', treaties: [], majorExports: ['fish', 'rum'], majorImports: ['machinery', 'fuel', 'food'] },
+
+  // --- FINAL BATCH: MICROSTATES & ISLANDS (~30 Countries) ---
+  
+  // Caribbean & Central America
+  { code: 'KY', name: 'Islas Caimán', nameEn: 'Cayman Islands', region: 'Caribbean', treaties: [], majorExports: ['re_exports'], majorImports: ['food', 'fuel'] },
+  { code: 'AW', name: 'Aruba', nameEn: 'Aruba', region: 'Caribbean', treaties: [], majorExports: ['oil_refining', 'tourism'], majorImports: ['food', 'fuel'] },
+  { code: 'CW', name: 'Curazao', nameEn: 'Curacao', region: 'Caribbean', treaties: [], majorExports: ['oil_refining'], majorImports: ['crude_oil', 'food'] },
+  { code: 'SX', name: 'Sint Maarten', nameEn: 'Sint Maarten', region: 'Caribbean', treaties: [], majorExports: ['tourism'], majorImports: ['food', 'fuel'] },
+  { code: 'BM', name: 'Bermudas', nameEn: 'Bermuda', region: 'North America', treaties: [], majorExports: ['re_exports'], majorImports: ['food', 'fuel', 'machinery'] },
+
+  // Pacific Islands
+  { code: 'WS', name: 'Samoa', nameEn: 'Samoa', region: 'Oceania', treaties: [], majorExports: ['fish', 'coconut'], majorImports: ['machinery', 'food'] },
+  { code: 'TO', name: 'Tonga', nameEn: 'Tonga', region: 'Oceania', treaties: [], majorExports: ['squash', 'vanilla'], majorImports: ['food', 'fuel'] },
+  { code: 'VU', name: 'Vanuatu', nameEn: 'Vanuatu', region: 'Oceania', treaties: [], majorExports: ['fish', 'copra'], majorImports: ['machinery', 'food'] },
+  { code: 'SB', name: 'Islas Salomón', nameEn: 'Solomon Islands', region: 'Oceania', treaties: [], majorExports: ['timber', 'fish'], majorImports: ['machinery', 'fuel'] },
+  { code: 'PF', name: 'Polinesia Francesa', nameEn: 'French Polynesia', region: 'Oceania', treaties: [], majorExports: ['pearls', 'vanilla'], majorImports: ['fuel', 'food'] },
+  { code: 'NC', name: 'Nueva Caledonia', nameEn: 'New Caledonia', region: 'Oceania', treaties: [], majorExports: ['nickel'], majorImports: ['machinery', 'fuel'] },
+
+  // Africa Microstates & Others
+  { code: 'CV', name: 'Cabo Verde', nameEn: 'Cape Verde', region: 'Africa', treaties: ['afcfta'], majorExports: ['fish', 'shoes'], majorImports: ['food', 'fuel'] },
+  { code: 'ST', name: 'Santo Tomé y Príncipe', nameEn: 'Sao Tome and Principe', region: 'Africa', treaties: ['afcfta'], majorExports: ['cocoa'], majorImports: ['food', 'fuel'] },
+  { code: 'GQ', name: 'Guinea Ecuatorial', nameEn: 'Equatorial Guinea', region: 'Africa', treaties: ['afcfta'], majorExports: ['oil', 'gas'], majorImports: ['machinery', 'food'] },
+  { code: 'GA', name: 'Gabón', nameEn: 'Gabon', region: 'Africa', treaties: ['afcfta'], majorExports: ['oil', 'manganese'], majorImports: ['machinery', 'food'] },
+  { code: 'CG', name: 'Congo', nameEn: 'Republic of the Congo', region: 'Africa', treaties: ['afcfta'], majorExports: ['oil', 'copper'], majorImports: ['machinery', 'food'] },
+  { code: 'MR', name: 'Mauritania', nameEn: 'Mauritania', region: 'Africa', treaties: ['afcfta'], majorExports: ['iron_ore', 'fish', 'gold'], majorImports: ['machinery', 'food'] },
+
+  // Europe Microstates
+  { code: 'MC', name: 'Mónaco', nameEn: 'Monaco', region: 'Europe', treaties: ['customs_union_eu'], majorExports: ['cosmetics', 'pharmaceuticals'], majorImports: ['luxury_goods'] },
+  { code: 'AD', name: 'Andorra', nameEn: 'Andorra', region: 'Europe', treaties: ['customs_union_eu'], majorExports: ['tobacco', 'furniture'], majorImports: ['food', 'fuel'] },
+  { code: 'SM', name: 'San Marino', nameEn: 'San Marino', region: 'Europe', treaties: ['customs_union_eu'], majorExports: ['ceramics', 'chemicals'], majorImports: ['gas', 'machinery'] },
+  { code: 'VA', name: 'Vaticano', nameEn: 'Vatican City', region: 'Europe', treaties: [], majorExports: [], majorImports: ['food', 'consumer_goods'] },
+
+  // Asia Others
+  { code: 'MV', name: 'Maldivas', nameEn: 'Maldives', region: 'Asia', treaties: [], majorExports: ['fish'], majorImports: ['fuel', 'food'] },
+  { code: 'BT', name: 'Bután', nameEn: 'Bhutan', region: 'Asia', treaties: [], majorExports: ['electricity', 'cement'], majorImports: ['fuel', 'machinery'] },
+  { code: 'TL', name: 'Timor Oriental', nameEn: 'East Timor', region: 'Asia', treaties: [], majorExports: ['oil', 'coffee'], majorImports: ['food', 'fuel'] },
+  { code: 'TJ', name: 'Tayikistán', nameEn: 'Tajikistan', region: 'Asia', treaties: [], majorExports: ['aluminum', 'cotton'], majorImports: ['petroleum', 'machinery'] },
+  { code: 'TM', name: 'Turkmenistán', nameEn: 'Turkmenistan', region: 'Asia', treaties: [], majorExports: ['gas', 'cotton'], majorImports: ['machinery', 'food'] }
 ];
 
 // Función para obtener tratados de un país

@@ -3,8 +3,8 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { db } from '../../database/db-sqlite';
-import { verifications, companies, users } from '../../shared/shared/schema-sqlite';
+import { db } from '../../database/db-sqlite.js';
+import { verifications, companies, users } from '../../shared/shared/schema-sqlite.js';
 import { Eq, eq, and, desc } from 'drizzle-orm';
 
 const router = Router();

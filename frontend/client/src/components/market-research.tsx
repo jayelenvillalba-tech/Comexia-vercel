@@ -28,6 +28,8 @@ export default function MarketResearch() {
   const [selectedCountry, setSelectedCountry] = useState<CountryOpportunity | null>(null);
   const [viewMode, setViewMode] = useState<"ranking" | "details">("ranking");
 
+  console.log('[DEBUG MARKET RESEARCH] State:', { hsCode, selectedCountry });
+
   const { data: opportunities = [] } = useQuery<CountryOpportunity[]>({
     queryKey: ["/api/country-opportunities", hsCode],
     queryFn: async () => {
@@ -401,16 +403,10 @@ export default function MarketResearch() {
                 </div>
               </div>
 
-              <div className="bg-red-100 p-2 text-red-800 text-xs font-mono mb-4 border border-red-300 rounded">
-                  DEBUG: SelectedCountryCode="{selectedCountry?.countryCode}" | HS="{hsCode}" | ReqsLoaded={requirements ? "YES" : "NO"}
-              </div>
 
-              {/* Mostrar documentación para US + Carne Bovina */}
-              {selectedCountry && hsCode === '0201' && (
-                selectedCountry.countryCode === 'US' || 
-                selectedCountry.countryName?.toLowerCase().includes('estados unidos') ||
-                selectedCountry.countryName?.toLowerCase().includes('united states')
-              ) && (
+
+              {/* Mostrar documentación para cualquier producto si hay requisitos */}
+              {(requirements || (selectedCountry && hsCode === '0201')) && (
                  (() => {
                     const activeRequirements = requirements || US_BEEF_MOCK;
                     return (
@@ -596,9 +592,10 @@ export default function MarketResearch() {
                 </div>
               )}
             </div>
-          </motion.div>
-        )
-      )}
+          </div>
+        );
+      })()
+    )}
     </div>
   );
 }

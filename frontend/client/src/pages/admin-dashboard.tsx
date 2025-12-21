@@ -87,16 +87,39 @@ export default function AdminDashboard() {
   const { data: verifications = [] } = useQuery({
     queryKey: ['verifications'],
     queryFn: async () => {
-      const res = await fetch('/api/verifications');
+      const token = localStorage.getItem('token');
+      const res = await fetch('/api/verifications', {
+          headers: { Authorization: `Bearer ${token}` }
+      });
       if (!res.ok) throw new Error('Failed to fetch verifications');
       return res.json();
     },
     enabled: isAuthenticated
   });
 
+  // Fetch real stats
+  const { data: realStats } = useQuery({
+      queryKey: ['admin-stats'],
+      queryFn: async () => {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/admin/stats', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) return mockStats; // Fallback to mock if failed (e.g. not admin)
+        return res.json();
+      },
+      enabled: isAuthenticated
+  });
+
+  const stats = realStats || mockStats;
+
   const approveMutation = useMutation({
     mutationFn: async (id: string) => {
-       await fetch(`/api/verifications/${id}/approve`, { method: 'POST' });
+       const token = localStorage.getItem('token');
+       await fetch(`/api/verifications/${id}/approve`, { 
+           method: 'POST',
+           headers: { Authorization: `Bearer ${token}` }
+       });
     },
     onSuccess: () => {
        queryClient.invalidateQueries({ queryKey: ['verifications'] });
@@ -211,7 +234,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-300 text-xs">{language === 'es' ? 'Usuarios' : 'Users'}</p>
-                  <p className="text-white text-2xl font-bold">{mockStats.totalUsers}</p>
+                  <p className="text-white text-2xl font-bold">{stats.totalUsers}</p>
                 </div>
                 <Users className="w-8 h-8 text-blue-400" />
               </div>
@@ -223,7 +246,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-300 text-xs">{language === 'es' ? 'Empresas' : 'Companies'}</p>
-                  <p className="text-white text-2xl font-bold">{mockStats.totalCompanies}</p>
+                  <p className="text-white text-2xl font-bold">{stats.totalCompanies}</p>
                 </div>
                 <Building2 className="w-8 h-8 text-purple-400" />
               </div>
@@ -235,7 +258,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-300 text-xs">{language === 'es' ? 'Suscripciones' : 'Subscriptions'}</p>
-                  <p className="text-white text-2xl font-bold">{mockStats.activeSubscriptions}</p>
+                  <p className="text-white text-2xl font-bold">{stats.activeSubscriptions}</p>
                 </div>
                 <TrendingUp className="w-8 h-8 text-green-400" />
               </div>
@@ -247,7 +270,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-300 text-xs">{language === 'es' ? 'Verificaciones' : 'Verifications'}</p>
-                  <p className="text-white text-2xl font-bold">{mockStats.pendingVerifications}</p>
+                  <p className="text-white text-2xl font-bold">{stats.pendingVerifications}</p>
                 </div>
                 <AlertTriangle className="w-8 h-8 text-yellow-400" />
               </div>
@@ -259,7 +282,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-300 text-xs">{language === 'es' ? 'Ingresos/mes' : 'Revenue/mo'}</p>
-                  <p className="text-white text-2xl font-bold">${mockStats.totalRevenue.toLocaleString()}</p>
+                  <p className="text-white text-2xl font-bold">${stats.totalRevenue ? stats.totalRevenue.toLocaleString() : '0'}</p>
                 </div>
                 <DollarSign className="w-8 h-8 text-emerald-400" />
               </div>
@@ -271,7 +294,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-slate-300 text-xs">{language === 'es' ? 'Publicaciones' : 'Posts'}</p>
-                  <p className="text-white text-2xl font-bold">{mockStats.activePosts}</p>
+                  <p className="text-white text-2xl font-bold">{stats.activePosts}</p>
                 </div>
                 <Package className="w-8 h-8 text-orange-400" />
               </div>

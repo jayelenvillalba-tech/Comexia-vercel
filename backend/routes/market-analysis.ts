@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { db } from '../../database/db-sqlite';
-import { hsSubpartidas, companies } from '../../shared/shared/schema-sqlite';
+import { db } from '../../database/db-sqlite.js';
+import { hsSubpartidas, companies } from '../../shared/shared/schema-sqlite.js';
 import { eq, like, and, sql } from 'drizzle-orm';
-import { countries, getCountryTreaties } from '../../shared/shared/countries-data';
+import { countries, getCountryTreaties } from '../../shared/shared/countries-data.js';
+import { ComtradeService } from '../services/comtrade-service.js';
 
 interface MarketAnalysisRequest {
   hsCode: string;
@@ -53,6 +54,13 @@ interface MarketAnalysis {
     treaties: string[];
     restrictions: string[];
     certifications: string[];
+    requiredDocuments: Array<{
+      name: string;
+      issuer: string;
+      description: string;
+      requirements: string;
+      link?: string;
+    }> | string[];
   };
   
   // Opportunities & Risks
@@ -120,10 +128,14 @@ export async function analyzeMarket(req: Request, res: Response) {
         like(companies.products, `%${hsCode}%`)
       ));
 
-    // Calculate market size (simplified estimation)
-    const baseMarketSize = calculateMarketSize(hsCode, country, countryData);
-    const growthRate = calculateGrowthRate(hsCode, country);
-    const trend = growthRate > 3 ? 'growing' : growthRate < -2 ? 'declining' : 'stable';
+    // [UPDATED] Get market data from UN Comtrade (with cache & fallback)
+    const importData = await ComtradeService.getImportData(hsCode, country);
+    const baseMarketSize = Math.round(importData.valueUsd / 1000000); // Convert to Millions
+    
+    // Calculate growth/trend (if we had previous years, we could compare properly)
+    // For now, keep the logic, but base it on the SOURCE
+    const trend = importData.source.includes('Comtrade') ? 'stable' : (calculateGrowthRate(hsCode, country) > 3 ? 'growing' : 'stable');
+    const growthRate = calculateGrowthRate(hsCode, country); // Keep estimated for now until we fetch multi-year
 
     // Competition analysis
     const competitionLevel = companiesInMarket.length > 10 ? 'high' : 
@@ -212,7 +224,8 @@ export async function analyzeMarket(req: Request, res: Response) {
         effectiveTariffRate: effectiveTariff,
         treaties: treaties.map(t => t.name),
         restrictions: hsCodeData.restrictions || [],
-        certifications: determineCertifications(hsCode)
+        certifications: determineCertifications(hsCode),
+        requiredDocuments: determineRequiredDocuments(hsCode, country)
       },
       opportunities,
       risks,
@@ -446,4 +459,65 @@ function determineCertifications(hsCode: string): string[] {
   certifications.push('Certificado de Origen');
 
   return certifications;
+}
+
+function determineRequiredDocuments(hsCode: string, country: string): any[] {
+  const commonDocs = [
+    {
+      name: 'Factura Comercial',
+      issuer: 'Exportador',
+      description: 'Documento comercial que detalla la transacción.',
+      requirements: 'Debe incluir Incoterms, descripción detallada, valor unitario y total.'
+    },
+    {
+      name: 'Lista de Empaque (Packing List)',
+      issuer: 'Exportador',
+      description: 'Detalle del contenido de cada bulto.',
+      requirements: 'Debe coincidir exactamente con la factura comercial.'
+    },
+    {
+      name: 'Certificado de Origen',
+      issuer: 'Cámara de Comercio / Entidad Autorizada',
+      description: 'Acredita el origen de la mercancía para preferencias arancelarias.',
+      requirements: 'Formato específico según el acuerdo comercial aplicable.'
+    },
+    {
+      name: 'Documento de Transporte',
+      issuer: 'Transportista / Agente de Carga',
+      description: 'Bill of Lading (marítimo), Air Waybill (aéreo) o CRT (terrestre).',
+      requirements: 'Debe estar consignado según instrucciones del importador.'
+    }
+  ];
+
+  // Specific documents based on HS Code chapter
+  const chapter = hsCode.substring(0, 2);
+  
+  if (chapter === '61' || chapter === '62') { // Textiles (Camisetas)
+    commonDocs.push({
+      name: 'Certificado de Composición',
+      issuer: 'Laboratorio Textil / Exportador',
+      description: 'Detalla la composición de las fibras (ej. 100% algodón).',
+      requirements: 'Obligatorio para etiquetado en destino.'
+    });
+  }
+  
+  if (['01', '02', '03', '04', '05'].includes(chapter)) { // Animal products
+    commonDocs.push({
+      name: 'Certificado Sanitario / Veterinario',
+      issuer: 'SENASA (Argentina) / Autoridad Sanitaria',
+      description: 'Acredita que los productos son aptos para consumo humano/animal.',
+      requirements: 'Debe ser emitido por la autoridad oficial del país exportador.'
+    });
+  }
+
+  if (country === 'US') {
+    commonDocs.push({
+      name: 'ISF (10+2) Filing',
+      issuer: 'Importador / Agente',
+      description: 'Información de seguridad del importador.',
+      requirements: 'Debe presentarse 24 horas antes de la carga en origen (marítimo).'
+    });
+  }
+
+  return commonDocs;
 }

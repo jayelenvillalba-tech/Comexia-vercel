@@ -1,14 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 
-// Mock User Type - aligned with schema
+// User Type - aligned with schema and backend response
 export interface User {
   id: string;
   name: string;
   email: string;
   role: string;
   company: string;
-  companyId?: string; // Added
+  companyId?: string;
   avatar?: string;
   verified: boolean;
 }
@@ -24,6 +24,7 @@ interface UserContextType {
   login: (credentials: UserLogin) => Promise<void>;
   register: (data: { name: string; email: string; password?: string; companyName?: string }) => Promise<boolean>;
   logout: () => void;
+  isAuthenticated: boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -32,21 +33,45 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  // Language for toasts (simplified, ideally use hook)
-  const language = 'es'; 
 
   useEffect(() => {
-    // Check local storage on mount
-    const storedUser = localStorage.getItem('comex_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Failed to parse stored user", e);
-        localStorage.removeItem('comex_user');
+    const initAuth = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setIsLoading(false);
+        return;
       }
-    }
-    setIsLoading(false);
+
+      try {
+        const res = await fetch('/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (res.ok) {
+            const userData = await res.json();
+             // Map backend response to Frontend User interface
+            const mappedUser: User = {
+                id: userData.id,
+                name: userData.name,
+                email: userData.email,
+                role: userData.role || "Usuario",
+                company: userData.companyName || "",
+                companyId: userData.companyId,
+                verified: false // Backend needs to send this if needed, defaulting for now
+            };
+            setUser(mappedUser);
+        } else {
+            console.log('Token expired or invalid');
+            logout(); // Clear bad token
+        }
+      } catch (error) {
+        console.error('Auth check error', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   const login = async (credentials: UserLogin) => {
@@ -61,27 +86,25 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.error || 'Login failed');
       }
 
-      // Map backend response to User type if needed
       const mappedUser: User = {
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          role: data.role || "Usuario",
-          company: data.company?.name || data.company || "",
-          companyId: data.company?.id || data.companyId,
-          verified: !!data.verified,
-          avatar: undefined 
+          id: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          role: data.user.role || "Usuario",
+          company: data.user.companyName || "",
+          companyId: data.user.companyId,
+          verified: !!data.user.verified
       };
 
+      localStorage.setItem('token', data.token);
       setUser(mappedUser);
-      localStorage.setItem('comex_user', JSON.stringify(mappedUser));
 
       toast({
         title: "¡Bienvenido de vuelta!",
-        description: "Has iniciado sesión correctamente.",
+        description: `Hola ${mappedUser.name}`,
       });
     } catch (error: any) {
       console.error('Login error:', error);
@@ -90,6 +113,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         description: error.message || "Error al iniciar sesión",
         variant: "destructive",
       });
+      throw error; 
     } finally {
       setIsLoading(false);
     }
@@ -98,36 +122,42 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const register = async (userData: any) => {
     setIsLoading(true);
     try {
+        // Map frontend params to backend expectation if needed
+        const payload = {
+            userName: userData.name,
+            companyName: userData.companyName,
+            email: userData.email,
+            password: userData.password
+        };
+
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Registration failed');
+        throw new Error(data.error || 'Registration failed');
       }
 
-       // For register, backend might handle company creation. 
-       // We'll rely on response data or fallback to input
        const mappedUser: User = {
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          role: data.role || "Usuario",
-          company: userData.companyName || "", 
-          companyId: data.companyId, // Should come from backend or be undefined initially
-          verified: !!data.verified
+          id: data.user.id,
+          name: data.user.name,
+          email: data.user.email,
+          role: data.user.role || "Usuario",
+          company: data.user.companyName || "", 
+          companyId: data.user.companyId,
+          verified: false
       };
 
+      localStorage.setItem('token', data.token);
       setUser(mappedUser);
-      localStorage.setItem('comex_user', JSON.stringify(mappedUser));
       
       toast({
         title: "¡Cuenta creada!",
-        description: `Bienvenido a ComexIA, ${data.name}`,
+        description: `Bienvenido a ComexIA, ${data.user.name}`,
       });
       return true;
     } catch (error: any) {
@@ -145,12 +175,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('comex_user');
-    window.location.href = '/'; 
+    localStorage.removeItem('token');
+    window.location.href = '/auth'; // Redirect to login
   };
 
   return (
-    <UserContext.Provider value={{ user, isLoading, login, logout, register }}>
+    <UserContext.Provider value={{ user, isLoading, login, logout, register, isAuthenticated: !!user }}>
       {children}
     </UserContext.Provider>
   );

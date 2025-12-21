@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { db } from '../../database/db-sqlite';
-import { hsSubpartidas } from '../../shared/shared/schema-sqlite';
+import { db } from '../../database/db-sqlite.js';
+import { hsSubpartidas } from '../../shared/shared/schema-sqlite.js';
 import { eq } from 'drizzle-orm';
-import { countries, getCountryTreaties, getTariffReduction } from '../../shared/shared/countries-data';
+import { countries, getCountryTreaties, getTariffReduction } from '../../shared/shared/countries-data.js';
 
 interface CostCalculationRequest {
   fobValue: number;

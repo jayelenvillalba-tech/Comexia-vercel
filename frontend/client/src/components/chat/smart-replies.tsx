@@ -15,7 +15,7 @@ export default function SmartReplies({ conversationId, onSelectReply, lastMessag
   const { data: suggestions = [], isLoading } = useQuery({
     queryKey: ['smart-replies', conversationId, lastMessageId],
     queryFn: async () => {
-      const response = await fetch('/api/chat/ai/suggest', {
+      const response = await fetch('/api/chat/suggestions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ conversationId })

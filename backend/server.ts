@@ -1,7 +1,29 @@
 import express from 'express';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import cors from 'cors';
+import { db, initDatabase } from '../database/db-sqlite.js';
+import { initializeTables } from '../database/init-db.js';
+import { companies, hsSubpartidas, hsPartidas, hsChapters, hsSections, marketplacePosts, users, conversations, conversationParticipants, messages, subscriptions, verifications, chatInvites, countryRequirements, countryBaseRequirements, shipments } from '../shared/shared/schema-sqlite.js';
+import { eq, like, or, and, sql, desc } from 'drizzle-orm';
+import { countries, getCountryTreaties, getTariffReduction } from '../shared/shared/countries-data.js';
+import { getCountryCoordinates } from '../shared/shared/continental-coordinates.js';
+import { calculateCosts } from './routes/cost-calculator.js';
+import { analyzeMarket } from './routes/market-analysis.js';
+import verificationRouter from './routes/verifications.js';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import { RegulatoryMerger } from './services/regulatory-merger.js';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const logFile = path.join(process.cwd(), 'backend-debug.log');
+const logToFile = (msg: string) => {
+  const timestamp = new Date().toISOString();
+  fs.appendFileSync(logFile, `[${timestamp}] ${msg}\n`);
+};
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +44,7 @@ app.get('/api/health', async (req, res) => {
     const companiesCount = await db.select({ count: sql<number>`count(*)` }).from(companies);
     
     res.json({ 
-      status: 'ok',
+      status: 'ok', 
       timestamp: new Date().toISOString(),
       services: {
         hsCodes: hsCodesCount[0].count,
@@ -31,6 +53,7 @@ app.get('/api/health', async (req, res) => {
       }
     });
   } catch (error: any) {
+    console.error('Health check error:', error);
     res.status(500).json({ status: 'error', error: error.message });
   }
 });
@@ -136,11 +159,16 @@ app.get('/api/hs-codes/search', async (req, res) => {
     if (query) {
       const searchPattern = `%${query.toLowerCase()}%`;
       
+      logToFile(`🔍 [DEBUG] Search Query: "${query}"`);
+
       // Use direct SQL to search both tables
-      const { sqliteDb } = await import('../database/db-sqlite');
+      const { sqliteDb } = await import('../database/db-sqlite.js');
       
-      console.log(`🔍 Backend: Searching HS codes with query: "${query}"`);
-      console.log(`🔍 Backend: Limit: ${limit}, Offset: ${offset}`);
+      if (!sqliteDb) {
+          logToFile('❌ [DEBUG] sqliteDb is undefined after dynamic import!');
+      } else {
+          logToFile('✅ [DEBUG] sqliteDb imported successfully.');
+      }
       
       const partidasResults = sqliteDb.exec(`
         SELECT * FROM hs_partidas 
@@ -152,7 +180,7 @@ app.get('/api/hs-codes/search', async (req, res) => {
         LIMIT ${limit}
         OFFSET ${offset}
       `);
-      console.log(`  - Partidas found: ${partidasResults.length > 0 ? partidasResults[0].values?.length || 0 : 0}`);
+      logToFile(`🔍 [DEBUG] Partidas found: ${partidasResults.length > 0 ? partidasResults[0].values?.length || 0 : 0}`);
       
       const subpartidasResults = sqliteDb.exec(`
         SELECT * FROM hs_subpartidas 
@@ -164,6 +192,7 @@ app.get('/api/hs-codes/search', async (req, res) => {
         LIMIT ${limit}
         OFFSET ${offset}
       `);
+      logToFile(`🔍 [DEBUG] Subpartidas found: ${subpartidasResults.length > 0 ? subpartidasResults[0].values?.length || 0 : 0}`);
       
       // Convert SQL results to objects
       if (partidasResults.length > 0 && partidasResults[0].values) {
@@ -192,7 +221,7 @@ app.get('/api/hs-codes/search', async (req, res) => {
       results = results.slice(0, limit);
     } else {
       // No query, return some results from both tables
-      const { sqliteDb } = await import('../database/db-sqlite');
+      const { sqliteDb } = await import('../database/db-sqlite.js');
       
       const allResults = sqliteDb.exec(`
         SELECT * FROM hs_partidas LIMIT ${limit} OFFSET ${offset}
@@ -492,13 +521,27 @@ app.get('/api/country-requirements/:countryCode/:hsCode', async (req, res) => {
       .orderBy(desc(sql`length(${countryRequirements.hsCode})`))
       .limit(1);
 
-    // 3. Merge Layers
     const merged = RegulatoryMerger.merge(
       baseReqs[0] || null,
       specificReqs[0] || null,
       countryCode,
       hsCode
     );
+
+    // [FIX] Always use Rich Base Documents from helper function (Spanish, detailed)
+    const richDocs = determineRequiredDocuments(hsCode, countryCode);
+    
+    // Get Specific Docs from DB if any (Layer 2)
+    let dbSpecificDocs: any[] = [];
+    if (specificReqs[0]?.requiredDocuments) {
+      try {
+        dbSpecificDocs = JSON.parse(specificReqs[0].requiredDocuments);
+      } catch (e) { console.error('Error parsing specific docs', e); }
+    }
+
+    // Merge: Rich Base + DB Specific
+    // This replaces the "Weak Base" from DB (English, no desc) with our Rich Base
+    merged.requiredDocuments = [...richDocs, ...dbSpecificDocs];
 
     // [DEMO OVERRIDE] Keep US Beef Mock if needed, but merge it if possible?
     // For now, if we have specific requirements in DB, we use them.
@@ -675,6 +718,7 @@ app.post('/api/marketplace/posts', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Update post
 app.put('/api/marketplace/posts/:id', async (req, res) => {
@@ -1600,8 +1644,358 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
+// Auth API
+app.post('/api/auth/register', async (req, res) => {
+    try {
+        const { register } = await import('./routes/auth.js');
+        await register(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { login } = await import('./routes/auth.js');
+        await login(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.get('/api/auth/me', async (req, res, next) => {
+    try {
+        const { isAuthenticated, getMe } = await import('./routes/auth.js');
+        // Manually run middleware logic here or export it differently? 
+        // Dynamic import makes middleware tricky.
+        // Let's implement robust middleware usage properly later, or wrapping:
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+             res.status(401).json({ error: 'No token provided' });
+             return;
+        }
+        // Simple forward valid JWT check logic inside getMe or duplicate it here?
+        // Better: We'll import isAuthenticated and use its logic manually for now to align with dynamic imports
+        const jwt = (await import('jsonwebtoken')).default; // Dynamic import might be messy with CommonJS/ESM mix
+        // Actually, let's keep it simple: call a function that handles both
+        isAuthenticated(req, res, () => getMe(req, res));
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+// Billing API
+app.post('/api/billing/checkout', async (req, res) => {
+    try {
+        const { isAuthenticated, createCheckoutSession } = await import('./routes/billing.js');
+        // Manually invoke auth middleware
+        const { isAuthenticated: authMiddleware } = await import('./routes/auth.js');
+        authMiddleware(req, res, () => createCheckoutSession(req, res));
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.post('/api/billing/confirm', async (req, res) => {
+    try {
+         const { confirmSubscription } = await import('./routes/billing.js');
+         const { isAuthenticated: authMiddleware } = await import('./routes/auth.js');
+         authMiddleware(req, res, () => confirmSubscription(req, res));
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.get('/api/billing/subscription', async (req, res) => {
+    try {
+        const { getSubscription } = await import('./routes/billing.js');
+        const { isAuthenticated: authMiddleware } = await import('./routes/auth.js');
+        authMiddleware(req, res, () => getSubscription(req, res));
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+// Admin API
+app.get('/api/admin/stats', async (req, res) => {
+    try {
+        const { getAdminStats } = await import('./routes/admin.js');
+        const { isAuthenticated } = await import('./routes/auth.js');
+        isAuthenticated(req, res, () => getAdminStats(req, res));
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.get('/api/verifications', async (req, res) => { // Kept old path for compatibility or move to /api/admin/verifications? 
+    // Admin dashboard frontend uses /api/verifications currently
+    try {
+        const { getVerifications } = await import('./routes/admin.js');
+        const { isAuthenticated } = await import('./routes/auth.js');
+        isAuthenticated(req, res, () => getVerifications(req, res));
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.post('/api/verifications/:id/approve', async (req, res) => {
+    try {
+        const { approveVerification } = await import('./routes/admin.js');
+        const { isAuthenticated } = await import('./routes/auth.js');
+        isAuthenticated(req, res, () => approveVerification(req, res));
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.post('/api/verifications/:id/reject', async (req, res) => {
+    try {
+        const { rejectVerification } = await import('./routes/admin.js');
+        const { isAuthenticated } = await import('./routes/auth.js');
+        isAuthenticated(req, res, () => rejectVerification(req, res));
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+// Coverage Dashboard API
+app.get('/api/coverage-stats', async (req, res) => {
+    try {
+        const { getCoverageStats } = await import('./routes/coverage.js');
+        await getCoverageStats(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+// Regulatory Alerts API
+app.get('/api/alerts', async (req, res) => {
+    try {
+        const { getAlerts } = await import('./routes/alerts.js');
+        await getAlerts(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+
+// Logistics API
+app.get('/api/logistics/estimate', async (req, res) => {
+    try {
+        const { estimateLogistics } = await import('./routes/logistics.js');
+        await estimateLogistics(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+// Trends API
+app.get('/api/trends', async (req, res) => {
+    try {
+        const { getMarketTrends } = await import('./routes/trends.js');
+        await getMarketTrends(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+// Marketplace API
+app.get('/api/marketplace/posts', async (req, res) => {
+    try {
+        const { getPosts } = await import('./routes/marketplace.js');
+        await getPosts(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.post('/api/marketplace/posts', async (req, res) => {
+    try {
+        const { createPost } = await import('./routes/marketplace.js');
+        await createPost(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+// Chat API
+app.get('/api/chat/conversations', async (req, res) => {
+    try {
+        const { getConversations } = await import('./routes/chat.js');
+        await getConversations(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.post('/api/chat/conversations', async (req, res) => {
+    try {
+        const { createConversation } = await import('./routes/chat.js');
+        await createConversation(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.get('/api/chat/conversations/:conversationId/messages', async (req, res) => {
+    try {
+        const { getMessages } = await import('./routes/chat.js');
+        await getMessages(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.post('/api/chat/conversations/:conversationId/messages', async (req, res) => {
+    try {
+        const { sendMessage } = await import('./routes/chat.js');
+        await sendMessage(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+app.post('/api/chat/suggestions', async (req, res) => {
+    try {
+        const { getSuggestions } = await import('./routes/chat.js');
+        await getSuggestions(req, res);
+    } catch (e) { res.status(500).json({error: e}); }
+});
+
+// ========== Production Serving ==========
+
+// Serve static files from Frontend build
+// Note: path resolution depends on where server is started. Assuming "backend" or root.
+// If started from "backend/", ../frontend/client/dist is correct.
+const frontendDist = path.join(__dirname, '../frontend/client/dist');
+app.use(express.static(frontendDist));
+
+// Handle React Routing, return all requests to React app
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  res.sendFile(path.join(frontendDist, 'index.html'));
+});
+
 app.listen(PORT, async () => {
   await initializeTables();
   console.log(`Server running on port ${PORT}`);
   console.log(`📁 SQLite Database connected`);
 });
+
+      description: 'Detalle del contenido de cada bulto.',
+      requirements: 'Debe coincidir exactamente con la factura comercial.'
+    },
+    {
+      name: 'Certificado de Origen',
+      issuer: 'Cámara de Comercio / Entidad Autorizada',
+      description: 'Acredita el origen de la mercancía para preferencias arancelarias.',
+      requirements: 'Formato específico según el acuerdo comercial aplicable.'
+    },
+    {
+      name: 'Documento de Transporte',
+      issuer: 'Transportista / Agente de Carga',
+      description: 'Bill of Lading (marítimo), Air Waybill (aéreo) o CRT (terrestre).',
+      requirements: 'Debe estar consignado según instrucciones del importador.'
+    }
+  ];
+
+  // --- REGIONAL LOGIC (Smart Base Docs) ---
+
+  // 1. European Union (EU)
+  const euCountries = ['DE', 'FR', 'IT', 'ES', 'NL', 'BE', 'SE', 'PL', 'AT', 'DK', 'FI', 'IE', 'PT', 'GR', 'CZ', 'HU', 'RO', 'BG', 'SK', 'HR', 'LT', 'SI', 'LV', 'EE', 'CY', 'LU', 'MT'];
+  if (euCountries.includes(country)) {
+     commonDocs.push({
+        name: 'Documento Único Administrativo (DUA/SAD)',
+        issuer: 'Aduana de Destino / Importador',
+        description: 'Declaración aduanera estándar para toda la Unión Europea.',
+        requirements: 'Debe presentarse electrónicamente antes de la llegada.'
+     });
+     commonDocs.push({
+        name: 'Declaración de Conformidad CE',
+        issuer: 'Fabricante',
+        description: 'Certifica que el producto cumple con las normas de seguridad de la UE.',
+        requirements: 'Obligatorio para electrónica, maquinaria y juguetes.'
+     });
+  }
+
+  // 2. MERCOSUR (AR, BR, PY, UY)
+  if (['AR', 'BR', 'PY', 'UY'].includes(country)) {
+      commonDocs.push({
+        name: 'Certificado de Origen MERCOSUR',
+        issuer: 'Cámara de Comercio',
+        description: 'Permite la exoneración del Arancel Externo Común.',
+        requirements: 'Formato oficial MERCOSUR, sin enmiendas.'
+      });
+  }
+
+  // 3. ASEAN (Vietnam, Thailand, Indonesia, etc.)
+  if (['VN', 'TH', 'ID', 'MY', 'PH', 'SG'].includes(country)) {
+      commonDocs.push({
+        name: 'Formulario D (ATIGA)',
+        issuer: 'Autoridad Comercial',
+        description: 'Certificado de origen para preferencias arancelarias en ASEAN.',
+        requirements: 'Original firmado, emitido antes del embarque.'
+      });
+  }
+
+  // 4. China (GACC for Food)
+  if (country === 'CN') {
+     if (['02', '03', '04', '08', '09', '10', '12', '16', '19', '20', '21', '22'].includes(chapter)) {
+        commonDocs.push({
+           name: 'Registro GACC (CIFER)',
+           issuer: 'GACC (Aduana China)',
+           description: 'Registro obligatorio para exportadores de alimentos.',
+           requirements: 'El número de registro debe figurar en el etiquetado.'
+        });
+     }
+  }
+
+  // 5. USA (ISF + FDA)
+  if (country === 'US') {
+    commonDocs.push({
+      name: 'ISF (10+2) Filing',
+      issuer: 'Importador / Agente',
+      description: 'Información de seguridad del importador.',
+      requirements: 'Debe presentarse 24 horas antes de la carga en origen (marítimo).'
+    });
+    if (['02', '03', '04', '07', '08', '09', '10', '11', '12', '17', '18', '19', '20', '21', '22'].includes(chapter)) {
+       commonDocs.push({
+          name: 'FDA Prior Notice',
+          issuer: 'FDA / Agente',
+          description: 'Notificación previa de alimentos importados.',
+          requirements: 'Número de confirmación debe estar en la factura.'
+       });
+    }
+  }
+
+  // Specific documents based on HS Code chapter
+  const chapter = hsCode.substring(0, 2);
+  
+  if (chapter === '61' || chapter === '62') { // Textiles (Camisetas)
+    commonDocs.push({
+      name: 'Certificado de Composición',
+      issuer: 'Laboratorio Textil / Exportador',
+      description: 'Detalla la composición de las fibras (ej. 100% algodón).',
+      requirements: 'Obligatorio para etiquetado en destino.'
+    });
+  }
+  
+  if (['01', '02', '03', '04', '05'].includes(chapter)) { // Animal products
+    commonDocs.push({
+      name: 'Certificado Sanitario / Veterinario',
+      issuer: 'SENASA (Argentina) / Autoridad Sanitaria',
+      description: 'Acredita que los productos son aptos para consumo humano/animal.',
+      requirements: 'Debe ser emitido por la autoridad oficial del país exportador.'
+    });
+  }
+
+  // --- SPECIALIZED DEEP DIVE LOGIC (User Request) ---
+
+  // 1. Chemicals (Chapters 28, 29, 38)
+  if (['28', '29', '38'].includes(chapter)) {
+      commonDocs.push({
+          name: 'MSDS (Hoja de Seguridad)',
+          issuer: 'Fabricante',
+          description: 'Material Safety Data Sheet (Hoja de Datos de Seguridad de Materiales).',
+          requirements: 'Debe cumplir norma GHS, idiomas origen/destino, 16 secciones.'
+      });
+      if (country === 'EU' || euCountries.includes(country)) {
+          commonDocs.push({
+              name: 'Registro REACH',
+              issuer: 'ECHA (Agencia Europea de Sustancias Químicas)',
+              description: 'Registro, Evaluación, Autorización y Restricción de sustancias químicas.',
+              requirements: 'Número de registro REACH obligatorio en la factura.'
+          });
+      }
+  }
+
+  // 2. Pharmaceuticals (Chapter 30)
+  if (['30'].includes(chapter)) {
+      commonDocs.push({
+          name: 'Certificado GMP / BPF',
+          issuer: 'Autoridad Sanitaria (ANMAT/FDA/EMA)',
+          description: 'Buenas Prácticas de Manufactura.',
+          requirements: 'Vigente y legalizado.'
+      });
+      commonDocs.push({
+          name: 'Certificado de Registro de Producto',
+          issuer: 'Ministerio de Salud (País Destino)',
+          description: 'Autorización de venta en el país de destino.',
+          requirements: 'Trámite previo a la exportación (puede tardar meses).'
+      });
+  }
+
+  // 3. Fertilizers (Chapter 31)
+  if (['31'].includes(chapter)) {
+       commonDocs.push({
+          name: 'Certificado de Análisis',
+          issuer: 'Laboratorio Acreditado',
+          description: 'Detalle de composición N-P-K y metales pesados.',
+          requirements: 'Debe coincidir con las especificaciones de la etiqueta.'
+      });
+  }
+
+  return commonDocs;
+}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from "@tanstack/react-query";
 import { useLocation } from 'wouter';
 import { Map, Marker } from 'pigeon-maps';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { useLanguage } from '@/hooks/use-language';
 import { ChevronLeft, ChevronRight, Ship, TrendingUp, AlertCircle, Globe, MapPin } from 'lucide-react';
 import LogisticsSimulator from '@/components/logistics-simulator';
 import CostCalculatorDialog from '@/components/cost-calculator-dialog';
+import { MarketTrendsChart } from "@/components/market-trends-chart";
 
 // Dark satellite map provider
 function darkMapTileProvider(x: number, y: number, z: number) {
@@ -29,6 +31,34 @@ export default function Analysis() {
   const country = params.get('country') || 'AR';
   const operation = params.get('operation') || 'export';
   const product = params.get('product') || '';
+
+  // [FIX] Fetch real requirements data
+  const { data: requirements } = useQuery<any>({
+    queryKey: ["/api/country-requirements", selectedCountry, code],
+    queryFn: async () => {
+      // Find country code for selected country name
+      // This is a bit hacky because selectedCountry is a name here, not a code
+      // We should really track countryCode in state
+      let targetCode = 'US'; // Default fallback
+      if (selectedCountry?.includes('China')) targetCode = 'CN';
+      if (selectedCountry?.includes('Alemania')) targetCode = 'DE';
+      if (selectedCountry?.includes('Brasil')) targetCode = 'BR';
+      if (selectedCountry?.includes('Chile')) targetCode = 'CL';
+      if (selectedCountry?.includes('Europa')) targetCode = 'EU';
+      if (selectedCountry?.includes('Japón') || selectedCountry?.includes('Japan')) targetCode = 'JP';
+      if (selectedCountry?.includes('Australia')) targetCode = 'AU';
+      if (selectedCountry?.includes('México') || selectedCountry?.includes('Mexico')) targetCode = 'MX';
+      if (selectedCountry?.includes('Rusia') || selectedCountry?.includes('Russia')) targetCode = 'RU';
+      
+      console.log('[DEBUG ANALYSIS] Fetching reqs for:', targetCode, code);
+      const response = await fetch(`/api/country-requirements/${targetCode}/${code}`);
+      if (!response.ok) return null;
+      return response.json();
+    },
+    enabled: !!selectedCountry && !!code,
+  });
+
+  // Mock data for top buyers and recommended countries with coordinates
 
   // Mock data for top buyers and recommended countries with coordinates
   const topBuyers = [
@@ -243,76 +273,79 @@ export default function Analysis() {
               </div>
 
               {/* Regulatory Documentation Section */}
-              {selectedCountry === 'Estados Unidos' && code === '0201' && (
-                <div className="bg-[#0A1929] rounded-lg p-4 border border-purple-500/30 space-y-3">
+              {/* [FIX] Removed hardcoded check for 0201. Now shows for any product if requirements exist or if we want to show empty state */}
+              <div className="bg-[#0A1929] rounded-lg p-4 border border-purple-500/30 space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-semibold text-purple-300 flex items-center gap-2">
                       📋 {language === 'es' ? 'Documentación Reglamentaria Requerida' : 'Required Regulatory Documentation'}
                     </h3>
                     <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded">
-                      {code} → US
+                      {code} → {selectedCountry}
                     </span>
                   </div>
                   
-                  <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                    {/* Document 1 */}
-                    <div className="bg-[#0D2137] p-3 rounded border border-purple-900/30">
-                      <div className="flex justify-between items-start mb-1">
-                        <h4 className="text-xs font-bold text-white">Certificado Sanitario Veterinario (C.S.V.)</h4>
-                        <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">SENASA</span>
-                      </div>
-                      <p className="text-[10px] text-gray-400 mb-2">
-                        Certifica que la carne proviene de animales sanos, con inspección ante/post mortem.
-                      </p>
-                      <div className="text-[10px] bg-gray-800/50 p-2 rounded">
-                        <span className="font-semibold text-gray-300">Requisito: </span>
-                        <span className="text-gray-400">Establecimiento autorizado, Vacunación, Trazabilidad completa.</span>
-                      </div>
-                      <a href="https://www.argentina.gob.ar/senasa" target="_blank" rel="noopener noreferrer" className="block mt-2 text-[10px] text-cyan-400 hover:underline">
-                        Ver fuente oficial →
-                      </a>
-                    </div>
 
-                    {/* Document 2 */}
-                    <div className="bg-[#0D2137] p-3 rounded border border-purple-900/30">
-                      <div className="flex justify-between items-start mb-1">
-                        <h4 className="text-xs font-bold text-white">FSIS Form 9060-5</h4>
-                        <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">USDA/FSIS</span>
-                      </div>
-                      <p className="text-[10px] text-gray-400 mb-2">
-                        Certificado de Salubridad de Exportación de Carnes y Aves.
-                      </p>
-                      <div className="text-[10px] bg-gray-800/50 p-2 rounded">
-                        <span className="font-semibold text-gray-300">Requisito: </span>
-                        <span className="text-gray-400">Requiere inspección oficial en puerto de entrada.</span>
-                      </div>
-                      <a href="https://www.fsis.usda.gov/" target="_blank" rel="noopener noreferrer" className="block mt-2 text-[10px] text-cyan-400 hover:underline">
-                        Ver fuente oficial →
-                      </a>
-                    </div>
 
-                    {/* Document 3 */}
-                    <div className="bg-[#0D2137] p-3 rounded border border-purple-900/30">
-                      <div className="flex justify-between items-start mb-1">
-                        <h4 className="text-xs font-bold text-white">Etiquetado Aprobado (Label Approval)</h4>
-                        <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">USDA/FSIS</span>
-                      </div>
-                      <p className="text-[10px] text-gray-400 mb-2">
-                        Aprobación de etiquetas genéricas o específicas.
-                      </p>
-                      <div className="text-[10px] bg-gray-800/50 p-2 rounded">
-                        <span className="font-semibold text-gray-300">Requisito: </span>
-                        <span className="text-gray-400">Incluir país de origen, establecimiento, peso neto.</span>
-                      </div>
-                      <a href="https://www.fsis.usda.gov/" target="_blank" rel="noopener noreferrer" className="block mt-2 text-[10px] text-cyan-400 hover:underline">
-                        Ver fuente oficial →
-                      </a>
+                  {requirements?.requiredDocuments && requirements.requiredDocuments.length > 0 ? (
+                    <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                      {requirements.requiredDocuments.map((doc: any, idx: number) => (
+                        <div 
+                          key={idx} 
+                          className={`p-3 rounded border transition-all ${
+                            doc.isSanction 
+                              ? 'bg-red-500/20 border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)] animate-pulse' 
+                              : 'bg-[#0D2137] border-purple-900/30'
+                          }`}
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <h4 className={`text-xs font-bold flex items-center gap-1 ${doc.isSanction ? 'text-red-400' : 'text-white'}`}>
+                              {doc.isSanction && <AlertCircle className="w-3 h-3" />}
+                              {doc.name}
+                            </h4>
+                            <span className={`text-[10px] px-2 py-0.5 rounded ${
+                              doc.isSanction ? 'bg-red-600 text-white font-bold' : 'bg-blue-500/20 text-blue-300'
+                            }`}>
+                              {doc.issuer}
+                            </span>
+                          </div>
+                          <p className={`text-[10px] mb-2 ${doc.isSanction ? 'text-red-200 font-medium' : 'text-gray-400'}`}>
+                            {doc.description || doc.importance || ''}
+                          </p>
+                          {(doc.requirements || doc.instruction) && (
+                            <div className={`text-[10px] p-2 rounded ${doc.isSanction ? 'bg-red-900/40 text-red-100' : 'bg-gray-800/50 text-gray-400'}`}>
+                                <span className="font-semibold">{doc.isSanction ? 'SANCIONA: ' : 'Requisito: '}</span>
+                                <span>{doc.requirements || doc.instruction}</span>
+                            </div>
+                          )}
+                          {doc.link && (
+                            <a href={doc.link} target="_blank" rel="noopener noreferrer" className={`block mt-2 text-[10px] hover:underline ${doc.isSanction ? 'text-red-400' : 'text-cyan-400'}`}>
+                              Ver fuente oficial →
+                            </a>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="text-gray-400 text-xs italic p-4 text-center">
+                       {language === 'es' ? 'Cargando o sin requisitos específicos...' : 'Loading or no specific requirements...'}
+                    </div>
+                  )}
 
                   <Button 
                     onClick={() => {
-                      alert('Función de descarga PDF en desarrollo. Ver regulatory-docs-complete-guide.md para implementación completa.');
+                        import('jspdf').then(jsPDF => {
+                            import('jspdf-autotable').then(autoTable => {
+                                const doc = new jsPDF.default();
+                                doc.text(`Requisitos: ${code} -> ${selectedCountry}`, 14, 20);
+                                const rows = requirements?.requiredDocuments?.map((d: any) => [d.name, d.issuer, d.description]) || [];
+                                autoTable.default(doc, {
+                                    head: [['Documento', 'Emisor', 'Descripción']],
+                                    body: rows,
+                                    startY: 30
+                                });
+                                doc.save('requisitos.pdf');
+                            });
+                        });
                     }}
                     variant="outline"
                     size="sm"
@@ -321,7 +354,6 @@ export default function Analysis() {
                     📄 Descargar Guía PDF
                   </Button>
                 </div>
-              )}
             </div>
           ) : (
             // Lists Panel

@@ -250,6 +250,57 @@ export default function Landing() {
               </div>
             </div>
           </div>
+
+          {/* Key Features Grid */}
+          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
+              <CardContent className="p-6 text-center">
+                <div className="bg-gradient-to-br from-purple-500 to-indigo-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {language === 'es' ? 'Marketplace B2B' : 'B2B Marketplace'}
+                </h3>
+                <p className="text-blue-100 text-sm">
+                  {language === 'es' 
+                    ? 'Conecta directamente con proveedores y compradores verificados en 130+ países.' 
+                    : 'Connect directly with verified suppliers and buyers in 130+ countries.'}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
+              <CardContent className="p-6 text-center">
+                 <div className="bg-gradient-to-br from-orange-500 to-red-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {language === 'es' ? 'Inteligencia Regulatoria' : 'Regulatory Intelligence'}
+                </h3>
+                <p className="text-blue-100 text-sm">
+                  {language === 'es' 
+                    ? 'Motor de cumplimiento automático. Aranceles, documentos y requisitos al instante.' 
+                    : 'Automatic compliance engine. Tariffs, documents, and requirements instantly.'}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
+              <CardContent className="p-6 text-center">
+                <div className="bg-gradient-to-br from-blue-500 to-cyan-600 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <Globe className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-2">
+                  {language === 'es' ? 'Logística Integral' : 'End-to-End Logistics'}
+                </h3>
+                <p className="text-blue-100 text-sm">
+                  {language === 'es' 
+                    ? 'Calculadora de fletes, tracking en tiempo real y optimización de rutas.' 
+                    : 'Freight calculator, real-time tracking, and route optimization.'}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
 
